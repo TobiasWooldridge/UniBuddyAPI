@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  start: 2013-05-17 10:51:36
+  end: 2013-05-17 10:51:36
+  description: MyText
+  cancelled: false
+  room: 
+
+two:
+  start: 2013-05-17 10:51:36
+  end: 2013-05-17 10:51:36
+  description: MyText
+  cancelled: false
+  room: 
