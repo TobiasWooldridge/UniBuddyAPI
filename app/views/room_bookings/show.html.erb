@@ -1,0 +1,35 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>Type:</b>
+  <%= @room_booking.type %>
+</p>
+
+<p>
+  <b>Cancelled:</b>
+  <%= @room_booking.cancelled %>
+</p>
+
+<p>
+  <b>Description:</b>
+  <%= @room_booking.description %>
+</p>
+
+<p>
+  <b>Booked for:</b>
+  <%= @room_booking.booked_for %>
+</p>
+
+<p>
+  <b>Start:</b>
+  <%= @room_booking.start %>
+</p>
+
+<p>
+  <b>End:</b>
+  <%= @room_booking.end %>
+</p>
+
+
+<%= link_to 'Edit', edit_room_booking_path(@room_booking) %> |
+<%= link_to 'Back', room_bookings_path %>

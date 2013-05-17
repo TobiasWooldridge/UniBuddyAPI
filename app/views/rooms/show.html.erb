@@ -1,0 +1,19 @@
+<h1><%= @room.building.name %> <%= @room.code %> <small>(<%= @room.name %>)</small></h1>
+
+<h2>Bookings</h2>
+<table class="table table-condensed">
+  <tr>
+    <th>Booking</th>
+    <th>Day</th>
+    <th>Start</th>
+    <th>End</th>
+  </tr>
+  <% @room.room_bookings.each do |booking| %>
+  <tr>
+    <td><%= booking.booked_for %> <%= booking.description %></td>
+    <td><%= l booking.start %></td>
+    <td><%= l booking.start %></td>
+    <td><%= l booking.end %></td>
+  </tr>
+  <% end %>
+</table>

@@ -1,0 +1,9 @@
+<h1><%= @building.name %> <small>(<%= @building.code %>)</small></h1>
+
+<h2>Rooms</h2>
+<ul>
+  <% @building.rooms.each do |room| %>
+    <li><%=  link_to @building.name + " " + room.code, building_room_path(@building.id, room.id) %></li>
+  <% end %>
+</ul>
+<%= link_to 'Buildings List', buildings_path %>

@@ -1,4 +1,10 @@
 FlindersAPI2::Application.routes.draw do
+  resources :buildings do
+    resources :rooms do
+      resources :room_bookings, :path => "/bookings", shallow: true
+    end
+  end
+
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
