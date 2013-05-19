@@ -3,11 +3,25 @@
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
 @mixin flinders-gradient {
-  background-image: linear-gradient(bottom, rgb(252,231,109) 46%, rgb(250,213,0) 100%);
-  background-image: -o-linear-gradient(bottom, rgb(252,231,109) 46%, rgb(250,213,0) 100%);
-  background-image: -moz-linear-gradient(bottom, rgb(252,231,109) 46%, rgb(250,213,0) 100%);
-  background-image: -webkit-linear-gradient(bottom, rgb(252,231,109) 46%, rgb(250,213,0) 100%);
-  background-image: -ms-linear-gradient(bottom, rgb(252,231,109) 46%, rgb(250,213,0) 100%);
+  background: #ffdc5b; /* Old browsers */
+  background: -moz-linear-gradient(top,  #ffdc5b 0%, #ffe063 100%); /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffdc5b), color-stop(100%,#ffe063)); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(top,  #ffdc5b 0%,#ffe063 100%); /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(top,  #ffdc5b 0%,#ffe063 100%); /* Opera 11.10+ */
+  background: -ms-linear-gradient(top,  #ffdc5b 0%,#ffe063 100%); /* IE10+ */
+  background: linear-gradient(to bottom,  #ffdc5b 0%,#ffe063 100%); /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffdc5b', endColorstr='#ffe063',GradientType=0 ); /* IE6-9 */
+}
+
+@mixin flinders-gradient-light {
+background: #ffe063; /* Old browsers */
+background: -moz-linear-gradient(top,  #ffe063 0%, #ffe6a8 100%); /* FF3.6+ */
+background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffe063), color-stop(100%,#ffe6a8)); /* Chrome,Safari4+ */
+background: -webkit-linear-gradient(top,  #ffe063 0%,#ffe6a8 100%); /* Chrome10+,Safari5.1+ */
+background: -o-linear-gradient(top,  #ffe063 0%,#ffe6a8 100%); /* Opera 11.10+ */
+background: -ms-linear-gradient(top,  #ffe063 0%,#ffe6a8 100%); /* IE10+ */
+background: linear-gradient(to bottom,  #ffe063 0%,#ffe6a8 100%); /* W3C */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffe063', endColorstr='#ffe6a8',GradientType=0 ); /* IE6-9 */
 }
 
 
@@ -22,7 +36,7 @@ body {
     margin-bottom: $header-height;
     background-repeat: no-repeat;
     background-attachment: fixed;
-    @include flinders-gradient
+    @include flinders-gradient-light;
 }
 
 header { color: #111; position: absolute; bottom: 0px; @include flinders-gradient; width: 100%; font-family: "Serif"; }
