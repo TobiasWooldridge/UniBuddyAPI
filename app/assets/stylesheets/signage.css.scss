@@ -1,0 +1,38 @@
+// Place all the styles related to the signage controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+
+@mixin flinders-gradient {
+  background-image: linear-gradient(bottom, rgb(252,231,109) 46%, rgb(250,213,0) 100%);
+  background-image: -o-linear-gradient(bottom, rgb(252,231,109) 46%, rgb(250,213,0) 100%);
+  background-image: -moz-linear-gradient(bottom, rgb(252,231,109) 46%, rgb(250,213,0) 100%);
+  background-image: -webkit-linear-gradient(bottom, rgb(252,231,109) 46%, rgb(250,213,0) 100%);
+  background-image: -ms-linear-gradient(bottom, rgb(252,231,109) 46%, rgb(250,213,0) 100%);
+}
+
+
+$header-height: 150px;
+
+
+html {
+    height: 100%;
+}
+body {
+    margin: 0;
+    margin-bottom: $header-height;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    @include flinders-gradient
+}
+
+header { color: #111; position: absolute; bottom: 0px; @include flinders-gradient; width: 100%; font-family: "Serif"; }
+header h1 { display: inline-block; font-size: 4em; font-weight: normal; line-height: $header-height; margin: 0 0 0 30px; padding: 0;  }
+header h1 small { color: #111; opacity: 0.5; }
+header img.logo { height: $header-height; display: inline; vertical-align: top; }
+
+header #flinders-sticky { padding: 10px; }
+
+div.body { color: #111; }
+div.body h1 { font-weight: normal; font-family: serif; font-size: 4em; }
+
+div.content { }

@@ -5,6 +5,8 @@ FlindersAPI2::Application.routes.draw do
     end
   end
 
+  match '/signage/:building' => 'signage#view'
+
   # The priority is based upon order of creation:
   # first created -> highest priority.
 

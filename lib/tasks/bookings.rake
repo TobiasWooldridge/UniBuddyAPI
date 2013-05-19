@@ -54,7 +54,7 @@ namespace :bookings do
 
 
         room = Room.where(:code => code).first
-        room ||= Room.create(:code => code, :name => name, :capacity => capacity, :building_idrails => building.id)
+        room ||= Room.create(:code => code, :name => name, :capacity => capacity, :building => building)
 
         roomPage = @agent.get(number['href'])
 
@@ -73,7 +73,7 @@ namespace :bookings do
 
       periods = []
       (timetable/'tr:not(:first) td:first').each do |timeCell|
-        periods.push(timeCell.text)
+        periods.push(timeCell.text.gsub("noon", "pm").gsub("midnight", "am"))
       end
 
 

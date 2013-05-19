@@ -1,0 +1,48 @@
+<header>
+  <div id="flinders-sticky">
+    <%= image_tag "flinders.png", { :class => "logo" } %>
+    <h1>Welcome to <%= @building.name %> <small>(<%= @building.code %>)</small></h1>
+  </div>
+</header>
+
+<div class="body row-fluid">
+  <div class="content span10">
+  </div>
+  <div class="content span10">
+    <h1>Looking for a free room?</h1>
+    <table width="100%">
+      <% @emptyRooms.each do |room| %>
+        <tr>
+          <td><%= @building.code %> <%= room.code %></td>
+          <td><%= room.name %></td>
+        </tr>
+      <% end %>
+    </table>
+  </div>
+  <div class="content span10">
+    <h1>What's going on</h1>
+    <table width="100%">
+      <% @currentRoomUsages.each do |booking| %>
+        <tr>
+          <td><%= booking.booked_for %> <%= booking.description %></td>
+          <td><%= @building.code %> <%= booking.room.code %></td>
+          <td><%= booking.room.name %></td>
+          <td><%= booking.end %></td>
+        </tr>
+      <% end %>
+    </table>
+  </div>
+  <div class="content span10">
+    <h1>Soon</h1>
+    <table width="100%">
+      <% @upcomingRoomUsages.each do |booking| %>
+        <tr>
+          <td><%= booking.booked_for %> <%= booking.description %></td>
+          <td><%= @building.code %> <%= booking.room.code %></td>
+          <td><%= booking.room.name %></td>
+          <td><%= booking.end %></td>
+        </tr>
+      <% end %>
+    </table>
+  </div>
+</div> 
