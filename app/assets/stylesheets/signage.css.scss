@@ -2,17 +2,6 @@
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
-@mixin flinders-gradient {
-  background: #ffdc5b; /* Old browsers */
-  background: -moz-linear-gradient(top,  #ffdc5b 0%, #ffe063 100%); /* FF3.6+ */
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffdc5b), color-stop(100%,#ffe063)); /* Chrome,Safari4+ */
-  background: -webkit-linear-gradient(top,  #ffdc5b 0%,#ffe063 100%); /* Chrome10+,Safari5.1+ */
-  background: -o-linear-gradient(top,  #ffdc5b 0%,#ffe063 100%); /* Opera 11.10+ */
-  background: -ms-linear-gradient(top,  #ffdc5b 0%,#ffe063 100%); /* IE10+ */
-  background: linear-gradient(to bottom,  #ffdc5b 0%,#ffe063 100%); /* W3C */
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffdc5b', endColorstr='#ffe063',GradientType=0 ); /* IE6-9 */
-}
-
 @mixin flinders-gradient-light {
 background: #ffe063; /* Old browsers */
 background: -moz-linear-gradient(top,  #ffe063 0%, #ffe6a8 100%); /* FF3.6+ */
@@ -39,7 +28,7 @@ body {
     @include flinders-gradient-light;
 }
 
-header { color: #111; position: absolute; bottom: 0px; @include flinders-gradient; width: 100%; font-family: "Serif"; }
+header { color: #111; position: absolute; bottom: 0px; @include flinders-gradient-light; width: 100%; font-family: "Serif"; }
 header h1 { display: inline-block; font-size: 4em; font-weight: normal; line-height: $header-height; margin: 0 0 0 30px; padding: 0;  }
 header h1 small { color: #111; opacity: 0.5; }
 header img.logo { height: $header-height; display: inline; vertical-align: top; }
