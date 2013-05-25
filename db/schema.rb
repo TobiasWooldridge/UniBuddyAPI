@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130517062143) do
+ActiveRecord::Schema.define(:version => 20130525053536) do
 
   create_table "buildings", :force => true do |t|
     t.string   "name"
@@ -21,8 +21,8 @@ ActiveRecord::Schema.define(:version => 20130517062143) do
   end
 
   create_table "room_bookings", :force => true do |t|
-    t.datetime "start"
-    t.datetime "end"
+    t.datetime "starts_at"
+    t.datetime "ends_at"
     t.text     "description"
     t.boolean  "cancelled"
     t.integer  "room_id"
