@@ -103,7 +103,7 @@ namespace :bookings do
 
       RoomBooking.where(
         :room_id => room.id,
-        :start => week_start .. week_end
+        :starts_at => week_start .. week_end
         ).delete_all
 
       bookings.each do |scrapedBooking|
@@ -125,8 +125,8 @@ namespace :bookings do
         booking = RoomBooking.new()
         booking.cancelled = false
         booking.room_id = room.id
-        booking.start = scrapedBooking.starts
-        booking.end = scrapedBooking.ends
+        booking.starts_at = scrapedBooking.starts
+        booking.ends_at = scrapedBooking.ends
         booking.booked_for = booked_for
         booking.description = activity
 

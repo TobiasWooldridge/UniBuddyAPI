@@ -4,7 +4,7 @@ class SignageController < ApplicationController
   def view 
     @building = Building.where(:code => params[:building]).first
 
-    currentHour = Time.parse("13 May 2013 12pm")
+    currentHour = Time.now
     @currentRoomUsages = RoomBooking.where(:room_id => @building.rooms).where('starts_at <= ? AND ends_at > ?', currentHour, currentHour)
 
     upcomingHour = currentHour + 1.hour

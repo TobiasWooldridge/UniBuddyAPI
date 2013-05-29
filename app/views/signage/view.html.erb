@@ -27,7 +27,7 @@
           <td><%= booking.booked_for %> <%= booking.description %></td>
           <td><%= @building.code %> <%= booking.room.code %></td>
           <td><%= booking.room.name %></td>
-          <td><%= booking.end %></td>
+          <td><%= booking.ends_at %></td>
         </tr>
       <% end %>
     </table>
@@ -40,7 +40,7 @@
           <td><%= booking.booked_for %> <%= booking.description %></td>
           <td><%= @building.code %> <%= booking.room.code %></td>
           <td><%= booking.room.name %></td>
-          <td><%= booking.end %></td>
+          <td><%= booking.ends_at %></td>
         </tr>
       <% end %>
     </table>
