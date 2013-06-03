@@ -4,16 +4,14 @@
 <table class="table table-condensed">
   <tr>
     <th>Booking</th>
-    <th>Day</th>
     <th>Start</th>
     <th>End</th>
   </tr>
   <% @room.room_bookings.each do |booking| %>
   <tr>
     <td><%= booking.booked_for %> <%= booking.description %></td>
-    <td><%= l booking.start %></td>
-    <td><%= l booking.start %></td>
-    <td><%= l booking.end %></td>
+    <td><%= l booking.starts_at %></td>
+    <td><%= l booking.ends_at %></td>
   </tr>
   <% end %>
 </table>

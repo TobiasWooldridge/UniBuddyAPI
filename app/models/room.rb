@@ -13,8 +13,12 @@ class Room < ActiveRecord::Base
 
   	if n == nil then
   		Time.now + 1.day
-	else
-		n.starts_at
-	end
+  	else
+  		n.starts_at
+  	end
+  end
+
+  def full_code
+    building.code + " " + code
   end
 end

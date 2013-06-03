@@ -1,8 +1,8 @@
 FlindersAPI2::Application.routes.draw do
-  resources :buildings do
-    resources :rooms do
-      resources :room_bookings, :path => "/bookings", shallow: true
-    end
+  resources :buildings
+  
+  resources :rooms do
+    resources :room_bookings, :path => "/bookings", shallow: true
   end
 
   match '/signage/:building' => 'signage#view'
