@@ -4,7 +4,6 @@ class RoomBookingsController < ApplicationController
   def index
     @room = Room.find(params[:room_id])
     raise ActiveRecord::RecordNotFound if @room.nil?
-    p room
 
     respond_to do |format|
       format.html # index.html.erb
