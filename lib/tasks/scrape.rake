@@ -1,29 +1,28 @@
-namespace :bookings do
+namespace :scrape do
   desc "Update room bookings from the Flinders website"
 
-  task :update => :environment do
+  task :all => :environment do
     desc "Update"
 
-    scrape
+    @agent = Mechanize.new
+    scrape_all
   end
 
   private
     agent = nil
-    def scrape
-      @agent = Mechanize.new
-      page = @agent.get("http://stusyswww.flinders.edu.au/roombook.taf")
+    def scrape_all
 
-      scrape_bookings page
+      scrape_bookings
     end
 
-    def scrape_bookings (page)
+    def scrape_bookings ()
+      page = @agent.get("http://stusyswww.flinders.edu.au/roombook.taf")
       form = page.form_with(:action=>/roombook\.taf/)
 
       buildingWidget = form.field_with(:name=>'bldg')
 
-      buildingWidget.options.each do |code|
-        building = Building.where(:code => code.value).first
-        building ||= Building.create(:code => code.value, :name => code.text.split(/(.+) \((.+)\)/).second)
+      buildingWidget.options.from(1).each do |code|
+        building = Building.where(:code => code.value).first || Building.create(:code => code.value, :name => code.text.split(/(.+) \((.+)\)/).second)
 
         buildingWidget.value = code
         buildingPage = form.submit
@@ -34,6 +33,7 @@ namespace :bookings do
 
     def scrape_bookings_building (building, page)
       p building.name
+      
 
       rooms = page/'#container_num_1 table tr'
       rooms.each do |roomRow|
