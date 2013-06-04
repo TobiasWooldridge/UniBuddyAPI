@@ -16,14 +16,14 @@ $flinders-light-yellow:  #ffe6a8;
 $flinders-dark-yellow: #ffe063;
 
 @mixin flinders-gradient-light {
-background: $flinders-dark-yellow; /* Old browsers */
-background: -moz-linear-gradient(top,  $flinders-dark-yellow 0%, $flinders-light-yellow 100%); /* FF3.6+ */
-background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,$flinders-dark-yellow), color-stop(100%,$flinders-light-yellow)); /* Chrome,Safari4+ */
-background: -webkit-linear-gradient(top,  $flinders-dark-yellow 0%,$flinders-light-yellow 100%); /* Chrome10+,Safari5.1+ */
-background: -o-linear-gradient(top,  $flinders-dark-yellow 0%,$flinders-light-yellow 100%); /* Opera 11.10+ */
-background: -ms-linear-gradient(top,  $flinders-dark-yellow 0%,$flinders-light-yellow 100%); /* IE10+ */
-background: linear-gradient(to bottom,  $flinders-dark-yellow 0%,$flinders-light-yellow 100%); /* W3C */
-filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='$flinders-dark-yellow', endColorstr='$flinders-light-yellow',GradientType=0 ); /* IE6-9 */
+	background: $flinders-dark-yellow; /* Old browsers */
+	background: -moz-linear-gradient(top,  $flinders-dark-yellow 0%, $flinders-light-yellow 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,$flinders-dark-yellow), color-stop(100%,$flinders-light-yellow)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top,  $flinders-dark-yellow 0%,$flinders-light-yellow 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top,  $flinders-dark-yellow 0%,$flinders-light-yellow 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top,  $flinders-dark-yellow 0%,$flinders-light-yellow 100%); /* IE10+ */
+	background: linear-gradient(to bottom,  $flinders-dark-yellow 0%,$flinders-light-yellow 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='$flinders-dark-yellow', endColorstr='$flinders-light-yellow',GradientType=0 ); /* IE6-9 */
 }
 
 
@@ -34,8 +34,7 @@ html {
     height: 100%;
 }
 body {
-    margin: 0;
-    margin-bottom: $header-height;
+    padding-bottom: $header-height;
     background-repeat: no-repeat;
     background-attachment: fixed;
     @include flinders-gradient-light;
@@ -48,11 +47,8 @@ header img.logo { height: $header-height; display: inline; vertical-align: top; 
 
 header #flinders-sticky { padding: 10px; }
 
-div.body { color: #111; }
-div.body h1 { font-weight: normal; font-family: serif; font-size: 4em; }
+.table th { border-top: 0 none !important; }
+.table td { border: 1px solid $flinders-dark-yellow !important; background: rgba(#fff, 0.30); }
 
-table.table { background: rgba(#fff, 0.30); }
-
-.table th, .table td { border: 1px solid $flinders-dark-yellow !important; }
 
 div.content { }

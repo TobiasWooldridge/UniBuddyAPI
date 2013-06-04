@@ -7,7 +7,7 @@
     <th>Description</th>
     <th>Booked for</th>
     <th>Start</th>
-    <th>End</th>
+    <th>Duration</th>
   </tr>
 
 <% @room.room_bookings.each do |room_booking| %>
@@ -17,7 +17,7 @@
     <td><%= room_booking.description %></td>
     <td><%= room_booking.booked_for %></td>
     <td><%= room_booking.starts_at %></td>
-    <td><%= room_booking.ends_at %></td>
+    <td><%= distance_of_time_in_words(room_booking.start, room_booking.end) %></td>
   </tr>
 <% end %>
 </table>

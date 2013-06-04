@@ -5,55 +5,72 @@
   </div>
 </header>
 
-<div class="body row-fluid">
-  <div class="content span10">
-  </div>
-  <div class="content span10">
-    <h1>Looking for a free room?</h1>
-    <table class="table">
-      <% @empty_rooms.each do |room| %>
+<div class="container-fluid">
+  <div class="signage row-fluid">
+    <div class="content span6">
+      <h1>Happening right now</h1>
+      <% if @current_usages.empty? %>
+        <p>No classes/events are going on right now</p>
+      <% else %>
+      <table class="table">
         <tr>
-          <td><%= @building.code %> <%= room.code %></td>
-          <td><%= room.name %></td>
-          <td><%= room.free_until %></td>
+          <th>Booking</th>
+          <th>Room</th>
+          <th>Room Description</th>
+          <th>Starts</th>
+          <th>Duration</th>
         </tr>
+        <% @current_usages.each do |booking| %>
+          <tr>
+            <td><%= booking.booked_for %> <%= booking.description %></td>
+            <td><%= booking.room.full_code %></td>
+            <td><%= booking.room.name %></td>
+            <td><%= booking.starts_at.strftime('%H:%M') %></td>
+            <td><%= distance_of_time_in_words(booking.duration) %></td>
+          </tr>
+        <% end %>
+      </table>
       <% end %>
-    </table>
-  </div>
-  <div class="content span10">
-    <h1>What's going on</h1>
-    <% if @current_usages.empty? %>
-      <p>No classes/events are going on right now</p>
-    <% else %>
-    <table class="table">
-      <% @current_usages.each do |booking| %>
+      <h1>Looking for a free room?</h1>
+      <table class="table">
         <tr>
-          <td><%= booking.booked_for %> <%= booking.description %></td>
-          <td><%= @building.code %> <%= booking.room.code %></td>
-          <td><%= booking.room.name %></td>
-          <td><%= booking.starts_at.strftime('%H:%M') %></td>
-          <td><%= booking.ends_at.strftime('%H:%M') %></td>
+          <th>Room</th>
+          <th>Room Description</th>
+          <th>Free for</th>
         </tr>
-      <% end %>
-    </table>
-    <% end %>
-  </div>
-  <div class="content span10">
-    <h1>Soon</h1>
-    <% if @upcoming_usages.empty? %>
-      <p>No classes/events are going on in the next period</p>
-    <% else %>
-    <table class="table">
-      <% @upcoming_usages.each do |booking| %>
+        <% @empty_rooms.each do |room| %>
+          <tr>
+            <td><%= room.full_code %></td>
+            <td><%= room.name %></td>
+            <td><%= room.next_booking.nil? ? "" : time_ago_in_words(room.next_booking.starts_at) %></td>
+          </tr>
+        <% end %>
+      </table>
+    </div>
+    <div class="content span6">
+      <h1>Soon</h1>
+      <% if @upcoming_usages.empty? %>
+        <p>No classes/events are going on in the next period</p>
+      <% else %>
+      <table class="table">
         <tr>
-          <td><%= booking.booked_for %> <%= booking.description %></td>
-          <td><%= @building.code %> <%= booking.room.code %></td>
-          <td><%= booking.room.name %></td>
-          <td><%= booking.starts_at.strftime('%H:%M') %></td>
-          <td><%= booking.ends_at.strftime('%H:%M') %></td>
+          <th>Booking</th>
+          <th>Room</th>
+          <th>Room Description</th>
+          <th>Starts</th>
+          <th>Duration</th>
         </tr>
+        <% @upcoming_usages.each do |booking| %>
+          <tr>
+            <td><%= booking.booked_for %> <%= booking.description %></td>
+            <td><%= booking.room.full_code %></td>
+            <td><%= booking.room.name %></td>
+            <td><%= booking.starts_at.strftime('%H:%M') %></td>
+            <td><%= distance_of_time_in_words(booking.duration) %></td>
+          </tr>
+        <% end %>
+      </table>
       <% end %>
-    </table>
-    <% end %>
+    </div>
   </div>
-</div> 
+</div>
