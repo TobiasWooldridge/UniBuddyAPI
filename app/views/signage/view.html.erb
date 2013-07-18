@@ -42,7 +42,7 @@
           <tr>
             <td><%= room.full_code %></td>
             <td><%= room.name %></td>
-            <td><%= room.next_booking.nil? ? "" : time_ago_in_words(room.next_booking.starts_at) %></td>
+            <td><%= time_ago_in_words(room.free_until) %></td>
           </tr>
         <% end %>
       </table>

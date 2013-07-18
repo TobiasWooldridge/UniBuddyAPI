@@ -11,11 +11,7 @@ class Room < ActiveRecord::Base
   def free_until
   	n = next_booking
 
-  	if n == nil then
-  		Time.now + 1.day
-  	else
-  		n.starts_at
-  	end
+    n.nil? ? Date.today.at_end_of_week : n.starts_at
   end
 
   def full_code
