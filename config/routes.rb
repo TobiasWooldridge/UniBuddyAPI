@@ -5,7 +5,7 @@ FlindersAPI2::Application.routes.draw do
     resources :room_bookings, :path => "/bookings", shallow: true
   end
 
-  match '/signage/:building' => 'signage#view'
+  match '/signage/:building' => 'signage#view', via: [:get]
 
   # The priority is based upon order of creation:
   # first created -> highest priority.
