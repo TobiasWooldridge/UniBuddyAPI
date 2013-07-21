@@ -1,9 +1,8 @@
 class SignageController < ApplicationController
   layout "signage"
   
-  def view 
-    @building = Building.where(:code => params[:building]).first
-    return not_found if @building.nil?
+  def view
+    @building = Building.find(params[:id])
 
     @current_usages = @building.current_bookings
     @upcoming_usages = @building.upcoming_bookings

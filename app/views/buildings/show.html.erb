@@ -3,7 +3,7 @@
 <h2>Rooms</h2>
 <ul>
   <% @building.rooms.each do |room| %>
-    <li><%=  link_to @building.name + " " + room.code, room_path(room.id) %></li>
+    <li><%=  link_to room, room_path(room.id) %></li>
   <% end %>
 </ul>
 <%= link_to 'Buildings List', buildings_path %>

@@ -21,6 +21,7 @@ $text-color: #333;
 html {
     height: 100%;
 }
+
 body {
     padding-bottom: $header-height;
     background-repeat: no-repeat;
@@ -31,7 +32,7 @@ body {
 
 header { color: #111; position: absolute; bottom: 0px; @include flinders-gradient-light; width: 100%; font-family: "Serif"; }
 header h1 { display: inline-block; font-size: 4em; font-weight: normal; line-height: $header-height; margin: 0 0 0 30px; padding: 0;  }
-header h1 small { opacity: 1; color: $text-color; }
+.container h1 small { opacity: 0.5; color: $text-color !important; }
 header img.logo { height: $header-height; display: inline; vertical-align: top; }
 
 header #flinders-sticky { padding: 10px; }
@@ -42,4 +43,4 @@ header #flinders-sticky { padding: 10px; }
 
 div.content { }
 
-div.content a { color: $text-color; text-decoration: underline }
+a { color: $text-color; text-decoration: underline }

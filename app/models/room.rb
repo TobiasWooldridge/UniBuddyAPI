@@ -13,6 +13,14 @@ class Room < ActiveRecord::Base
   end
 
   def full_code
-    building.code + " " + code
+    building.code + ' ' + code
+  end
+
+  def full_name
+    building.name + " " + code
+  end
+
+  def to_s
+     "%s (%s)" % [full_name, full_code]
   end
 end
