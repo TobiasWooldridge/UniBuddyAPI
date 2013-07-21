@@ -6,18 +6,20 @@ class Room < ActiveRecord::Base
   	RoomBooking.where(:room_id => id).where('starts_at > ?', Time.now.to_s).order(:starts_at).first	
   end
 
-  def free_until
+  def free_until_today
   	n = next_booking
 
-    n.nil? ? Date.today.at_end_of_week : n.starts_at
+    end_of_day = Time.now.at_end_of_day
+
+    (n.nil? or not n.starts_at.today?) ? end_of_day : n.starts_at
   end
 
   def full_code
-    building.code + ' ' + code
+    "%s %s" % [building.code, code]
   end
 
   def full_name
-    building.name + " " + code
+    "%s %s" % [building.name, code]
   end
 
   def to_s
