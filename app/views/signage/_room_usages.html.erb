@@ -1,0 +1,18 @@
+<table class="table">
+    <tr>
+        <th>Booking</th>
+        <th>Room</th>
+        <th>Room Description</th>
+        <th>Starts</th>
+        <th>Ends</th>
+    </tr>
+    <% usages.each do |booking| %>
+    <tr>
+        <td><%= booking.booked_for %> <%= booking.description %></td>
+        <td><%= booking.room.full_code %></td>
+        <td><%= booking.room.name %></td>
+        <td><%= booking.starts_at.strftime('%I:%M %p') %></td>
+        <td><%= booking.ends_at.strftime('%I:%M %p') %></td>
+    </tr>
+    <% end %>
+</table>

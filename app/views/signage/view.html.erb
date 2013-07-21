@@ -12,64 +12,17 @@
       <% if @current_usages.empty? %>
         <p>No classes/events are going on right now</p>
       <% else %>
-      <table class="table">
-        <tr>
-          <th>Booking</th>
-          <th>Room</th>
-          <th>Room Description</th>
-          <th>Starts</th>
-          <th>Ends</th>
-        </tr>
-        <% @current_usages.each do |booking| %>
-          <tr>
-            <td><%= booking.booked_for %> <%= booking.description %></td>
-            <td><%= booking.room.full_code %></td>
-            <td><%= booking.room.name %></td>
-            <td><%= booking.starts_at.strftime('%I:%M %p') %></td>
-            <td><%= booking.ends_at.strftime('%I:%M %p') %></td>
-          </tr>
-        <% end %>
-      </table>
+        <%= render "signage/room_usages", :usages => @current_usages %>
       <% end %>
       <h1>Looking for a free room?</h1>
-      <table class="table">
-        <tr>
-          <th>Room</th>
-          <th>Room Description</th>
-          <th>Free for</th>
-        </tr>
-        <% @empty_rooms.each do |room| %>
-          <tr>
-            <td><%= room.full_code %></td>
-            <td><%= room.name %></td>
-            <td><%= limited_time_until(room.free_until_today) %></td>
-          </tr>
-        <% end %>
-      </table>
+      <%= render "signage/free_rooms", :free_rooms => @empty_rooms %>
     </div>
     <div class="content span6">
       <h1>Soon</h1>
       <% if @upcoming_usages.empty? %>
         <p>No classes/events are going on in the next period</p>
       <% else %>
-      <table class="table">
-        <tr>
-          <th>Booking</th>
-          <th>Room</th>
-          <th>Room Description</th>
-          <th>Starts</th>
-          <th>Ends</th>
-        </tr>
-        <% @upcoming_usages.each do |booking| %>
-          <tr>
-            <td><%= booking.booked_for %> <%= booking.description %></td>
-            <td><%= booking.room.full_code %></td>
-            <td><%= booking.room.name %></td>
-            <td><%= booking.starts_at.strftime('%I:%M %p') %></td>
-            <td><%= booking.ends_at.strftime('%I:%M %p') %></td>
-          </tr>
-        <% end %>
-      </table>
+          <%= render "signage/room_usages", :usages => @upcoming_usages %>
       <% end %>
     </div>
   </div>
