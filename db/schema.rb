@@ -9,36 +9,50 @@
 # from scratch. The latter is a flawed and unsustainable approach (the more migrations
 # you'll amass, the slower it'll run and the greater likelihood for issues).
 #
-# It's strongly recommended to check this file into your version control system.
+# It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130525053536) do
+ActiveRecord::Schema.define(version: 20130721063050) do
 
-  create_table "buildings", :force => true do |t|
-    t.string   "name"
-    t.string   "code"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+  create_table "broadcasts", force: true do |t|
+    t.string   "message"
+    t.datetime "show_from"
+    t.datetime "show_until"
+    t.string   "author_name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
-  create_table "room_bookings", :force => true do |t|
+  create_table "broadcasts_buildings", id: false, force: true do |t|
+    t.integer "broadcast_id"
+    t.integer "building_id"
+  end
+
+  create_table "buildings", force: true do |t|
+    t.string   "name"
+    t.string   "code"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "room_bookings", force: true do |t|
     t.datetime "starts_at"
     t.datetime "ends_at"
     t.text     "description"
     t.boolean  "cancelled"
     t.integer  "room_id"
-    t.datetime "created_at",  :null => false
-    t.datetime "updated_at",  :null => false
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
     t.string   "booked_for"
     t.string   "type"
   end
 
-  create_table "rooms", :force => true do |t|
+  create_table "rooms", force: true do |t|
     t.string   "code"
     t.string   "name"
     t.integer  "capacity"
     t.integer  "building_id"
-    t.datetime "created_at",  :null => false
-    t.datetime "updated_at",  :null => false
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
   end
 
 end
