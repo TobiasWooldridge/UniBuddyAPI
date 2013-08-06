@@ -1,23 +1,12 @@
 class BuildingsController < ApplicationController
-  # GET /buildings
-  # GET /buildings.json
+  respond_to :html, :xml, :json
   def index
     @buildings = Building.all
-
-    respond_to do |format|
-      format.html # index.html.erb
-      format.json { render json: @buildings }
-    end
+    respond_with(@entries = Building.all)
   end
 
-  # GET /buildings/1
-  # GET /buildings/1.json
+  respond_to :html, :xml, :json
   def show
-    @building = Building.find(params[:id])
-
-    respond_to do |format|
-      format.html # show.html.erb
-      format.json { render json: @building }
-    end
+    respond_with(@building = Building.find(params[:id]))
   end
 end

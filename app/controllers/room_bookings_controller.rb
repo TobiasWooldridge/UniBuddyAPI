@@ -1,13 +1,6 @@
 class RoomBookingsController < ApplicationController
-  # GET /room_bookings
-  # GET /room_bookings.json
+  respond_to :html, :xml, :json
   def index
-    @room = Room.find(params[:room_id])
-    raise ActiveRecord::RecordNotFound if @room.nil?
-
-    respond_to do |format|
-      format.html # index.html.erb
-      format.json { render json: @room_bookings }
-    end
+    respond_with(@room = Room.find(params[:room_id]))
   end
 end

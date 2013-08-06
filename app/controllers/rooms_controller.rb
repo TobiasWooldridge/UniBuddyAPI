@@ -1,24 +1,11 @@
 class RoomsController < ApplicationController
-  # GET /rooms
-  # GET /rooms.json
+  respond_to :html, :xml, :json
   def index
-    @rooms = Room.all
-
-    respond_to do |format|
-      format.html # index.html.erb
-      format.json { render json: @rooms }
-    end
+    respond_with(@rooms = Room.all)
   end
 
-  # GET /rooms/1
-  # GET /rooms/1.json
+  respond_to :html, :xml, :json
   def show
-    @room = Room.find(params[:id])
-    raise ActiveRecord::RecordNotFound if @room.nil?
-
-    respond_to do |format|
-      format.html # show.html.erb
-      format.json { render json: @room }
-    end
+    respond_with(@room = Room.find(params[:id]))
   end
 end
