@@ -21,6 +21,12 @@ gem 'jquery-rails'
 
 gem 'mechanize'
 
+gem 'puma'
+
+gem 'flexslider', :git => 'https://github.com/constantm/Flexslider-2-Rails-Gem.git'
+
+gem 'feedzirra'
+
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'
 

@@ -7,5 +7,7 @@ FlindersAPI2::Application.routes.draw do
 
   resources :broadcasts
 
-  match '/signage/:id' => 'signage#view', via: [:get]
+  get '/signage/:id' => 'signage#view'
+  get '/signage/:id/bookings' => 'signage#bookings'
+  get '/signage/:id/news' => 'signage#news'
 end

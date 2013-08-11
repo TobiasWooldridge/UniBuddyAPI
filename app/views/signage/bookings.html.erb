@@ -1,0 +1,29 @@
+<div class="signage row-fluid">
+  <div class="content span6">
+
+    <div id="booked-now">
+        <h1>Happening right now</h1>
+        <% if @current_usages.empty? %>
+            <p>No classes/events are going on right now</p>
+        <% else %>
+            <%= render "signage/room_usages", :usages => @current_usages %>
+        <% end %>
+    </div>
+
+    <div id="unbooked-now">
+      <h1>Looking for a free room?</h1>
+      <%= render "signage/free_rooms", :free_rooms => @empty_rooms %>
+    </div>
+
+  </div>
+  <div class="content span6">
+    <div id="booked-soon">
+      <h1>Soon</h1>
+      <% if @upcoming_usages.empty? %>
+          <p>No classes/events are going on in the next period</p>
+      <% else %>
+          <%= render "signage/room_usages", :usages => @upcoming_usages %>
+      <% end %>
+    </div>
+  </div>
+</div>

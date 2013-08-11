@@ -3,13 +3,21 @@ class SignageController < ApplicationController
   
   def view
     @building = Building.find(params[:id])
+    @term_date = TermDates.current_week
+  end
 
-    @current_usages = @building.current_bookings
+  def bookings
+    @building = Building.find(params[:id])
+    @empty_rooms = @building.empty_rooms
     @upcoming_usages = @building.upcoming_bookings
+    @current_usages = @building.current_bookings
 
-    @empty_rooms = Room.where(:building_id => @building)
-    .joins('LEFT OUTER JOIN room_bookings ON room_bookings.room_id = rooms.id AND now() BETWEEN room_bookings
-.starts_at AND room_bookings.ends_at')
-    .where('room_bookings.id IS NULL')
+    render :layout => false
+  end
+
+  def news
+    @latest = BlogPost.last
+
+    render :layout => false
   end
 end

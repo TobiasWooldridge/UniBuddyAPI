@@ -11,7 +11,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20130721063050) do
+ActiveRecord::Schema.define(version: 20130811085433) do
+
+  create_table "blog_posts", force: true do |t|
+    t.integer  "remote_id"
+    t.string   "url"
+    t.string   "title"
+    t.text     "content"
+    t.datetime "published"
+    t.datetime "last_modified"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "broadcasts", force: true do |t|
     t.string   "message"
@@ -53,6 +64,15 @@ ActiveRecord::Schema.define(version: 20130721063050) do
     t.integer  "building_id"
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
+  end
+
+  create_table "term_dates", force: true do |t|
+    t.datetime "starts_at"
+    t.datetime "ends_at"
+    t.string   "semester"
+    t.string   "week"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
 end

@@ -13,4 +13,10 @@ class Building < ActiveRecord::Base
   def upcoming_bookings
   	bookings_at (Time.now + 1.hour)
   end
+
+  def empty_rooms
+    rooms.joins('LEFT OUTER JOIN room_bookings ON room_bookings.room_id = rooms.id AND now() BETWEEN room_bookings
+.starts_at AND room_bookings.ends_at')
+    .where('room_bookings.id IS NULL')
+  end
 end

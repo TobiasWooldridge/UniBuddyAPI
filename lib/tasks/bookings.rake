@@ -1,7 +1,7 @@
-namespace :scrape do
+namespace :bookings do
   desc "Update room bookings from the Flinders website"
 
-  task :all => :environment do
+  task :update => :environment do
     desc "Update"
 
     @agent = Mechanize.new

@@ -1,29 +1,36 @@
 <header>
   <div id="flinders-sticky">
     <%= image_tag "flinders.png", { :class => "logo" } %>
-    <h1>Welcome to <%= @building.name %> <small>(<%= @building.code %>)</small></h1>
+    <h1>Welcome to <%= @building.name %> <small>(<%= @building.code %>)</small> <small>(<%= @term_date.week %>)</small></h1>
   </div>
 </header>
 
-<div class="container-fluid">
-  <div class="signage row-fluid">
-    <div class="content span6">
-      <h1>Happening right now</h1>
-      <% if @current_usages.empty? %>
-        <p>No classes/events are going on right now</p>
-      <% else %>
-        <%= render "signage/room_usages", :usages => @current_usages %>
-      <% end %>
-      <h1>Looking for a free room?</h1>
-      <%= render "signage/free_rooms", :free_rooms => @empty_rooms %>
-    </div>
-    <div class="content span6">
-      <h1>Soon</h1>
-      <% if @upcoming_usages.empty? %>
-        <p>No classes/events are going on in the next period</p>
-      <% else %>
-          <%= render "signage/room_usages", :usages => @upcoming_usages %>
-      <% end %>
-    </div>
-  </div>
+<div id="slider" class="flexslider">
+    <ul class="slides container-fluid">
+      <li id="bookings-slide"></li>
+      <li id="news-slide"></li>
+      <li id="tonsley-feed-slide"><%= render 'signage/tonsley_feed' %></li>
+    </ul>
 </div>
+
+<script>
+    $(document).ready(function() {
+        function update(){
+            $.get('<%= url_for :controller => 'signage', :action =>  'bookings', :id => @building.id %>', function(data) {
+                $('#bookings-slide').html(data);
+            });
+            $.get('<%= url_for :controller => 'signage', :action =>  'news', :id => @building.id %>', function(data) {
+                $('#news-slide').html(data);
+            });
+        }
+
+        window.setInterval(update, 60000);
+        update();
+
+        $('#slider').flexslider({
+            animation: "fade",
+            controlNav: false,
+            directionNav: false
+        });
+    });
+</script>
