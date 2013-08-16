@@ -10,4 +10,7 @@ FlindersAPI2::Application.routes.draw do
   get '/signage/:id' => 'signage#view'
   get '/signage/:id/bookings' => 'signage#bookings'
   get '/signage/:id/news' => 'signage#news'
+
+
+  get '/' => 'signage#view'
 end

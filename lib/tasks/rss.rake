@@ -11,8 +11,6 @@ namespace :rss do
 
       post = BlogPost.where(:remote_id => remote_id).first
 
-      p "Remote %d %s" % [remote_id, post.remote_id]
-
       if post.nil?
         post = BlogPost.new
         post.remote_id = remote_id
