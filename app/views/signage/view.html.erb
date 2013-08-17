@@ -7,21 +7,19 @@
 
 <div id="slider" class="flexslider">
     <ul class="slides container-fluid">
-      <li id="bookings-slide"></li>
-      <li id="news-slide"></li>
+      <li id="bookings-slide" data-url="<%= url_for :controller => 'signage', :action =>  'bookings', :id => @building.id %>"></li>
+      <li id="news-slide" data-url="<%= url_for :controller => 'signage', :action =>  'news', :id => @building.id %>"></li>
       <li id="tonsley-feed-slide"><%= render 'signage/tonsley_feed' %></li>
     </ul>
 </div>
 
 <script>
+    $.fn.refresh = function() { this.load(this.data('url')); }
+
     $(document).ready(function() {
         function update(){
-            $.get('<%= url_for :controller => 'signage', :action =>  'bookings', :id => @building.id %>', function(data) {
-                $('#bookings-slide').html(data);
-            });
-            $.get('<%= url_for :controller => 'signage', :action =>  'news', :id => @building.id %>', function(data) {
-                $('#news-slide').html(data);
-            });
+            $('#bookings-slide').refresh()
+            $('#news-slide').refresh()
         }
 
         window.setInterval(update, 60000);
