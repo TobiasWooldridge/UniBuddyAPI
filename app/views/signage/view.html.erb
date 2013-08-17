@@ -22,13 +22,16 @@
             $('#news-slide').refresh()
         }
 
-        window.setInterval(update, 60000);
         update();
 
         $('#slider').flexslider({
             animation: "fade",
             controlNav: false,
-            directionNav: false
+            slideshowSpeed: 10000,
+            directionNav: false,
+            end: function() {
+                update()
+            }
         });
     });
 </script>
