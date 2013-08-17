@@ -24,6 +24,5 @@ gem 'flexslider', :git => 'https://github.com/constantm/Flexslider-2-Rails-Gem.g
 gem 'feedzirra'
 
 group :production do
-  gem 'rails_log_stdout',           github: 'heroku/rails_log_stdout'
-  gem 'rails3_serve_static_assets', github: 'heroku/rails3_serve_static_assets'
+  gem 'rails_12factor'
 end
