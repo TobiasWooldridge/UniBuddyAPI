@@ -35,17 +35,15 @@ body {
 }
 
 h1 { vertical-align: middle; }
-
-header { color: #111; position: absolute; bottom: 0px; @include flinders-gradient-light; width: 100%; font-family: "Serif"; }
-header h1 { display: inline-block; font-size: 4em; font-weight: normal; line-height: $header-height; margin: 0 0 0 30px; padding: 0;  }
 h1 small { opacity: 0.5; color: $text-color !important; vertical-align: middle; }
-header img.logo { height: $header-height; display: inline; vertical-align: top; }
 
-header #flinders-sticky { padding: 10px; }
+header#flinders-sticky { color: #111; position: absolute; bottom: 0px; @include flinders-gradient-light; width: 100%; font-family: "Serif"; }
+header#flinders-sticky > div { padding: 10px; }
+header#flinders-sticky h1 { display: inline-block; font-size: 4em; font-weight: normal; line-height: $header-height; margin: 0 0 0 30px; padding: 0;  }
+header#flinders-sticky img.logo { height: $header-height; display: inline; vertical-align: top; }
 
 .table th { border-top: 0 none !important; }
 .table td { border: 1px solid $flinders-dark-yellow !important; background: rgba(#fff, 0.30); }
-
 
 div.content { }
 
@@ -53,7 +51,6 @@ a { color: $text-color; text-decoration: underline }
 
 .flexslider { background: none !important; border: 0px none !important; box-shadow: none !important; padding: 10px 20px !important; }
 
-
-
-
 .wp-caption { float: left; margin: 10px 30px 10px 0; }
+
+.clock { font-family: monospace; }

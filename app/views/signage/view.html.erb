@@ -1,15 +1,15 @@
-<header>
-  <div id="flinders-sticky">
-    <%= image_tag "flinders.png", { :class => "logo" } %>
-    <h1>Welcome to <%= @building.name %> <small>(<%= @building.code %>)</small> <small>(<%= @term_date.week %>)</small></h1>
-  </div>
+<header id="flinders-sticky">
+    <div>
+        <%= image_tag "flinders.png", { :class => "logo" } %>
+        <h1>Welcome to <%= @building.name %> <small>(<%= @building.code %>)</small> <small>(<%= @term_date.week %>)</small></h1>
+    </div>
 </header>
 
 <div id="slider" class="flexslider">
     <ul class="slides container-fluid">
-      <li id="bookings-slide" data-url="<%= url_for :controller => 'signage', :action =>  'bookings', :id => @building.id %>"></li>
-      <li id="news-slide" data-url="<%= url_for :controller => 'signage', :action =>  'news', :id => @building.id %>"></li>
-      <li id="tonsley-feed-slide"><%= render 'signage/tonsley_feed' %></li>
+      <li id="bookings-slide" class="slide slide-live" data-url="<%= url_for :controller => 'signage', :action =>  'bookings', :id => @building.id %>"></li>
+      <li id="news-slide" class="slide slide-live" data-url="<%= url_for :controller => 'signage', :action =>  'news', :id => @building.id %>"></li>
+      <li id="tonsley-feed-slide" class="slide"><%= render 'signage/tonsley_feed' %></li>
     </ul>
 </div>
 
@@ -17,12 +17,11 @@
     $.fn.refresh = function() { this.load(this.data('url')); }
 
     $(document).ready(function() {
-        function update(){
-            $('#bookings-slide').refresh()
-            $('#news-slide').refresh()
+        function updateLiveSlides(){
+            $('.slide-live').refresh()
         }
 
-        update();
+        updateLiveSlides();
 
         $('#slider').flexslider({
             animation: "fade",
@@ -30,7 +29,7 @@
             slideshowSpeed: 10000,
             directionNav: false,
             end: function() {
-                update()
+                updateLiveSlides()
             }
         });
     });
