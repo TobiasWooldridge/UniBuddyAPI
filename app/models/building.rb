@@ -15,7 +15,8 @@ class Building < ActiveRecord::Base
   end
 
   def empty_rooms
-    rooms.joins('LEFT OUTER JOIN room_bookings ON room_bookings.room_id = rooms.id AND now() BETWEEN room_bookings
+    # Need to use Building.sanitize because Rails doesn't like you passing parameters to joins. Also, rails hates kittens.
+    rooms.joins('LEFT OUTER JOIN room_bookings ON room_bookings.room_id = rooms.id AND ' + Building.sanitize(Time.now) + ' BETWEEN room_bookings
 .starts_at AND room_bookings.ends_at')
     .where('room_bookings.id IS NULL')
   end
