@@ -14,11 +14,15 @@
 </div>
 
 <script>
-    $.fn.refresh = function() { this.load(this.data('url')); }
+    $.fn.refresh = function() {
+        this.load(this.data('url'));
+    }
 
     $(document).ready(function() {
         function updateLiveSlides(){
-            $('.slide-live').refresh()
+            $('.slide-live').each(function() {
+                $(this).refresh();
+            });
         }
 
         updateLiveSlides();
