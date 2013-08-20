@@ -7,9 +7,9 @@
 
 <div id="slider" class="flexslider">
     <ul class="slides container-fluid">
-      <li id="bookings-slide" class="slide slide-live" data-url="<%= url_for :controller => 'signage', :action =>  'bookings', :id => @building.id %>"></li>
-      <li id="news-slide" class="slide slide-live" data-url="<%= url_for :controller => 'signage', :action =>  'news', :id => @building.id %>"></li>
-      <li id="tonsley-feed-slide" class="slide"><%= render 'signage/tonsley_feed' %></li>
+      <li id="bookings-slide" class="slide-live" data-url="<%= url_for :controller => 'signage', :action =>  'bookings', :id => @building.id %>"></li>
+      <li id="news-slide" class="slide-live" data-url="<%= url_for :controller => 'signage', :action =>  'news', :id => @building.id %>"></li>
+      <li id="tonsley-feed-slide"><%= render 'signage/tonsley_feed' %></li>
     </ul>
 </div>
 
