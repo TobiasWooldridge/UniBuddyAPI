@@ -36,8 +36,6 @@ The scraped content includes
 
 ## Other
 
-Developers are invited to contribute to the project.
-
 ### Legal
 
-This work is licensed under the Apache2 license.
+This work is licensed under the Apache2 license. You can pretty much do whatever you want with it. But I would love if you contributed back to the project if it's useful to you :)
