@@ -1,4 +1,4 @@
-class BuildingsController < ApplicationController
+class Api::BuildingsController < ApplicationController
   respond_to :html, :xml, :json
   def index
     @buildings = Building.all
