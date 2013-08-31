@@ -8,7 +8,7 @@ The project makes some uses of the data, including signage software for Flinders
 
 The API is designed to be RESTful, and enables simple access to the data scraped from the Flinders website by this application.
 
-The supported formats of the API include JSON and XML.
+The supported formats of the API include JSON, JSONP (using ?callback=foo query parameter) and XML.
 
 ## Signage (TODO)
 

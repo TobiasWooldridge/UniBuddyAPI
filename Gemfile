@@ -23,6 +23,8 @@ gem 'flexslider', :git => 'https://github.com/constantm/Flexslider-2-Rails-Gem.g
 
 gem 'feedzirra'
 
+gem 'rack-jsonp-middleware'
+
 group :production do
   gem 'rails_12factor'
 end

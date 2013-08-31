@@ -1,6 +1,7 @@
 require File.expand_path('../boot', __FILE__)
 
 require 'rails/all'
+require 'rack/jsonp'
 
 Bundler.require(:default, Rails.env)
 
@@ -51,5 +52,7 @@ module FlindersAPI2
     
     config.time_zone = 'Adelaide'
     config.active_record.default_timezone = :local
+
+    config.middleware.use Rack::JSONP
   end
 end
