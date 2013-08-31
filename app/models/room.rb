@@ -32,8 +32,8 @@ class Room < ActiveRecord::Base
 
   def as_json(options = {})
     {
-      building_code: self.building_code,
       code: self.code,
+      building_code: self.building_code,
       name: self.name,
       full_code: self.full_code,
       full_name: self.full_name,
