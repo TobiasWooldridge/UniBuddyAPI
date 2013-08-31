@@ -1,9 +1,5 @@
-class Api::RoomsController < ApplicationController
-  respond_to :html, :xml, :json
+class Api::V1::RoomsController < Api::V1::BaseController
   def index
-    p "---------------"
-    p params[:building_id]
-
     if params[:building_id].nil?
       respond_with(@rooms = Room.all)
     else
@@ -11,7 +7,6 @@ class Api::RoomsController < ApplicationController
     end
   end
 
-  respond_to :html, :xml, :json
   def show
     respond_with(@room = Room.find(params[:id]))
   end

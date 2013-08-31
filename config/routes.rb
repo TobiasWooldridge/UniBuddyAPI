@@ -1,12 +1,14 @@
 FlindersAPI2::Application.routes.draw do
   namespace :api do
-    resources :buildings do
-      resources :rooms do
-        resources :room_bookings, :path => "/bookings"
+    namespace :v1 do
+      resources :buildings do
+        resources :rooms do
+          resources :room_bookings, :path => "/bookings"
+        end
       end
+      resources :rooms
+      resources :room_bookings, :path => "/bookings"
     end
-    resources :rooms
-    resources :room_bookings, :path => "/bookings"
   end
 
   resources :broadcasts
