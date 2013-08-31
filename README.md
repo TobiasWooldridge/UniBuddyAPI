@@ -13,15 +13,19 @@ The supported formats of the API include JSON, JSONP (using ?callback=foo query 
 
 Currently, the requests are supported by the API aree
 
-    GET "/buildings"
-    GET "/buildings/:id"
-    GET "/buildings/:building_id/rooms"
-    GET "/buildings/:building_id/rooms/:id"
-    GET "/buildings/:building_id/rooms/:room_id/bookings"
-    GET "/rooms"
-    GET "/rooms/:id"
-    GET "/rooms/:id/bookings"
-    GET "/bookings"
+    GET "/api/v1/buildings.:format"
+    GET "/api/v1/buildings/:id.:format"
+    GET "/api/v1/buildings/:building_id/rooms.:format"
+    GET "/api/v1/buildings/:building_id/rooms/:id.:format"
+    GET "/api/v1/buildings/:building_id/rooms/:room_id/bookings.:format"
+    GET "/api/v1/rooms.:format"
+    GET "/api/v1/rooms/:id.:format"
+    GET "/api/v1/rooms/:id/bookings.:format"
+    GET "/api/v1/bookings.:format"
+
+Where :format may be xml, json or jsonp. If using jsonp, a callback must be specified, e.g. the function Library.beAwesome will be passed the JSON from the following response
+
+    GET "/api/v1/bookings.jsonp?callback=Library.beAwesome"
 
 ## Signage (TODO)
 
