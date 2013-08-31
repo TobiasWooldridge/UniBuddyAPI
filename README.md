@@ -10,6 +10,19 @@ The API is designed to be RESTful, and enables simple access to the data scraped
 
 The supported formats of the API include JSON, JSONP (using ?callback=foo query parameter) and XML.
 
+
+Currently, the requests are supported by the API aree
+
+    GET "/buildings"
+    GET "/buildings/:id"
+    GET "/buildings/:building_id/rooms"
+    GET "/buildings/:building_id/rooms/:id"
+    GET "/buildings/:building_id/rooms/:room_id/bookings"
+    GET "/rooms"
+    GET "/rooms/:id"
+    GET "/rooms/:id/bookings"
+    GET "/bookings"
+
 ## Signage (TODO)
 
 The signage for the project is designed for usage on non-interactive internet-enabled screens, similar to the digital signs seen around Flinders University.
