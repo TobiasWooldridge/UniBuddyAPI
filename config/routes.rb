@@ -1,13 +1,18 @@
 FlindersAPI2::Application.routes.draw do
   namespace :api do
     namespace :v1 do
-      resources :buildings do
-        resources :rooms do
-          resources :room_bookings, :path => "/bookings"
-        end
-      end
-      resources :rooms
-      resources :room_bookings, :path => "/bookings"
+      get "/buildings" => "buildings#index"
+      get "/buildings/:id" => "buildings#show"
+      get "/buildings/:building_id/rooms" => "rooms#index"
+      get "/buildings/:building_id/rooms/:id" => "rooms#show"
+      get "/buildings/:building_id/rooms/:room_id/bookings" => "room_bookings#index"
+      get "/buildings/:building_id/rooms/:room_id/bookings/:id" => "room_bookings#show"
+
+      get "/rooms" => "rooms#index"
+      get "/rooms/:id" => "rooms#show"
+      
+      get "/bookings" => "room_bookings#index"
+      get "/bookings/:id" => "room_bookings#show"
     end
   end
 
