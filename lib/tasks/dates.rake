@@ -26,7 +26,7 @@ namespace :dates do
       if /Semester [12]/i.match(label)
         semester = label.titlecase
       else
-        if /[0-9\s\*]/.match(label)
+        if /^[0-9\s\*]/.match(label)
           label = "Week %s" % label
         end
 
