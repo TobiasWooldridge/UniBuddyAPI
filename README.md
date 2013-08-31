@@ -51,4 +51,6 @@ Unit tests are used to ensure integrity in the project's functionality (TODO)
 
 ### Legal
 
-This work is licensed under the Apache2 license. You can pretty much do whatever you want with it. But I would love if you contributed back to the project if it's useful to you :)
+All code by myself in this repository licensed under the Apache2 license unless otherwise specified. You can pretty much do whatever you want with it. But I would love if you contributed back to the project if it's useful to you :)
+
+Note that some dependencies may not be as leniently licensed.
