@@ -1,9 +1,9 @@
 class Api::V1::RoomBookingsController < Api::V1::BaseController
   def index
-    if not params[:room_id].nil?
-      respond_with(@room_bookings = Room.find(params[:room_id]).room_bookings)
-    else
-      respond_with(@room_bookings = RoomBooking.all)
-    end
+
+    building = Building.find_by code: params[:building_code]
+    room = Room.find(:first, :conditions => ["building_id = ? AND code = ? ", building.id, params[:room_code]])
+
+    respond_with(@room_bookings = room.room_bookings)
   end
 end

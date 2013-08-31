@@ -20,4 +20,14 @@ class Building < ActiveRecord::Base
 .starts_at AND room_bookings.ends_at')
     .where('room_bookings.id IS NULL')
   end
+
+  def as_json(options = {})
+    {
+      building_code: self.code,
+      name: self.name,
+      created_at: self.created_at,
+      updated_at: self.updated_at,
+      rooms: self.rooms
+    }
+  end
 end

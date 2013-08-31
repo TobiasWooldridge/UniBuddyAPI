@@ -4,30 +4,34 @@ This project scrapes the Flinders website and creates a database from publicly a
 
 The project makes some uses of the data, including signage software for Flinders University.
 
-## API (TODO)
+## API
 
 The API is designed to be RESTful, and enables simple access to the data scraped from the Flinders website by this application.
 
-The supported formats of the API include JSON, JSONP (using ?callback=foo query parameter) and XML.
+The supported formats of the API include JSON and JSONP (using ?callback=foo query parameter)
 
 
 Currently, the requests are supported by the API aree
 
-    GET "/api/v1/buildings.:format"
-    GET "/api/v1/buildings/:id.:format"
-    GET "/api/v1/buildings/:building_id/rooms.:format"
-    GET "/api/v1/buildings/:building_id/rooms/:id.:format"
-    GET "/api/v1/buildings/:building_id/rooms/:room_id/bookings.:format"
-    GET "/api/v1/rooms.:format"
-    GET "/api/v1/rooms/:id.:format"
-    GET "/api/v1/rooms/:id/bookings.:format"
-    GET "/api/v1/bookings.:format"
+    GET "/api/v1/buildings.json"
 
-Where :format may be xml, json or jsonp. If using jsonp, a callback must be specified, e.g. the function Library.beAwesome will be passed the JSON from the following response
+    GET "/api/v1/buildings/:building_id.json"
+    GET "/api/v1/buildings/ENGR.json"
+    
+    GET "/api/v1/buildings/:building_id/rooms.json"
+    GET "/api/v1/buildings/ENGR/rooms.json"
+    
+    GET "/api/v1/buildings/:building_id/rooms/:room_id.json"
+    GET "/api/v1/buildings/ENGR/rooms/209.json"
+    
+    GET "/api/v1/buildings/:building_id/rooms/:room_id/bookings.json"
+    GET "/api/v1/buildings/ENGR/rooms/209/bookings.json"
+
+You must append json or jsonp to the URL to request that type of response. If using jsonp, a callback must be specified, e.g. the function Library.beAwesome will be passed the JSON from the following response
 
     GET "/api/v1/bookings.jsonp?callback=Library.beAwesome"
-
-## Signage (TODO)
+Signage
+## T (TODO)
 
 The signage for the project is designed for usage on non-interactive internet-enabled screens, similar to the digital signs seen around Flinders University.
 

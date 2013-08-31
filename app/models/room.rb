@@ -6,6 +6,10 @@ class Room < ActiveRecord::Base
   	RoomBooking.where(:room_id => id).where('starts_at > ?', Time.now.to_s).order(:starts_at).first	
   end
 
+  def building_code
+    building.code
+  end
+
   def free_until_today
   	n = next_booking
 
@@ -15,7 +19,7 @@ class Room < ActiveRecord::Base
   end
 
   def full_code
-    "%s %s" % [building.code, code]
+    "%s%s" % [building.code, code]
   end
 
   def full_name
@@ -24,5 +28,18 @@ class Room < ActiveRecord::Base
 
   def to_s
      "%s (%s)" % [full_name, full_code]
+  end
+
+  def as_json(options = {})
+    {
+      building_code: self.building_code,
+      code: self.code,
+      name: self.name,
+      full_code: self.full_code,
+      full_name: self.full_name,
+      created_at: self.created_at,
+      updated_at: self.updated_at,
+      capacity: self.capacity
+    }
   end
 end
