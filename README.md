@@ -30,8 +30,8 @@ Currently, the requests are supported by the API aree
 You must append json or jsonp to the URL to request that type of response. If using jsonp, a callback must be specified, e.g. the function Library.beAwesome will be passed the JSON from the following response
 
     GET "/api/v1/bookings.jsonp?callback=Library.beAwesome"
-Signage
-## T (TODO)
+
+## Signage
 
 The signage for the project is designed for usage on non-interactive internet-enabled screens, similar to the digital signs seen around Flinders University.
 
