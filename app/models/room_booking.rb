@@ -11,7 +11,7 @@ class RoomBooking < ActiveRecord::Base
       starts_at: self.starts_at,
       ends_at: self.ends_at,
       description: self.description,
-      cancelled: self.cancelled,
+      # cancelled: self.cancelled,
       room_code: self.room.code,
       booked_for: self.booked_for,
       created_at: self.created_at,

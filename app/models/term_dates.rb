@@ -5,11 +5,24 @@ class TermDates < ActiveRecord::Base
     end
 
     def this_year
-      for_year Date.today.at_beginning_of_year
+      for_year
     end
 
     def for_year year
+      year = year || Date.today.at_beginning_of_year
+
       TermDates.where("starts_at BETWEEN ? AND ?", year.at_beginning_of_year, year.at_end_of_year) or ""
     end
+  end
+
+  def as_json(options = {})
+    {
+      starts_at: self.starts_at,
+      ends_at: self.ends_at,
+      semester: self.semester,
+      week: self.week,
+      created_at: self.created_at,
+      updated_at: self.updated_at
+    }
   end
 end
