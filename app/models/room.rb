@@ -2,16 +2,20 @@ class Room < ActiveRecord::Base
   belongs_to :building
   has_many :room_bookings, :dependent => :destroy
 
+  def bookings
+    room_bookings
+  end
+
   def current_booking
-    RoomBooking.where(:room_id => id).where('starts_at < ? AND ends_at > ?', Time.now.to_s, Time.now.to_s).order(:starts_at).first 
+    RoomBooking.where(:room_id => id).where('starts_at < ? AND ends_at > ?', Time.now.to_s, Time.now.to_s).order('starts_at ASC').first 
   end
 
   def next_booking
-  	RoomBooking.where(:room_id => id).where('starts_at > ?', Time.now.to_s).order(:starts_at).first	
+  	RoomBooking.where(:room_id => id).where('starts_at > ?', Time.now.to_s).order('starts_at ASC').first	
   end
 
   def todays_bookings
-    RoomBooking.where(:room_id => id).where('starts_at >= ? AND ends_at <= ?', Time.now.at_beginning_of_day, Time.now.at_end_of_day).order(:starts_at).first 
+    RoomBooking.where('room_id = ? AND starts_at BETWEEN ? AND ?', id, Time.now.at_beginning_of_day, Time.now.at_end_of_day).order('starts_at ASC')
   end
 
   def free_until_today
