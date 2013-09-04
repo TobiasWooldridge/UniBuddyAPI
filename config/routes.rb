@@ -7,6 +7,7 @@ FlindersAPI2::Application.routes.draw do
       get "/buildings/:building_code/rooms/:room_code" => "rooms#show"
       get "/buildings/:building_code/rooms/:room_code/bookings" => "room_bookings#index"
       get "/dates" => "dates#index"
+      get "/news" => "news#index"
     end
   end
 
