@@ -27,7 +27,11 @@ class Room < ActiveRecord::Base
   end
 
   def full_code
-    "%s%s" % [building.code, code]
+    if code.match(/[0-9]+/) then
+      "%s %s" % [building.code, code]
+    else
+      "%s%s" % [building.code, code]
+    end
   end
 
   def full_name
