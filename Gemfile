@@ -24,6 +24,7 @@ gem 'flexslider', :git => 'https://github.com/constantm/Flexslider-2-Rails-Gem.g
 gem 'feedzirra'
 
 gem 'rack-jsonp-middleware'
+gem 'rack-cors', :require => 'rack/cors'
 
 group :production do
   gem 'rails_12factor'

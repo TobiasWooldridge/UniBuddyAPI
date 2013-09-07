@@ -54,5 +54,13 @@ module FlindersAPI2
     config.active_record.default_timezone = :local
 
     config.middleware.use Rack::JSONP
+
+    config.middleware.use Rack::Cors do
+      allow do
+        origins '*'
+        resource '*', :headers => :any, :methods => [:get]
+      end
+    end
+
   end
 end

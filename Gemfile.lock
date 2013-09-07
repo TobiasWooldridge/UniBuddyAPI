@@ -94,6 +94,8 @@ GEM
     puma (2.5.0)
       rack (>= 1.1, < 2.0)
     rack (1.5.2)
+    rack-cors (0.2.8)
+      rack
     rack-jsonp-middleware (0.0.9)
       rack
     rack-test (0.6.2)
@@ -163,6 +165,7 @@ DEPENDENCIES
   mechanize
   pg
   puma
+  rack-cors
   rack-jsonp-middleware
   rails (= 4.0.0)
   rails_12factor
