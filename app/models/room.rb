@@ -10,6 +10,10 @@ class Room < ActiveRecord::Base
     RoomBooking.where(:room_id => id).where('starts_at < ? AND ends_at > ?', Time.now.to_s, Time.now.to_s).order('starts_at ASC').first 
   end
 
+  def is_empty
+    current_booking.nil?
+  end
+
   def next_booking
   	RoomBooking.where(:room_id => id).where('starts_at > ?', Time.now.to_s).order('starts_at ASC').first	
   end
@@ -52,6 +56,7 @@ class Room < ActiveRecord::Base
       created_at: created_at,
       updated_at: updated_at,
       capacity: capacity,
+      is_empty: is_empty,
       current_booking: current_booking,
       next_booking: next_booking,
       todays_bookings: todays_bookings

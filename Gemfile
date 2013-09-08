@@ -26,6 +26,11 @@ gem 'feedzirra'
 gem 'rack-jsonp-middleware'
 gem 'rack-cors', :require => 'rack/cors'
 
+gem 'rspec-rails'
+gem 'rspec_api_test'
+
+gem 'sanitize'
+
 group :production do
   gem 'rails_12factor'
 end

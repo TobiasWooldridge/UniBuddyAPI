@@ -39,7 +39,7 @@ namespace :bookings do
       rooms.each do |roomRow|
         number = roomRow.search("a").first
 
-        if number == nil then
+        if number.nil? then
           next
         end
 
@@ -79,7 +79,7 @@ namespace :bookings do
 
       bookings = []
       for i in 0..(dates.size-1) do
-        # TODO: Fix bug which will cause dates after current year end to wrap back to start of year (Because Flinders' site doesn't include year for each date)
+        # TODO: Fix (potential) bug which will cause dates after current year end to wrap back to start of year (Because Flinders' site doesn't include year for each date)
         # TODO: Add timestamp support
         day_start = Time.parse(dates[i].to_s + " " + periods.first)
         day_end = Time.parse(dates[i].to_s + " " + periods.last) + 1.hour

@@ -16,11 +16,13 @@ namespace :rss do
         post.remote_id = remote_id
       end
 
+
       post.url = entry.url
       post.title = entry.title
-      post.content = entry.content
       post.published = entry.published
       post.last_modified = entry.last_modified
+
+      post.content = Sanitize.clean(entry.content, Sanitize::Config::RELAXED);
 
       post.save
 
