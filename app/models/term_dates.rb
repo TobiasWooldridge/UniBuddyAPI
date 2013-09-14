@@ -8,9 +8,7 @@ class TermDates < ActiveRecord::Base
       for_year
     end
 
-    def for_year year
-      year = year || Date.today.at_beginning_of_year
-
+    def for_year (year = Date.today.at_beginning_of_year)
       TermDates.where("starts_at BETWEEN ? AND ?", year.at_beginning_of_year, year.at_end_of_year) or ""
     end
   end

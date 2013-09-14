@@ -58,8 +58,7 @@ class Room < ActiveRecord::Base
       capacity: capacity,
       is_empty: is_empty,
       current_booking: current_booking,
-      next_booking: next_booking,
-      todays_bookings: todays_bookings
+      next_booking: next_booking
     }
   end
 end

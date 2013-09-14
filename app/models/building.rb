@@ -26,8 +26,7 @@ class Building < ActiveRecord::Base
       code: self.code,
       name: self.name,
       created_at: self.created_at,
-      updated_at: self.updated_at,
-      rooms: self.rooms
+      updated_at: self.updated_at
     }
   end
 end
