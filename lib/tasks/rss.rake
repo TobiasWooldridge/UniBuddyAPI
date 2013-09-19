@@ -32,24 +32,15 @@ namespace :rss do
       end
 
 
-      # Extract content image/caption
+      caption = !doc.css("div.wp-caption > a").empty?
 
-      mode = "default"
-
-      if not doc.css("p.MsoNormal").nil?
-        # Oh no, this post has been polluted by copy-pasted MS Office HTML :[
-        mode = "microsoft"
-      end
-
-
-      if mode == "default"
+      if caption
         post.image = doc.css("div.wp-caption > a").first.attribute("href").text
         post.caption = doc.css("div.wp-caption p.wp-caption-text").first.text
 
         doc.css("div.wp-caption").first.remove
 
-      elsif mode == "microsoft"
-        # office-HTML polluted posts have no captions
+      else
         post.image = doc.css("a").first.attribute("href").text
         post.caption = ""
 
