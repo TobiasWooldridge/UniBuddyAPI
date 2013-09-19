@@ -89,6 +89,7 @@ GEM
     nokogiri (1.6.0-x86-mingw32)
       mini_portile (~> 0.5.0)
     ntlm-http (0.1.1)
+    ots (0.5.4)
     pg (0.15.1)
     pg (0.15.1-x86-mingw32)
     polyglot (0.3.3)
@@ -186,6 +187,7 @@ DEPENDENCIES
   flexslider!
   jquery-rails
   mechanize
+  ots (~> 0.5.4)
   pg
   puma
   rack-cors

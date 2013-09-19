@@ -31,6 +31,8 @@ gem 'rspec_api_test'
 
 gem 'sanitize'
 
+gem "ots", "~> 0.5.4"
+
 group :production do
   gem 'rails_12factor'
 end
