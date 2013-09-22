@@ -19,15 +19,36 @@ namespace :bookings do
       page = @agent.get("http://stusyswww.flinders.edu.au/roombook.taf")
       form = page.form_with(:action=>/roombook\.taf/)
 
-      buildingWidget = form.field_with(:name=>'bldg')
 
-      buildingWidget.options.from(1).each do |code|
-        building = Building.where(:code => code.value).first || Building.create(:code => code.value, :name => code.text.split(/(.+) \((.+)\)/).second)
+      # List of weeks (identified by any given day in the week) we want to scrape bookings for 
 
-        buildingWidget.value = code
-        buildingPage = form.submit
+      now = Time.now
+      weeks = []
 
-        scrape_bookings_building building, buildingPage
+      3.times { |i|
+        weeks.push((now + i.weeks).strftime("%d-%b-%Y").upcase)
+      }
+
+
+      weeks.each do |week|
+        weekWidget = form.field_with(:name=>'weekday').value = week
+
+
+        buildingWidget = form.field_with(:name=>'bldg')
+
+        buildingWidget.options.from(1).each do |entry|
+          code = entry.value
+          name = entry.text.split(/(.+) \((.+)\)/).second
+
+
+          building = Building.where(:code => code).first
+          building = building || Building.create(:code => code, :name => name)
+
+          buildingWidget.value = entry
+          buildingPage = form.submit
+
+          scrape_bookings_building building, buildingPage
+        end
       end
     end
 
