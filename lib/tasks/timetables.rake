@@ -6,7 +6,7 @@ namespace :timetables do
 
     @agent = Mechanize.new
 
-    scrape_timetables
+    scrape_timetables_from_url "http://stusyswww.flinders.edu.au/timetable.taf"
   end
 
   private
@@ -28,8 +28,8 @@ namespace :timetables do
       nil
     end
 
-    def scrape_timetables
-      page = @agent.get("http://stusyswww.flinders.edu.au/timetable.taf")
+    def scrape_timetables_from_url url
+      page = @agent.get url
       form = get_timetable_form page
 
       subject_area_widget = form.field_with(:name=>'subj')
@@ -66,7 +66,7 @@ namespace :timetables do
 
     end
 
-    def scrape_topic
+    def scrape_topic url
       # TODO: this function is important :<
     end
 
