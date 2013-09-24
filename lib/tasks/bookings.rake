@@ -5,15 +5,12 @@ namespace :bookings do
     desc "Update"
 
     @agent = Mechanize.new
-    scrape_all
+
+    scrape_bookings
   end
 
   private
     agent = nil
-    def scrape_all
-
-      scrape_bookings
-    end
 
     def scrape_bookings ()
       page = @agent.get("http://stusyswww.flinders.edu.au/roombook.taf")

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20130919133436) do
+ActiveRecord::Schema.define(version: 20130924120928) do
 
   create_table "blog_posts", force: true do |t|
     t.integer  "remote_id"
@@ -48,6 +48,40 @@ ActiveRecord::Schema.define(version: 20130919133436) do
     t.datetime "updated_at"
   end
 
+  create_table "class_groups", force: true do |t|
+    t.integer  "class_type_id"
+    t.integer  "group_number"
+    t.string   "note"
+    t.boolean  "full"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "class_groups", ["class_type_id"], name: "index_class_groups_on_class_type_id", using: :btree
+
+  create_table "class_sessions", force: true do |t|
+    t.integer  "class_group_id"
+    t.date     "first_day"
+    t.date     "last_day"
+    t.integer  "day_of_week",    limit: 2
+    t.integer  "time_starts_at"
+    t.integer  "time_ends_at"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "class_sessions", ["class_group_id"], name: "index_class_sessions_on_class_group_id", using: :btree
+
+  create_table "class_types", force: true do |t|
+    t.integer  "topic_id"
+    t.string   "name"
+    t.text     "note"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "class_types", ["topic_id"], name: "index_class_types_on_topic_id", using: :btree
+
   create_table "room_bookings", force: true do |t|
     t.datetime "starts_at"
     t.datetime "ends_at"
@@ -74,6 +108,30 @@ ActiveRecord::Schema.define(version: 20130919133436) do
     t.datetime "ends_at"
     t.string   "semester"
     t.string   "week"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "topics", force: true do |t|
+    t.string   "name"
+    t.string   "subject_area",        limit: 4
+    t.string   "topic_number",        limit: 5
+    t.integer  "year"
+    t.string   "semester",            limit: 3
+    t.decimal  "units",                         precision: 4, scale: 1
+    t.string   "coordinator"
+    t.text     "description"
+    t.text     "aims"
+    t.text     "learning_outcomes"
+    t.text     "assumed_knowledge"
+    t.text     "assessment"
+    t.string   "class_contact"
+    t.string   "text"
+    t.date     "enrolment_opens"
+    t.string   "enrolment_closes"
+    t.string   "date"
+    t.date     "census"
+    t.date     "withdraw_no_fail_by"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

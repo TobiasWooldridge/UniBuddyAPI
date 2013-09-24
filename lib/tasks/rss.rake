@@ -50,6 +50,9 @@ namespace :rss do
       post.plaintext = doc.text.strip
       post.content = Sanitize.clean(doc.to_html.strip, Sanitize::Config::RELAXED)
 
+      summary = OTS::parse(post.plaintext)
+      p summary.summarize(sentences: 8)
+
       post.save
 
       p "Saving post %s as %s" % [post.remote_id, post.id]
