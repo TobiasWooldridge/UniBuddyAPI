@@ -2,7 +2,7 @@ require 'github/markup'
 
 class DefaultController < ApplicationController
   def index
-    @readme = markdown_file('/home/tobias/Projects/FlindersAPI2/README.md')
+    @readme = markdown_file(Rails.root.join('README.md').to_s)
   end
 
   def markdown_file path
