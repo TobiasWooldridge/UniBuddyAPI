@@ -59,13 +59,16 @@ namespace :timetables do
           next
         end
 
-        scrape_topic_page @agent.get(topic_link['href'] + "&aims=Y&fees=Y")
+        begin
+          scrape_topic_page @agent.get(topic_link['href'] + "&aims=Y&fees=Y")
+        rescue
+          puts "Error #{$!} while importing %s" % topic_link['href']
+        end
       end
 
     end
 
     def scrape_topic_page page
-
       topic_full_name = (page/"div.container h2:first").text.squish
       topic_title_meta = /^(?<Subject Area>[a-z]+)(?<Topic Number>[0-9]+[a-z]*) (?<Name>.*)$/i.match topic_full_name
 
