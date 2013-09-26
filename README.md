@@ -4,6 +4,8 @@ This project scrapes the Flinders website and creates a database from publicly a
 
 The project makes some uses of the data, including signage software for Flinders University.
 
+This project's source is available free [on Github](https://github.com/TobiasWooldridge/FlindersAPI2/).
+
 ## API
 
 The API is designed to be RESTful, and enables simple access to the data scraped from the Flinders website by this application.

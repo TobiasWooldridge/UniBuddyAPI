@@ -35,6 +35,9 @@ gem "ots", "~> 0.5.4"
 
 gem 'capistrano'
 
+gem 'github-markup'
+gem 'redcarpet'
+
 group :production do
   gem 'rails_12factor'
 end

@@ -17,4 +17,5 @@ module ApplicationHelper
 
     return distance_of_time_in_words_to_now free_until
   end
+
 end
