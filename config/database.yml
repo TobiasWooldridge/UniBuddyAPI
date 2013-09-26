@@ -1,3 +1,11 @@
+production:
+  adapter: postgresql
+  encoding: unicode
+  database: flindersapi
+  pool: 5
+  username: flindersapi
+  password: password
+
 development:
   adapter: postgresql
   encoding: unicode

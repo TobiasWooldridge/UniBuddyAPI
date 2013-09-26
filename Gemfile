@@ -33,6 +33,8 @@ gem 'sanitize'
 
 gem "ots", "~> 0.5.4"
 
+gem 'capistrano'
+
 group :production do
   gem 'rails_12factor'
 end
