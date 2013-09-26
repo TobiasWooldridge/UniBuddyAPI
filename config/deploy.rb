@@ -1,10 +1,11 @@
+load 'deploy/assets'
+
 set :application, "FlindersAPI2"
 set :repository,  "git@github.com:TobiasWooldridge/FlindersAPI2.git"
 
 set :user, 'flindersapi'
 set :domain, 'flindersapi.tobias.pw'
 set :applicationdir, "/opt/webapps/FlindersAPI2"
-set :use_sudo, false
 
 
 set :scm, :git
@@ -20,6 +21,7 @@ role :db,  domain, :primary => true
 set :deploy_to, applicationdir
 set :deploy_via, :remote_cache
 
+
 namespace :deploy do
   task :start do ; end
   task :stop do ; end
@@ -28,10 +30,9 @@ namespace :deploy do
   end
 end
 
-
-
 default_run_options[:pty] = true
 ssh_options[:forward_agent] = true
+
 
 namespace :rake do  
   desc "Run a task on a remote server."  
