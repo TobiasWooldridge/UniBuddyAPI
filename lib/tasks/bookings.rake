@@ -22,7 +22,7 @@ namespace :bookings do
       now = Time.now
       weeks = []
 
-      3.times { |i|
+      2.times { |i|
         weeks.push((now + i.weeks).strftime("%d-%b-%Y").upcase)
       }
 

@@ -65,16 +65,67 @@ namespace :timetables do
     end
 
     def scrape_topic_page page
+
       topic_full_name = (page/"div.container h2:first").text.squish
-      topic_title_meta = /^(?<subject_area>[a-z]+)(?<topic_code>[0-9]+[a-z]*) (?<topic_name>.*)$/i.match topic_full_name
+      topic_title_meta = /^(?<Subject Area>[a-z]+)(?<Topic Number>[0-9]+[a-z]*) (?<Name>.*)$/i.match topic_full_name
 
-      meta_table_rows = page/"div.container > table.FlindersTable1 > tr"
+      topic_meta_table_rows = page/"div.container > table.FlindersTable1 > tr"
 
-      meta_table_rows.each do |table_row|
+      topic_meta = Hash.new
+
+      topic_meta["Subject Area"] = topic_title_meta["Subject Area"]
+      topic_meta["Topic Number"] = topic_title_meta["Topic Number"]
+      topic_meta["Name"] = topic_title_meta["Name"]
+
+      topic_meta["Coordinator"] = (page/"div.container h2:first").first.next_sibling.next_sibling.text.strip
+
+      topic_meta_table_rows.each do |table_row|
         label = (table_row/"td:first").text.squish
+        value = (table_row/"td:last").text.squish
 
-        p label
+        topic_meta[label] = value
+      end
+
+      # Each topic may be taught in multiple semesters, which are on the same page for some reason
+
+      picks = []
+      (page/"input.picklist").each do |pick|
+        picks.append("#" + pick.attr('value'))
+      end
+
+      picks.each do |pick|
+        meta = topic_meta.deep_dup
+
+        meta_table = (page/(pick + " table:first"))
+        meta_table_headings = meta_table/"tr:first td"
+        meta_table_values = meta_table/"tr:last td"
+
+        meta_table_headings.length.times do |x|
+          heading = meta_table_headings[x].text.squish
+          value = meta_table_values[x].text.squish
+
+          meta[heading] = value
+        end
+
+        topic = Topic.where(:subject_area => topic_title_meta["Subject Area"], :topic_number => topic_title_meta["Topic Number"], :year => meta["Year"], :semester => meta["Sem"]).first
+
+        topic ||= Topic.create(:subject_area => topic_title_meta["Subject Area"], :topic_number => topic_title_meta["Topic Number"], :year => meta["Year"], :semester => meta["Sem"])
+
+        topic.name = meta["Name"]
+        topic.units = meta["Units"]
+        topic.coordinator = meta["Coordinator"]
+        topic.description = meta["Topic Description"]
+        # topic.aims = // TODO
+        topic.learning_outcomes = meta["Expected Learning Outcomes"]
+        topic.assumed_knowledge = meta["Assumed Knowledge"]
+        topic.assessment = meta["Assessment"]      
+        topic.class_contact = meta["Class Contact"]    
+        topic.enrolment_opens = meta["First day to enrol"]
+        topic.enrolment_closes = meta["Last day to enrol"]
+
+        topic.save
+
+        p "Saving topic %s (%s %s) (%s)" % [topic.code, topic.year, topic.semester, topic.name]
       end
     end
-
 end
