@@ -59,15 +59,22 @@ namespace :timetables do
           next
         end
 
-        p "Scraping %s" % topic_link.text
-
-        scrape_topic topic_link['href']
+        scrape_topic_page @agent.get(topic_link['href'] + "&aims=Y&fees=Y")
       end
 
     end
 
-    def scrape_topic url
-      # TODO: this function is important :<
+    def scrape_topic_page page
+      topic_full_name = (page/"div.container h2:first").text.squish
+      topic_title_meta = /^(?<subject_area>[a-z]+)(?<topic_code>[0-9]+[a-z]*) (?<topic_name>.*)$/i.match topic_full_name
+
+      meta_table_rows = page/"div.container > table.FlindersTable1 > tr"
+
+      meta_table_rows.each do |table_row|
+        label = (table_row/"td:first").text.squish
+
+        p label
+      end
     end
 
 end
