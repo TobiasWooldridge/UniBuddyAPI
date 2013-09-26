@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20130926134633) do
+ActiveRecord::Schema.define(version: 20130926135350) do
 
   create_table "blog_posts", force: true do |t|
     t.integer  "remote_id"
@@ -127,7 +127,6 @@ ActiveRecord::Schema.define(version: 20130926134633) do
     t.text     "assessment"
     t.string   "class_contact"
     t.date     "enrolment_opens"
-    t.string   "date"
     t.date     "census"
     t.date     "withdraw_no_fail_by"
     t.datetime "created_at"
