@@ -9,12 +9,7 @@ namespace :rss do
     feed.entries.each do |entry|
       remote_id = entry.entry_id.scan(/\d+/).first.to_i
 
-      post = BlogPost.where(:remote_id => remote_id).first
-
-      if post.nil?
-        post = BlogPost.new
-        post.remote_id = remote_id
-      end
+      post = BlogPost.where(:remote_id => remote_id).first_or_initialize
 
 
       post.url = entry.url

@@ -38,8 +38,7 @@ namespace :bookings do
           name = entry.text.split(/(.+) \((.+)\)/).second
 
 
-          building = Building.where(:code => code).first
-          building = building || Building.create(:code => code, :name => name)
+          building = Building.where(:code => code).first_or_initialize
 
           buildingWidget.value = entry
           buildingPage = form.submit
@@ -71,8 +70,10 @@ namespace :bookings do
         capacity = desc[2]
 
 
-        room = Room.where(:code => code).first
-        room ||= Room.create(:code => code, :name => name, :capacity => capacity, :building => building)
+        room = Room.where(:code => code, :building => building).first_or_initialize
+
+        room.name = name
+        room.capacity = capacity
 
         roomPage = @agent.get(number['href'])
 

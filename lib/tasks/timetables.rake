@@ -25,14 +25,14 @@ namespace :timetables do
         end
       end
 
-      nil
+      return nil
     end
 
     def scrape_timetables_from_url url
       page = @agent.get url
       form = get_timetable_form page
 
-      subject_area_widget = form.field_with(:name=>'subj')
+      subject_area_widget = form.field_with(:name => 'subj')
 
       subject_area_widget.options.from(1).each do |entry|
         subject_code = entry.value
@@ -61,8 +61,9 @@ namespace :timetables do
 
         begin
           scrape_topic_page @agent.get(topic_link['href'] + "&aims=Y&fees=Y")
-        rescue
+        rescue => error
           puts "Error #{$!} while importing %s" % topic_link['href']
+          puts error.backtrace
         end
       end
 
@@ -110,9 +111,12 @@ namespace :timetables do
           meta[heading] = value
         end
 
-        topic = Topic.where(:subject_area => topic_title_meta["Subject Area"], :topic_number => topic_title_meta["Topic Number"], :year => meta["Year"], :semester => meta["Sem"]).first
-
-        topic ||= Topic.create(:subject_area => topic_title_meta["Subject Area"], :topic_number => topic_title_meta["Topic Number"], :year => meta["Year"], :semester => meta["Sem"])
+        topic = Topic.where(
+          :subject_area => topic_title_meta["Subject Area"],
+          :topic_number => topic_title_meta["Topic Number"],
+          :year => meta["Year"],
+          :semester => meta["Sem"]
+        ).first_or_initialize
 
         topic.name = meta["Name"]
         topic.units = meta["Units"]
@@ -126,9 +130,66 @@ namespace :timetables do
         topic.enrolment_opens = meta["First day to enrol"]
         topic.enrolment_closes = meta["Last day to enrol"]
 
+        # Wrap up our changes to the topic here
         topic.save
+
+        # Now create/update all child objects
+        process_timetable page/(pick + " > div > table:first"), topic
 
         p "Saving topic %s (%s %s) (%s)" % [topic.code, topic.year, topic.semester, topic.name]
       end
     end
+
+    def process_timetable timetable, topic
+      rows = timetable/"tr"
+
+      class_type = nil
+      class_group = nil
+
+      rows.each do |row|
+        cells = row/"td"
+
+        # Create new ClassType
+        if cells.length == 2
+          class_type = ClassType.where(
+            :topic => topic,
+            :name => cells[0].text.squish
+          ).first_or_initialize
+
+          class_type.note = cells[1].text.squish
+          class_type.save
+        else
+          # Create new ClassGroup
+          if cells.length == 6
+            class_group = ClassGroup.where(
+              :class_type => class_type,
+              :group_number => (cells[0].text.scan /\(([0-9]+)\)/)[0][0]
+            ).first_or_initialize
+
+            class_group.note = nil # TODO
+            class_group.full = false # TODO
+
+            cells.shift
+          end
+
+          # Create new ClassSession
+          class_group.class_sessions.delete
+
+          date_range = cells[0].text.split("-")
+          time_range = cells[2].text.split("-")
+
+          class_session = ClassSession.new(
+            :class_group => class_group,
+            :first_day => Date.parse(date_range[0].strip),
+            :last_day => Date.parse(date_range[1].strip),
+            :day_of_week => Date.parse(cells[1].text.strip).strftime('%u'),
+            :time_starts_at => Time.parse(time_range[0].strip) - Time.now.at_beginning_of_day,
+            :time_ends_at => Time.parse(time_range[1].strip) - Time.now.at_beginning_of_day
+          )
+
+          class_session.save
+        end
+      end
+    end
+
 end
