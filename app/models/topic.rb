@@ -1,5 +1,12 @@
 class Topic < ActiveRecord::Base
-  def code
-    subject_area + topic_number
+  has_many :class_types
+
+  before_save :update_topic_code
+
+  private
+  def update_topic_code
+    write_attribute :code, subject_area + topic_number
+
+    true
   end
 end
