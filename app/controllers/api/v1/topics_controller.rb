@@ -5,18 +5,6 @@ class Api::V1::TopicsController < Api::V1::BaseController
   end
 
   def subject_area
-    @topics = Topic.where(:subject_area => params[:subject_area]).pluck_h(
-      :name,
-      :subject_area,
-      :topic_number,
-      :year,
-      :semester
-    )
-
-    respond_with(@topics)
-  end
-
-  def topic_number
     @topics = Topic
 
     [:subject_area, :topic_number, :year, :semester].each do |keyword|

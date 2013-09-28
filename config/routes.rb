@@ -9,9 +9,6 @@ FlindersAPI2::Application.routes.draw do
       get "/dates" => "dates#index"
       get "/subjects" => "topics#index"
       get "/subjects/:subject_area" => "topics#subject_area"
-      get "/subjects/:subject_area/:topic_number" => "topics#topic_number"
-      get "/subjects/:subject_area/:topic_number/:year" => "topics#topic_number"
-      get "/subjects/:subject_area/:topic_number/:year/:semester" => "topics#topic_number"
       get "/news" => "news#index"
     end
   end
