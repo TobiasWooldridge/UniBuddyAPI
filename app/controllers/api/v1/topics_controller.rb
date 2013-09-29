@@ -7,13 +7,13 @@ class Api::V1::TopicsController < Api::V1::BaseController
   def index
     @topics = Topic
 
-    [:subject_area, :topic_number, :year, :semester].each do |keyword|
+    [:subject_area, :topic_number, :code, :year, :semester].each do |keyword|
       if !params[keyword].nil?
         @topics = @topics.where(keyword => params[keyword])
       end
     end
 
-    respond_with(@topics.pluck_h(:id, :name, :subject_area, :topic_number, :year, :semester))
+    respond_with(@topics.pluck_h(:id, :name, :code, :subject_area, :topic_number, :year, :semester))
   end
 
   def show
