@@ -1,10 +1,10 @@
 class Api::V1::TopicsController < Api::V1::BaseController
-  def index
+  def subject_areas
     @topics = Topic.group(:subject_area).order(:subject_area).pluck_h(:subject_area)
     respond_with(@topics)
   end
 
-  def subject_area
+  def index
     @topics = Topic
 
     [:subject_area, :topic_number, :year, :semester].each do |keyword|
@@ -13,20 +13,20 @@ class Api::V1::TopicsController < Api::V1::BaseController
       end
     end
 
-    respond_with(@topics)
+    respond_with(@topics.pluck_h(:id, :name, :subject_area, :topic_number, :year, :semester))
+  end
+
+  def show
+    @topic = Topic.find(params[:topic_id])
+
+    respond_with(@topic);
   end
 
   def classes
-    @topics = Topic.where(
-      :subject_area => params[:subject_area],
-      :topic_number => params[:topic_number],
-      :id => params[:topic_id]
-    )
+    topic = Topic.find(params[:topic_id])
 
-    [:year, :semester, :units].each do |keyword|
-      if !params[keyword].nil?
-        @topics = @topics.where(keyword => params[keyword])
-      end
-    end
+    classes = ClassType.where(:topic => topic).includes(:class_group)
+
+    respond_with(classes);
   end
 end

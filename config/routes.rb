@@ -7,8 +7,10 @@ FlindersAPI2::Application.routes.draw do
       get "/buildings/:building_code/rooms/:room_code" => "rooms#show"
       get "/buildings/:building_code/rooms/:room_code/bookings" => "room_bookings#index"
       get "/dates" => "dates#index"
-      get "/subjects" => "topics#index"
-      get "/subjects/:subject_area" => "topics#subject_area"
+      get "/subjects" => "topics#subject_areas"
+      get "/topics" => "topics#index"
+      get "/topics/:topic_id" => "topics#show"
+      get "/topics/:topic_id/classes" => "topics#classes"
       get "/news" => "news#index"
     end
   end
