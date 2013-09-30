@@ -38,6 +38,10 @@ namespace :timetables do
         subject_code = entry.value
         name = entry.text.split(/^(.+) \((.+)\)/).second
 
+        if !['ENGR', 'COMP'].include? subject_code
+          next
+        end
+
         subject_area_widget.value = entry
         page = form.submit
 
@@ -174,6 +178,8 @@ namespace :timetables do
 
           # Create new ClassSession
           class_group.class_sessions.delete
+
+          ClassSession.where(:class_group => class_group).delete_all
 
           date_range = cells[0].text.split("-")
           time_range = cells[2].text.split("-")
