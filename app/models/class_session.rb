@@ -2,7 +2,7 @@ class ClassSession < ActiveRecord::Base
   belongs_to :class_group
 
   def day_of_week_name
-    (Time.now.at_beginning_of_week + day_of_week.day).strftime("%A") 
+    (Time.now.at_beginning_of_week + (day_of_week - 1).days).strftime("%A") 
   end
 
   def as_json(options = {})
