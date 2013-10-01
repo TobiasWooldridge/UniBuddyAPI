@@ -24,6 +24,6 @@ class ClassSession < ActiveRecord::Base
 
   private
   def seconds_to_time seconds
-    (Time.now.at_beginning_of_day + seconds).strftime("%l:%M:%S %p")
+    (Time.now.at_beginning_of_day + seconds).strftime("%l:%M %p").squish
   end
 end
