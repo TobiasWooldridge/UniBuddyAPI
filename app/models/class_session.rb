@@ -11,8 +11,15 @@ class ClassSession < ActiveRecord::Base
       last_day: last_day,
       day_of_week: day_of_week_name,
       time_starts_at: seconds_to_time(time_starts_at),
-      time_ends_at: seconds_to_time(time_ends_at)
+      time_ends_at: seconds_to_time(time_ends_at),
+      seconds_starts_at: time_starts_at,
+      seconds_ends_at: time_ends_at,
+      seconds_duration: seconds_duration
     }
+  end
+
+  def seconds_duration
+    time_ends_at - time_starts_at
   end
 
   private
