@@ -34,6 +34,9 @@ namespace :timetables do
 
       subject_area_widget = form.field_with(:name => 'subj')
 
+      # TODO: Remove the following line in November 2013, when 2014 timetables are up
+      form.field_with(:name => 'year').value = "2013"
+
       subject_area_widget.options.from(1).each do |entry|
         subject_code = entry.value
         name = entry.text.split(/^(.+) \((.+)\)/).second
@@ -169,16 +172,15 @@ namespace :timetables do
               :class_type => class_type,
               :group_number => (cells[0].text.scan /\(([0-9]+)\)/)[0][0]
             ).first_or_initialize
+            class_group.class_sessions.delete
 
-            class_group.note = nil # TODO
-            class_group.full = false # TODO
+            class_group.note = cells[5].text
+            class_group.full = !(cells[5].text.scan /FULL/).empty?
 
             cells.shift
           end
 
           # Create new ClassSession
-          class_group.class_sessions.delete
-
           ClassSession.where(:class_group => class_group).delete_all
 
           date_range = cells[0].text.split("-")
