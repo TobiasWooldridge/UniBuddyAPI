@@ -41,7 +41,7 @@ namespace :timetables do
         subject_code = entry.value
         name = entry.text.split(/^(.+) \((.+)\)/).second
 
-        if !['ENGR', 'COMP'].include? subject_code
+        if !['ENGR'].include? subject_code
           next
         end
 
@@ -172,7 +172,7 @@ namespace :timetables do
               :class_type => class_type,
               :group_number => (cells[0].text.scan /\(([0-9]+)\)/)[0][0]
             ).first_or_initialize
-            class_group.class_sessions.delete
+            ClassSession.where(:class_group => class_group).delete_all
 
             class_group.note = cells[5].text
             class_group.full = !(cells[5].text.scan /FULL/).empty?
@@ -181,8 +181,6 @@ namespace :timetables do
           end
 
           # Create new ClassSession
-          ClassSession.where(:class_group => class_group).delete_all
-
           date_range = cells[0].text.split("-")
           time_range = cells[2].text.split("-")
 
