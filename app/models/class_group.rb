@@ -1,7 +1,7 @@
 class ClassGroup < ActiveRecord::Base
   belongs_to :class_type
 
-  has_many :class_sessions
+  has_many :class_sessions, :dependent => :destroy
 
   def as_json(options = {})
     {

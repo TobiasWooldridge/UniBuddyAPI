@@ -1,11 +1,13 @@
 class ClassSession < ActiveRecord::Base
   belongs_to :class_group
+  belongs_to :room
 
   def day_of_week_name
     (Time.now.at_beginning_of_week + (day_of_week - 1).days).strftime("%A") 
   end
 
   def as_json(options = {})
+    room_h = room.to_h_light
     {
       first_day: first_day,
       last_day: last_day,
@@ -14,7 +16,8 @@ class ClassSession < ActiveRecord::Base
       time_ends_at: seconds_to_time(time_ends_at),
       seconds_starts_at: time_starts_at,
       seconds_ends_at: time_ends_at,
-      seconds_duration: seconds_duration
+      seconds_duration: seconds_duration,
+      room: room_h
     }
   end
 

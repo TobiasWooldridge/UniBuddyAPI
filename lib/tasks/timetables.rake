@@ -184,13 +184,20 @@ namespace :timetables do
           date_range = cells[0].text.split("-")
           time_range = cells[2].text.split("-")
 
+          room_details = cells[3].text.squish.split(': ')
+
+          if room_details.length == 2
+            room = Room.joins(:building).where("buildings.name = ? AND rooms.code = ?", room_details[0].to_s, room_details[1].to_s).first
+          end
+
           class_session = ClassSession.new(
             :class_group => class_group,
             :first_day => Date.parse(date_range[0].strip),
             :last_day => Date.parse(date_range[1].strip),
             :day_of_week => Date.parse(cells[1].text.strip).strftime('%u'),
             :time_starts_at => Time.parse(time_range[0].strip) - Time.now.at_beginning_of_day,
-            :time_ends_at => Time.parse(time_range[1].strip) - Time.now.at_beginning_of_day
+            :time_ends_at => Time.parse(time_range[1].strip) - Time.now.at_beginning_of_day,
+            :room => room
           )
 
           class_session.save

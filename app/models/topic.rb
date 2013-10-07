@@ -1,5 +1,5 @@
 class Topic < BaseModel
-  has_many :class_types
+  has_many :class_types, :dependent => :destroy
 
   before_save :update_topic_code
 

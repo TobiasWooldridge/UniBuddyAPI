@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20130927234506) do
+ActiveRecord::Schema.define(version: 20131007055028) do
 
   create_table "blog_posts", force: true do |t|
     t.integer  "remote_id"
@@ -68,9 +68,11 @@ ActiveRecord::Schema.define(version: 20130927234506) do
     t.integer  "time_ends_at"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "room_id"
   end
 
   add_index "class_sessions", ["class_group_id"], name: "index_class_sessions_on_class_group_id", using: :btree
+  add_index "class_sessions", ["room_id"], name: "index_class_sessions_on_room_id", using: :btree
 
   create_table "class_types", force: true do |t|
     t.integer  "topic_id"

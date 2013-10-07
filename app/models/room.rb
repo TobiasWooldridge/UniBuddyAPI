@@ -1,6 +1,7 @@
 class Room < ActiveRecord::Base
   belongs_to :building
   has_many :room_bookings, :dependent => :destroy
+  has_many :class_sessions
 
   def bookings
     room_bookings
@@ -46,19 +47,26 @@ class Room < ActiveRecord::Base
      "%s (%s)" % [full_name, full_code]
   end
 
-  def as_json(options = {})
+  def to_h
+    to_h_light.merge {
+      is_empty: is_empty,
+      current_booking: current_booking,
+      next_booking: next_booking
+    }
+  end
+
+  def to_h_light
     {
       code: code,
       building_code: building.code,
       name: name,
       full_code: full_code,
       full_name: full_name,
-      created_at: created_at,
-      updated_at: updated_at,
       capacity: capacity,
-      is_empty: is_empty,
-      current_booking: current_booking,
-      next_booking: next_booking
     }
+  end
+
+  def as_json(options = {})
+    to_h
   end
 end
