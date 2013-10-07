@@ -7,7 +7,12 @@ class ClassSession < ActiveRecord::Base
   end
 
   def as_json(options = {})
-    room_h = room.to_h_light
+    if room.nil?
+      room_h = nil
+    else
+      room_h = room.to_h_light
+    end
+
     {
       first_day: first_day,
       last_day: last_day,
