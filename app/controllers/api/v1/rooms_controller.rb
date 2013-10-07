@@ -1,7 +1,8 @@
 class Api::V1::RoomsController < Api::V1::BaseController
   def index
     building = Building.find_by code: params[:building_code]
-    respond_with(building.rooms)
+    
+    respond_with building.rooms
   end
 
   def show

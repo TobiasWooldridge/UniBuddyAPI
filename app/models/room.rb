@@ -48,11 +48,11 @@ class Room < ActiveRecord::Base
   end
 
   def to_h
-    to_h_light.merge {
+    to_h_light.merge({
       is_empty: is_empty,
       current_booking: current_booking,
       next_booking: next_booking
-    }
+    })
   end
 
   def to_h_light

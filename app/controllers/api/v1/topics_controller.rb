@@ -1,7 +1,9 @@
 class Api::V1::TopicsController < Api::V1::BaseController
   def subject_areas
     @topics = Topic.group(:subject_area).order(:subject_area).pluck_h(:subject_area)
-    respond_with(@topics)
+
+    respond_with @topics
+    expires_in 1.day, :public => true, 'max-stale' => 0
   end
 
   def index
@@ -13,7 +15,8 @@ class Api::V1::TopicsController < Api::V1::BaseController
       end
     end
 
-    respond_with(@topics.pluck_h(:id, :name, :code, :subject_area, :topic_number, :year, :semester))
+    respond_with @topics.pluck_h(:id, :name, :code, :subject_area, :topic_number, :year, :semester)
+    expires_in 1.day, :public => true, 'max-stale' => 0
   end
 
   def show
@@ -23,10 +26,9 @@ class Api::V1::TopicsController < Api::V1::BaseController
   end
 
   def classes
-    topic = Topic.find(params[:topic_id])
+    @classes = ClassType.joins(:topic).where("topics.id = ?", params[:topic_id]).includes(:class_group)
 
-    classes = ClassType.where(:topic => topic).includes(:class_group)
-
-    respond_with(classes);
+    respond_with(@classes);
+    expires_in 1.day, :public => true, 'max-stale' => 0
   end
 end
