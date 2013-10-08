@@ -29,6 +29,5 @@ class Api::V1::TopicsController < Api::V1::BaseController
     @classes = ClassType.joins(:topic).where("topics.id = ?", params[:topic_id]).includes(:class_group)
 
     respond_with(@classes);
-    expires_in 1.day, :public => true, 'max-stale' => 0
   end
 end
