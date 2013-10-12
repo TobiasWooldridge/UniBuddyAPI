@@ -39,6 +39,9 @@ namespace :bookings do
 
 
           building = Building.where(:code => code).first_or_initialize
+          building.name = name
+
+          building.save
 
           buildingWidget.value = entry
           buildingPage = form.submit

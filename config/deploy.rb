@@ -4,7 +4,7 @@ set :application, "FlindersAPI2"
 set :repository,  "git@github.com:TobiasWooldridge/FlindersAPI2.git"
 
 set :user, 'flindersapi'
-set :domain, 'flindersapi.tobias.pw'
+set :domain, 'wooldridge.id.au'
 set :applicationdir, "/opt/webapps/FlindersAPI2"
 
 
