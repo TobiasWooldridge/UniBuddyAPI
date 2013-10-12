@@ -41,7 +41,7 @@ namespace :timetables do
         subject_code = entry.value
         name = entry.text.split(/^(.+) \((.+)\)/).second
 
-        if !['ENGR'].include? subject_code
+        if !['COMP'].include? subject_code
           next
         end
 
@@ -190,15 +190,32 @@ namespace :timetables do
             room = Room.joins(:building).where("buildings.name = ? AND rooms.code = ?", room_details[0].to_s, room_details[1].to_s).first
           end
 
-          class_session = ClassSession.new(
+          time_starts_at = Time.parse(time_range[0].strip) - Time.now.at_beginning_of_day
+          time_ends_at = Time.parse(time_range[1].strip) - Time.now.at_beginning_of_day
+
+          class_session = ClassSession.where(
             :class_group => class_group,
             :first_day => Date.parse(date_range[0].strip),
             :last_day => Date.parse(date_range[1].strip),
             :day_of_week => Date.parse(cells[1].text.strip).strftime('%u'),
-            :time_starts_at => Time.parse(time_range[0].strip) - Time.now.at_beginning_of_day,
-            :time_ends_at => Time.parse(time_range[1].strip) - Time.now.at_beginning_of_day,
-            :room => room
+            :time_ends_at => [time_starts_at, time_starts_at - 10.minutes],
+            :room_id => room.nil? ? nil : room.id
+          ).first
+
+          class_session = class_session || ClassSession.new(
+            :class_group => class_group,
+            :first_day => Date.parse(date_range[0].strip),
+            :last_day => Date.parse(date_range[1].strip),
+            :day_of_week => Date.parse(cells[1].text.strip).strftime('%u'),
+            :time_starts_at => time_starts_at,
+            :room_id => room.nil? ? nil : room.id
           )
+
+          if !class_session.new_record?
+            p "Joining adjacent class sessions for %s %s" % [topic.name, class_type.name]
+          end
+
+          class_session.time_ends_at = time_ends_at
 
           class_session.save
         end
