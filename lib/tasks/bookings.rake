@@ -80,6 +80,8 @@ namespace :bookings do
 
         roomPage = @agent.get(number['href'])
 
+        room.save
+
         scrape_bookings_room room, roomPage
       end
     end
