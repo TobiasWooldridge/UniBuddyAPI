@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20131007055028) do
+ActiveRecord::Schema.define(version: 20131025053714) do
 
   create_table "blog_posts", force: true do |t|
     t.integer  "remote_id"
@@ -44,8 +44,8 @@ ActiveRecord::Schema.define(version: 20131007055028) do
   create_table "buildings", force: true do |t|
     t.string   "name"
     t.string   "code"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "class_groups", force: true do |t|
@@ -90,10 +90,10 @@ ActiveRecord::Schema.define(version: 20131007055028) do
     t.text     "description"
     t.boolean  "cancelled"
     t.integer  "room_id"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
     t.string   "booked_for"
     t.string   "type"
-    t.datetime "created_at"
-    t.datetime "updated_at"
   end
 
   create_table "rooms", force: true do |t|
@@ -101,8 +101,8 @@ ActiveRecord::Schema.define(version: 20131007055028) do
     t.string   "name"
     t.integer  "capacity"
     t.integer  "building_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
   end
 
   create_table "term_dates", force: true do |t|
@@ -135,6 +135,9 @@ ActiveRecord::Schema.define(version: 20131007055028) do
     t.datetime "updated_at"
     t.date     "enrolment_closes"
     t.string   "code"
+    t.string   "unique_topic_code"
   end
+
+  add_index "topics", ["unique_topic_code"], name: "index_topics_on_unique_topic_code", using: :btree
 
 end

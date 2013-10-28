@@ -15,19 +15,13 @@ class Api::V1::TopicsController < Api::V1::BaseController
       end
     end
 
-    respond_with @topics.pluck_h(:id, :name, :code, :subject_area, :topic_number, :year, :semester)
+    respond_with @topics.pluck_h(:name, :code, :unique_topic_code, :subject_area, :topic_number, :year, :semester)
     expires_in 1.day, :public => true, 'max-stale' => 0
   end
 
   def show
-    @topic = Topic.find(params[:topic_id])
+    @topic = Topic.where(:unique_topic_code => params[:unque_topic_code]).includes(:class_types).first
 
     respond_with(@topic);
-  end
-
-  def classes
-    @classes = ClassType.joins(:topic).where("topics.id = ?", params[:topic_id]).includes(:class_group)
-
-    respond_with(@classes);
   end
 end
