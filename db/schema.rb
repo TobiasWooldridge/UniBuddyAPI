@@ -44,8 +44,8 @@ ActiveRecord::Schema.define(version: 20131025053714) do
   create_table "buildings", force: true do |t|
     t.string   "name"
     t.string   "code"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "class_groups", force: true do |t|
@@ -90,10 +90,10 @@ ActiveRecord::Schema.define(version: 20131025053714) do
     t.text     "description"
     t.boolean  "cancelled"
     t.integer  "room_id"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
     t.string   "booked_for"
     t.string   "type"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "rooms", force: true do |t|
@@ -101,8 +101,8 @@ ActiveRecord::Schema.define(version: 20131025053714) do
     t.string   "name"
     t.integer  "capacity"
     t.integer  "building_id"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "term_dates", force: true do |t|
