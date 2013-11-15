@@ -1,12 +1,16 @@
 namespace :timetables do
   desc "Update class timetables from the Flinders website"
 
-  task :update => :environment do
+  task :update, [:year]  => :environment do |t, args|
     desc "Update"
+
+    args.with_defaults(:year => "2013")
+
+    p args.year
 
     @agent = Mechanize.new
 
-    scrape_timetables_from_url "http://stusyswww.flinders.edu.au/timetable.taf"
+    scrape_timetables_from_url "http://stusyswww.flinders.edu.au/timetable.taf", args.year
   end
 
   private
@@ -28,22 +32,18 @@ namespace :timetables do
       return nil
     end
 
-    def scrape_timetables_from_url url
+    def scrape_timetables_from_url url, year
       page = @agent.get url
       form = get_timetable_form page
 
       subject_area_widget = form.field_with(:name => 'subj')
 
       # TODO: Remove the following line in November 2013, when 2014 timetables are up
-      form.field_with(:name => 'year').value = "2013"
+      form.field_with(:name => 'year').value = year
 
       subject_area_widget.options.from(1).each do |entry|
         subject_code = entry.value
         name = entry.text.split(/^(.+) \((.+)\)/).second
-
-        if !['COMP'].include? subject_code
-          next
-        end
 
         subject_area_widget.value = entry
         page = form.submit
