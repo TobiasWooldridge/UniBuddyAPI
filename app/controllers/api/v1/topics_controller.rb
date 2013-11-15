@@ -23,5 +23,6 @@ class Api::V1::TopicsController < Api::V1::BaseController
     @topic = Topic.where(:unique_topic_code => params[:unque_topic_code]).includes(:class_types).first
 
     respond_with(@topic);
+    expires_in 1.day, :public => true, 'max-stale' => 0
   end
 end
