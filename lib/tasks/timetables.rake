@@ -4,7 +4,7 @@ namespace :timetables do
   task :update, [:year]  => :environment do |t, args|
     desc "Update"
 
-    args.with_defaults(:year => "2013")
+    args.with_defaults(:year => Date.today.strftime("%Y"))
 
     p args.year
 
