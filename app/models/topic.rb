@@ -1,6 +1,7 @@
 class Topic < BaseModel
   has_many :class_types, :dependent => :destroy
 
+  before_create :update_topic_codes
   before_save :update_topic_codes
 
   def get_unique_topic_code
@@ -43,7 +44,8 @@ class Topic < BaseModel
       write_attribute :code, subject_area + topic_number
 
       # Cache in DB for querying
-      write_attribute :unique_topic_code, unique_topic_code
+      write_attribute :unique_topic_code, get_unique_topic_code
+      
       true
     end
 end
