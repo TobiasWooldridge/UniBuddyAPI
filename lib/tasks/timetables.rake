@@ -6,7 +6,7 @@ namespace :timetables do
 
     args.with_defaults(:year => Date.today.strftime("%Y"))
 
-    p args.year
+    puts "Scraping timetables for %s" % args.year
 
     @agent = Mechanize.new
 
@@ -67,16 +67,18 @@ namespace :timetables do
         end
 
         begin
-          scrape_topic_page @agent.get(topic_link['href'] + "&aims=Y&fees=Y")
+          url = topic_link['href'] + "&aims=Y&fees=Y"
+          scrape_topic_page_from_url url
         rescue => error
           puts "Error #{$!} while importing %s" % topic_link['href']
           puts error.backtrace
         end
       end
-
     end
 
-    def scrape_topic_page page
+    def scrape_topic_page_from_url url
+      page = @agent.get(url)
+
       topic_full_name = (page/"div.container h2:first").text.squish
       topic_title_meta = /^(?<Subject Area>[a-z]+)(?<Topic Number>[0-9]+[a-z]*) (?<Name>.*)$/i.match topic_full_name
 
@@ -98,7 +100,6 @@ namespace :timetables do
       end
 
       # Each topic may be taught in multiple semesters, which are on the same page for some reason
-
       picks = []
       (page/"input.picklist").each do |pick|
         picks.append("#" + pick.attr('value'))
@@ -143,7 +144,7 @@ namespace :timetables do
         # Now create/update all child objects
         process_timetable page/(pick + " > div > table:first"), topic
 
-        p "Saving topic %s (%s %s) (%s)" % [topic.code, topic.year, topic.semester, topic.name]
+        puts "Saving topic %s (%s %s) (%s)" % [topic.code, topic.year, topic.semester, topic.name]
       end
     end
 
@@ -212,7 +213,7 @@ namespace :timetables do
           )
 
           if !class_session.new_record?
-            p "Joining adjacent class sessions for %s %s" % [topic.name, class_type.name]
+            puts "Joining adjacent class sessions for %s %s" % [topic.name, class_type.name]
           end
 
           class_session.time_ends_at = time_ends_at

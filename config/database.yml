@@ -6,13 +6,21 @@ production:
   username: flindersapi
   password: password
 
+#development:
+#  adapter: postgresql
+#  encoding: unicode
+#  database: flindersapi
+#  pool: 5
+#  username: flindersapi
+#  password: password
+
 development:
-  adapter: postgresql
-  encoding: unicode
-  database: flindersapi
+  adapter: sqlite3
+  database: db/development.sqlite3
   pool: 5
-  username: flindersapi
-  password: password
+  timeout: 5000
+
+
 
 test:
   adapter: postgresql
