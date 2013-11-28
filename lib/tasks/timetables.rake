@@ -50,9 +50,18 @@ namespace :timetables do
 
         scrape_topics_on_page page
         while pagination_form = get_next_page_form(page) do
-          page = pagination_form.submit
 
-          scrape_topics_on_page page
+          begin
+            page = pagination_form.submit
+            scrape_topics_on_page page
+          rescue => error
+              begin
+                page = pagination_form.submit
+                scrape_topics_on_page page
+              rescue => error_two
+                puts "Failed to scrape %s" % name
+              end
+          end
         end
 
       end
