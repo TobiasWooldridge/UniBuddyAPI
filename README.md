@@ -39,7 +39,7 @@ The signage for the project is designed for usage on non-interactive internet-en
 
 The signage is designed to be accessed via a web browser, and is tested in modern versions of Chrome and Firefox.
 
-Much of the signage's data is dynamically pulled from Flinders university's public website, however some content can be added through the application. This includes "Broadcasts": a means for Lecturers and other staff to post messages to the signage. For example, "COMP1337 has moved from IST202 to ENGR209 on Monday"
+The signage's data is dynamically pulled from Flinders university's public website
 
 
 ## Data

@@ -2,9 +2,9 @@ class BaseModel < ActiveRecord::Base
   self.abstract_class = true
 
   def self.pluck_h (*columns)
-    retrieved_rows = self.pluck(*columns)
-
     topics = []
+
+    retrieved_rows = self.pluck(*columns)
     retrieved_rows.each do |row|
       topic = {}
 

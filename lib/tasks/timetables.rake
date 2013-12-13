@@ -62,6 +62,15 @@ namespace :timetables do
                 puts "Failed to scrape %s" % name
               end
           end
+
+
+          begin
+            page = pagination_form.submit
+            scrape_topics_on_page page
+          rescue => error
+            puts "Error #{$!} while importing %s" % name
+            puts error.backtrace
+          end
         end
 
       end

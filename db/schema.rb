@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20131025053714) do
+ActiveRecord::Schema.define(version: 20131213123434) do
 
   create_table "blog_posts", force: true do |t|
     t.integer  "remote_id"
@@ -25,15 +25,6 @@ ActiveRecord::Schema.define(version: 20131025053714) do
     t.text     "plaintext"
     t.string   "image"
     t.string   "caption"
-  end
-
-  create_table "broadcasts", force: true do |t|
-    t.string   "message"
-    t.datetime "show_from"
-    t.datetime "show_until"
-    t.string   "author_name"
-    t.datetime "created_at"
-    t.datetime "updated_at"
   end
 
   create_table "broadcasts_buildings", id: false, force: true do |t|
