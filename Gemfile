@@ -23,23 +23,29 @@ gem 'flexslider', :git => 'https://github.com/constantm/Flexslider-2-Rails-Gem.g
 
 gem 'feedzirra'
 
-gem 'rack-jsonp-middleware'
 gem 'rack-cors', :require => 'rack/cors'
 
-gem 'rspec-rails'
-gem 'rspec_api_test'
+
 
 gem 'sanitize'
 
 gem "ots", "~> 0.5.4"
 
-gem 'capistrano'
 
-gem 'github-markup'
-gem 'redcarpet'
+#gem 'github-markup'
+#gem 'redcarpet'
+
+
+group :development, :test do
+  gem 'rspec-rails'
+  gem 'rspec_api_test'
+  gem 'factory_girl'
+  gem "factory_girl_rails", "~> 4.0"
+end
 
 group :development do
   gem 'sqlite3'
+  gem 'capistrano'
 end
 
 group :production do

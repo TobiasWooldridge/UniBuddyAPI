@@ -9,7 +9,7 @@ class Api::V1::BuildingsController < Api::V1::BaseController
   def show
     @building = Building.find_by code: params[:building_code]
 
-    respond_with @building 
+    respond_with @building
     expires_in 1.day, :public => true, 'max-stale' => 0
   end
 end

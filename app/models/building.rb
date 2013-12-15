@@ -16,8 +16,7 @@ class Building < ActiveRecord::Base
   def empty_rooms
     # Need to use Building.sanitize because Rails doesn't like you passing parameters to joins. Also, rails hates kittens.
     rooms.joins('LEFT OUTER JOIN room_bookings ON room_bookings.room_id = rooms.id AND ' + Building.sanitize(Time.now) + ' BETWEEN room_bookings
-.starts_at AND room_bookings.ends_at')
-    .where('room_bookings.id IS NULL')
+.starts_at AND room_bookings.ends_at').where('room_bookings.id IS NULL')
   end
 
   def as_json(options = {})
