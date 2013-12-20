@@ -1,7 +1,6 @@
 source 'https://rubygems.org'
 ruby '1.9.3'
 
-
 gem 'rails', '4.0.0'
 
 gem 'bootstrap-sass', '2.3'
@@ -9,7 +8,6 @@ gem 'bootstrap-sass', '2.3'
 gem 'pg'
 
 gem 'sass-rails',   '~> 4.0.0'
-gem 'coffee-rails', '~> 4.0.0'
 
 gem 'uglifier', '>= 1.3.0'
 
@@ -25,16 +23,12 @@ gem 'feedzirra'
 
 gem 'rack-cors', :require => 'rack/cors'
 
-
-
 gem 'sanitize'
 
 gem "ots", "~> 0.5.4"
 
-
 #gem 'github-markup'
 #gem 'redcarpet'
-
 
 group :development, :test do
   gem 'rspec-rails'
@@ -44,7 +38,6 @@ group :development, :test do
 end
 
 group :development do
-  gem 'sqlite3'
   gem 'capistrano'
 end
 

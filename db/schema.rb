@@ -13,6 +13,9 @@
 
 ActiveRecord::Schema.define(version: 20131213123434) do
 
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
   create_table "blog_posts", force: true do |t|
     t.integer  "remote_id"
     t.string   "url"
@@ -48,13 +51,13 @@ ActiveRecord::Schema.define(version: 20131213123434) do
     t.datetime "updated_at"
   end
 
-  add_index "class_groups", ["class_type_id"], name: "index_class_groups_on_class_type_id"
+  add_index "class_groups", ["class_type_id"], name: "index_class_groups_on_class_type_id", using: :btree
 
   create_table "class_sessions", force: true do |t|
     t.integer  "class_group_id"
     t.date     "first_day"
     t.date     "last_day"
-    t.integer  "day_of_week",    limit: 1
+    t.integer  "day_of_week",    limit: 2
     t.integer  "time_starts_at"
     t.integer  "time_ends_at"
     t.datetime "created_at"
@@ -62,8 +65,8 @@ ActiveRecord::Schema.define(version: 20131213123434) do
     t.integer  "room_id"
   end
 
-  add_index "class_sessions", ["class_group_id"], name: "index_class_sessions_on_class_group_id"
-  add_index "class_sessions", ["room_id"], name: "index_class_sessions_on_room_id"
+  add_index "class_sessions", ["class_group_id"], name: "index_class_sessions_on_class_group_id", using: :btree
+  add_index "class_sessions", ["room_id"], name: "index_class_sessions_on_room_id", using: :btree
 
   create_table "class_types", force: true do |t|
     t.integer  "topic_id"
@@ -73,7 +76,7 @@ ActiveRecord::Schema.define(version: 20131213123434) do
     t.datetime "updated_at"
   end
 
-  add_index "class_types", ["topic_id"], name: "index_class_types_on_topic_id"
+  add_index "class_types", ["topic_id"], name: "index_class_types_on_topic_id", using: :btree
 
   create_table "room_bookings", force: true do |t|
     t.datetime "starts_at"
@@ -111,14 +114,14 @@ ActiveRecord::Schema.define(version: 20131213123434) do
     t.string   "topic_number",        limit: 5
     t.integer  "year"
     t.string   "semester",            limit: 3
-    t.decimal  "units",                           precision: 4, scale: 1
+    t.decimal  "units",                         precision: 4, scale: 1
     t.string   "coordinator"
     t.text     "description"
     t.text     "aims"
     t.text     "learning_outcomes"
     t.text     "assumed_knowledge"
     t.text     "assessment"
-    t.text     "class_contact",       limit: 255
+    t.text     "class_contact"
     t.date     "enrolment_opens"
     t.date     "census"
     t.date     "withdraw_no_fail_by"
@@ -129,6 +132,6 @@ ActiveRecord::Schema.define(version: 20131213123434) do
     t.string   "unique_topic_code"
   end
 
-  add_index "topics", ["unique_topic_code"], name: "index_topics_on_unique_topic_code"
+  add_index "topics", ["unique_topic_code"], name: "index_topics_on_unique_topic_code", using: :btree
 
 end

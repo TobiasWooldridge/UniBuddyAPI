@@ -38,12 +38,15 @@ namespace :timetables do
 
       subject_area_widget = form.field_with(:name => 'subj')
 
-      # TODO: Remove the following line in November 2013, when 2014 timetables are up
       form.field_with(:name => 'year').value = year
 
       subject_area_widget.options.from(1).each do |entry|
         subject_code = entry.value
         name = entry.text.split(/^(.+) \((.+)\)/).second
+
+        if subject_code != "NURS"
+          next
+        end
 
         subject_area_widget.value = entry
         page = form.submit
@@ -141,14 +144,14 @@ namespace :timetables do
           :subject_area => topic_title_meta["Subject Area"],
           :topic_number => topic_title_meta["Topic Number"],
           :year => meta["Year"],
-          :semester => meta["Sem"]
+          :semester => meta["Sem"],
+          #:location => meta["Location"]
         ).first_or_initialize
 
         topic.name = meta["Name"]
         topic.units = meta["Units"]
         topic.coordinator = meta["Coordinator"]
         topic.description = meta["Topic Description"]
-        # topic.aims = // TODO
         topic.learning_outcomes = meta["Expected Learning Outcomes"]
         topic.assumed_knowledge = meta["Assumed Knowledge"]
         topic.assessment = meta["Assessment"]      
@@ -162,7 +165,8 @@ namespace :timetables do
         # Now create/update all child objects
         process_timetable page/(pick + " > div > table:first"), topic
 
-        puts "Saving topic %s (%s %s) (%s)" % [topic.code, topic.year, topic.semester, topic.name]
+        verb = topic.new_record? ? "Saving" : "Updating"
+        puts "%s topic %s (%s %s) (%s)" % [verb, topic.code, topic.year, topic.semester, topic.name]
       end
     end
 
@@ -194,7 +198,9 @@ namespace :timetables do
             ClassSession.where(:class_group => class_group).delete_all
 
             class_group.note = cells[5].text
-            class_group.full = !(cells[5].text.scan /FULL/).empty?
+
+            full = !(cells[5].text.scan /FULL/).empty?
+            class_group.full = full && Time.now > topic.enrolment_opens
 
             cells.shift
           end

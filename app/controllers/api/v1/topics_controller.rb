@@ -11,7 +11,9 @@ class Api::V1::TopicsController < Api::V1::BaseController
 
     [:subject_area, :topic_number, :code, :year, :semester].each do |keyword|
       if !params[keyword].nil?
-        @topics = @topics.where(keyword => params[keyword])
+        options = params[keyword].split(",")
+
+        @topics = @topics.where(keyword => options.length == 1 ? options.first : options)
       end
     end
 
