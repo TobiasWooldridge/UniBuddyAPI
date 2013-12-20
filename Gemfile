@@ -27,8 +27,8 @@ gem 'sanitize'
 
 gem "ots", "~> 0.5.4"
 
-#gem 'github-markup'
-#gem 'redcarpet'
+gem 'github-markup'
+gem 'redcarpet'
 
 group :development, :test do
   gem 'rspec-rails'
