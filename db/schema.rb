@@ -11,14 +11,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20131213123434) do
+ActiveRecord::Schema.define(version: 20140116124647) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "blog_posts", force: true do |t|
     t.integer  "remote_id"
-    t.string   "url"
+    t.text     "url"
     t.string   "title"
     t.text     "content"
     t.datetime "published"
@@ -26,9 +26,12 @@ ActiveRecord::Schema.define(version: 20131213123434) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.text     "plaintext"
-    t.string   "image"
+    t.text     "image"
     t.string   "caption"
+    t.integer  "institution_id"
   end
+
+  add_index "blog_posts", ["institution_id"], name: "index_blog_posts_on_institution_id", using: :btree
 
   create_table "broadcasts_buildings", id: false, force: true do |t|
     t.integer "broadcast_id"
@@ -40,7 +43,10 @@ ActiveRecord::Schema.define(version: 20131213123434) do
     t.string   "code"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "institution_id"
   end
+
+  add_index "buildings", ["institution_id"], name: "index_buildings_on_institution_id", using: :btree
 
   create_table "class_groups", force: true do |t|
     t.integer  "class_type_id"
@@ -78,6 +84,15 @@ ActiveRecord::Schema.define(version: 20131213123434) do
 
   add_index "class_types", ["topic_id"], name: "index_class_types_on_topic_id", using: :btree
 
+  create_table "institutions", force: true do |t|
+    t.string   "name",       limit: 50
+    t.string   "nickname",   limit: 10
+    t.string   "country",    limit: 20
+    t.string   "state",      limit: 3
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "room_bookings", force: true do |t|
     t.datetime "starts_at"
     t.datetime "ends_at"
@@ -90,6 +105,8 @@ ActiveRecord::Schema.define(version: 20131213123434) do
     t.datetime "updated_at"
   end
 
+  add_index "room_bookings", ["room_id"], name: "index_room_bookings_on_room_id", using: :btree
+
   create_table "rooms", force: true do |t|
     t.string   "code"
     t.string   "name"
@@ -99,6 +116,8 @@ ActiveRecord::Schema.define(version: 20131213123434) do
     t.datetime "updated_at"
   end
 
+  add_index "rooms", ["building_id"], name: "index_rooms_on_building_id", using: :btree
+
   create_table "term_dates", force: true do |t|
     t.datetime "starts_at"
     t.datetime "ends_at"
@@ -106,7 +125,10 @@ ActiveRecord::Schema.define(version: 20131213123434) do
     t.string   "week"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "institution_id"
   end
+
+  add_index "term_dates", ["institution_id"], name: "index_term_dates_on_institution_id", using: :btree
 
   create_table "topics", force: true do |t|
     t.string   "name"
@@ -130,8 +152,10 @@ ActiveRecord::Schema.define(version: 20131213123434) do
     t.date     "enrolment_closes"
     t.string   "code"
     t.string   "unique_topic_code"
+    t.integer  "institution_id"
   end
 
+  add_index "topics", ["institution_id"], name: "index_topics_on_institution_id", using: :btree
   add_index "topics", ["unique_topic_code"], name: "index_topics_on_unique_topic_code", using: :btree
 
 end

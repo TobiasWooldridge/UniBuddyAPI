@@ -1,4 +1,6 @@
 class TermDates < ActiveRecord::Base
+  belongs_to :institution
+
   class << self
     def current_week
       TermDates.where("? BETWEEN starts_at AND ends_at", Time.now).first or ""

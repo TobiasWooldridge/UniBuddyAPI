@@ -40,6 +40,7 @@ namespace :bookings do
 
           building = Building.where(:code => code).first_or_initialize
           building.name = name
+          building.institution = Institution.flinders
 
           building.save
 

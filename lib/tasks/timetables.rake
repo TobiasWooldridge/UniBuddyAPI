@@ -16,6 +16,7 @@ namespace :timetables do
   private
     agent = nil
 
+
     def get_timetable_form page
       page.form_with(:action => /timetable\.taf/)
     end
@@ -158,6 +159,7 @@ namespace :timetables do
         topic.class_contact = meta["Class Contact"]    
         topic.enrolment_opens = meta["First day to enrol"]
         topic.enrolment_closes = meta["Last day to enrol"]
+        topic.institution = Institution.flinders
 
         # Wrap up our changes to the topic here
         topic.save

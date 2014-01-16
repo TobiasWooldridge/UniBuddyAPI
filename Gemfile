@@ -17,16 +17,15 @@ gem 'mechanize'
 
 gem 'puma'
 
-gem 'flexslider', :git => 'https://github.com/constantm/Flexslider-2-Rails-Gem.git'
-
 gem 'feedzirra'
 
 gem 'rack-cors', :require => 'rack/cors'
 
 gem 'sanitize'
 
-gem "ots", "~> 0.5.4"
+#gem "ots", "~> 0.5.4"
 
+# Used for rendering markdown-based documentation on home page
 gem 'github-markup'
 gem 'redcarpet'
 

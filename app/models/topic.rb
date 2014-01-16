@@ -1,6 +1,8 @@
 class Topic < BaseModel
   has_many :class_types, :dependent => :destroy
 
+  belongs_to :institution
+
   before_create :update_topic_codes
   before_save :update_topic_codes
 
@@ -36,7 +38,7 @@ class Topic < BaseModel
 			code: code,
 			unique_topic_code: unique_topic_code,
 			classes: class_types
-			}    
+		}
   end
 
   private
@@ -45,7 +47,6 @@ class Topic < BaseModel
 
       # Cache in DB for querying
       write_attribute :unique_topic_code, get_unique_topic_code
-      
       true
     end
 end

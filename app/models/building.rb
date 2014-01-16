@@ -1,6 +1,8 @@
 class Building < ActiveRecord::Base
   has_many :rooms, :dependent => :destroy
 
+  belongs_to :institution
+
   def bookings_at time
     RoomBooking.where(:room_id => rooms).where('starts_at <= ? AND ends_at > ?', time.to_s, time.to_s)
   end

@@ -13,6 +13,7 @@ namespace :dates do
     rows.first.search('td').each do |yearBox|
       years.append(yearBox.text)
     end
+
     years.shift
 
     rows.shift
@@ -23,15 +24,21 @@ namespace :dates do
       label = row.search("td:first").text
       contentBoxes = row.search("td + td")
 
-      if /Semester [12]/i.match(label)
+      if /(Summer|Semester [12])/i.match(label)
         semester = label.titlecase
       else
         if /^[0-9\s\*]/.match(label)
           label = "Week %s" % label
         end
 
+
+
         contentBoxes.each_with_index do |c, index|
           contentText = c.text.gsub(/[[:space:]]/, ' ').strip
+
+          if contentText == ""
+            next
+          end
 
           year = years[index]
           week_start = Time.parse("%s %s" % [year, contentText])
@@ -45,6 +52,8 @@ namespace :dates do
           termDate.ends_at = week_end
           termDate.semester = semester
           termDate.week = label
+          termDate.institution = Institution.flinders
+
 
           termDate.save
         end

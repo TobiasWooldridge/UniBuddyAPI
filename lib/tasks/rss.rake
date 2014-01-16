@@ -6,16 +6,16 @@ namespace :rss do
 
     feed = Feedzirra::Feed.fetch_and_parse("http://blogs.flinders.edu.au/flinders-news/feed/")
 
-    feed.entries.each do |entry|
+    feed.entries.reverse.each do |entry|
       remote_id = entry.entry_id.scan(/\d+/).first.to_i
 
       post = BlogPost.where(:remote_id => remote_id).first_or_initialize
-
 
       post.url = entry.url
       post.title = entry.title
       post.published = entry.published
       post.last_modified = entry.last_modified
+      post.institution = Institution.flinders
 
       doc = Nokogiri::HTML.fragment(entry.content)
       doc.css("abbr.unapi-id").remove
@@ -45,8 +45,8 @@ namespace :rss do
       post.plaintext = doc.text.strip
       post.content = Sanitize.clean(doc.to_html.strip, Sanitize::Config::RELAXED)
 
-      summary = OTS::parse(post.plaintext)
-      p summary.summarize(sentences: 8)
+      #summary = OTS::parse(post.plaintext)
+      #p summary.summarize(sentences: 8)
 
       post.save
 
