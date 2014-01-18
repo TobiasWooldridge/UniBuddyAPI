@@ -4,7 +4,7 @@ class Institution < ActiveRecord::Base
 
   class << self # Class methods
     def flinders()
-      Institution.where(:name => "Flinders University").first
+      Institution.where(:code => "flinders").first
     end
   end
 end

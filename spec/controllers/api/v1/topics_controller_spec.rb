@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Api::V1::TopicsController do
+describe Api::V2::TopicsController do
   topic = nil
 
   before :each do

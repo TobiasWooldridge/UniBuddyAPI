@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140116124647) do
+ActiveRecord::Schema.define(version: 20140118043133) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -91,7 +91,11 @@ ActiveRecord::Schema.define(version: 20140116124647) do
     t.string   "state",      limit: 3
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "code",       limit: 10
   end
+
+  add_index "institutions", ["name"], name: "index_institutions_on_name", unique: true, using: :btree
+  add_index "institutions", ["nickname"], name: "index_institutions_on_nickname", unique: true, using: :btree
 
   create_table "room_bookings", force: true do |t|
     t.datetime "starts_at"
@@ -156,6 +160,8 @@ ActiveRecord::Schema.define(version: 20140116124647) do
   end
 
   add_index "topics", ["institution_id"], name: "index_topics_on_institution_id", using: :btree
+  add_index "topics", ["subject_area", "topic_number"], name: "index_topics_on_subject_area_and_topic_number", using: :btree
   add_index "topics", ["unique_topic_code"], name: "index_topics_on_unique_topic_code", using: :btree
+  add_index "topics", ["year", "semester"], name: "index_topics_on_year_and_semester", using: :btree
 
 end

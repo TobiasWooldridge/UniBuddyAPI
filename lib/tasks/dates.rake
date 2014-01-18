@@ -54,7 +54,6 @@ namespace :dates do
           termDate.week = label
           termDate.institution = Institution.flinders
 
-
           termDate.save
         end
       end

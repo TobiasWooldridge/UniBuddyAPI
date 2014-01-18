@@ -21,4 +21,8 @@ class BaseModel < ActiveRecord::Base
 
     return topics
   end
+
+  def self.for_institution(inst_code)
+    self.joins(:institution).where(:institutions => { :code => inst_code })
+  end
 end
