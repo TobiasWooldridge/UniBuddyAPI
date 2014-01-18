@@ -1,7 +1,7 @@
 class ClassGroup < ActiveRecord::Base
   belongs_to :class_type
 
-  has_many :class_sessions, :dependent => :destroy
+  has_many :activities, :dependent => :destroy
 
   def as_json(options = {})
     {
@@ -9,7 +9,8 @@ class ClassGroup < ActiveRecord::Base
       group_id: group_number,
       note: note,
       full: full,
-      class_sessions: class_sessions
+      activities: activities
+
     }
   end
 end

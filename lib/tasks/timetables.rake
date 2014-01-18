@@ -197,7 +197,7 @@ namespace :timetables do
               :class_type => class_type,
               :group_number => (cells[0].text.scan /\(([0-9]+)\)/)[0][0]
             ).first_or_initialize
-            ClassSession.where(:class_group => class_group).delete_all
+            Activity.where(:class_group => class_group).delete_all
 
             class_group.note = cells[5].text
 
@@ -220,7 +220,7 @@ namespace :timetables do
           time_starts_at = Time.parse(time_range[0].strip) - Time.now.at_beginning_of_day
           time_ends_at = Time.parse(time_range[1].strip) - Time.now.at_beginning_of_day
 
-          class_session = ClassSession.where(
+          class_session = Activity.where(
             :class_group => class_group,
             :first_day => Date.parse(date_range[0].strip),
             :last_day => Date.parse(date_range[1].strip),
@@ -229,7 +229,7 @@ namespace :timetables do
             :room_id => room.nil? ? nil : room.id
           ).first
 
-          class_session = class_session || ClassSession.new(
+          class_session = class_session || Activity.new(
             :class_group => class_group,
             :first_day => Date.parse(date_range[0].strip),
             :last_day => Date.parse(date_range[1].strip),

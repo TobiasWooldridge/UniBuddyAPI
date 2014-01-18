@@ -1,4 +1,4 @@
-class ClassSession < ActiveRecord::Base
+class Activity < ActiveRecord::Base
   belongs_to :class_group
   belongs_to :room
 

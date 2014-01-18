@@ -19,5 +19,6 @@
 .idea
 /*.iml
 
+/db/schema.rb
 
 *.DS_Store

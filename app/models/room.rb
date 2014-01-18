@@ -1,7 +1,7 @@
 class Room < ActiveRecord::Base
   belongs_to :building
   has_many :room_bookings, :dependent => :destroy
-  has_many :class_sessions
+  has_many :activities
 
   def bookings
     room_bookings
