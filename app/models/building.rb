@@ -1,4 +1,4 @@
-class Building < ActiveRecord::Base
+class Building < BaseModel
   has_many :rooms, :dependent => :destroy
 
   belongs_to :institution

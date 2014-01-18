@@ -9,6 +9,6 @@ class Api::V2::RoomBookingsController < Api::V2::BaseController
 
     if room.nil? then raise ActiveRecord::RecordNotFound end
 
-    respond_with(@room_bookings = room.room_bookings)
+    respond_with padded_response @room_bookings = room.room_bookings
   end
 end

@@ -1,4 +1,4 @@
-class TermDates < ActiveRecord::Base
+class TermDates < BaseModel
   belongs_to :institution
 
   class << self
@@ -20,9 +20,7 @@ class TermDates < ActiveRecord::Base
       starts_at: self.starts_at,
       ends_at: self.ends_at,
       semester: self.semester,
-      week: self.week,
-      created_at: self.created_at,
-      updated_at: self.updated_at
+      week: self.week
     }
   end
 end
