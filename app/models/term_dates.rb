@@ -7,10 +7,10 @@ class TermDates < BaseModel
     end
 
     def this_year
-      for_year
+      for_year Date.today
     end
 
-    def for_year (year = Date.today.at_beginning_of_year)
+    def for_year (year = Date.today)
       TermDates.where("starts_at BETWEEN ? AND ?", year.at_beginning_of_year, year.at_end_of_year) or ""
     end
   end

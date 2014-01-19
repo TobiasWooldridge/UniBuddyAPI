@@ -16,6 +16,6 @@ class Api::V2::TopicsController < Api::V2::BaseController
   def show
     @topic = Topic.for_institution(params[:inst_code]).where(:id => params[:topic_id]).includes(:class_types).first
 
-    respond_with padded_response @topic;
+    respond_with padded_response @topic
   end
 end

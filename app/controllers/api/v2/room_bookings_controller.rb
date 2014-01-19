@@ -1,6 +1,5 @@
 class Api::V2::RoomBookingsController < Api::V2::BaseController
   def index
-
     building = Building.for_institution(params[:inst_code]).find_by code: params[:building_code]
 
     if building.nil? then raise ActiveRecord::RecordNotFound end

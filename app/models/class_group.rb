@@ -10,7 +10,6 @@ class ClassGroup < ActiveRecord::Base
       note: note,
       full: full,
       activities: activities
-
     }
   end
 end

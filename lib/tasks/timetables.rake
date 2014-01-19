@@ -1,16 +1,16 @@
 namespace :timetables do
   desc "Update class timetables from the Flinders website"
 
-  task :update, [:year]  => :environment do |t, args|
+  task :update, [:year, :subject_area]  => :environment do |t, args|
     desc "Update"
 
-    args.with_defaults(:year => Date.today.strftime("%Y"))
+    args.with_defaults(:year => Date.today.strftime("%Y"), :subject_area => nil)
 
-    puts "Scraping timetables for %s" % args.year
+    puts "Scraping timetables for %s (subject area: %s)" % [args.year, args.subject_area || "all subject areas"]
 
     @agent = Mechanize.new
 
-    scrape_timetables_from_url "http://stusyswww.flinders.edu.au/timetable.taf", args.year
+    scrape_timetables_from_url "http://stusyswww.flinders.edu.au/timetable.taf", args.year, args.subject_area
   end
 
   private
@@ -33,7 +33,7 @@ namespace :timetables do
       return nil
     end
 
-    def scrape_timetables_from_url url, year
+    def scrape_timetables_from_url url, year, limit_subject_area
       page = @agent.get url
       form = get_timetable_form page
 
@@ -45,7 +45,7 @@ namespace :timetables do
         subject_code = entry.value
         name = entry.text.split(/^(.+) \((.+)\)/).second
 
-        if subject_code != "NURS"
+        if !limit_subject_area.nil? and subject_code != limit_subject_area
           next
         end
 
@@ -220,6 +220,7 @@ namespace :timetables do
           time_starts_at = Time.parse(time_range[0].strip) - Time.now.at_beginning_of_day
           time_ends_at = Time.parse(time_range[1].strip) - Time.now.at_beginning_of_day
 
+          # Get the immediate previous activity for this topic if it exists so we can just join them
           class_session = Activity.where(
             :class_group => class_group,
             :first_day => Date.parse(date_range[0].strip),
@@ -229,6 +230,7 @@ namespace :timetables do
             :room_id => room.nil? ? nil : room.id
           ).first
 
+          # Otherwise create a new one
           class_session = class_session || Activity.new(
             :class_group => class_group,
             :first_day => Date.parse(date_range[0].strip),
@@ -239,7 +241,7 @@ namespace :timetables do
           )
 
           if !class_session.new_record?
-            puts "Joining adjacent class sessions for %s %s" % [topic.name, class_type.name]
+            puts "Joining adjacent class activities for %s %s" % [topic.name, class_type.name]
           end
 
           class_session.time_ends_at = time_ends_at

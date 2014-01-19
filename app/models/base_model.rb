@@ -23,6 +23,12 @@ class BaseModel < ActiveRecord::Base
   end
 
   def self.for_institution(inst_code)
-    self.joins(:institution).where(:institutions => { :code => inst_code })
+    institution = Institution.select(:id).where(:code => inst_code).first
+
+    # Make sure the institution exists
+    if institution.nil? then raise ActiveRecord::RecordNotFound end
+
+    # Now restrict ourselves to the institution
+    self.where(:institution_id => institution.id)
   end
 end
