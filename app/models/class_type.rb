@@ -5,6 +5,7 @@ class ClassType < ActiveRecord::Base
 
   def as_json(options = {})
     {
+      id: id,
       name: name,
       note: note,
       class_groups: class_group
