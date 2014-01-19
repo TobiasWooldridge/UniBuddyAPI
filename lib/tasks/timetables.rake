@@ -146,7 +146,7 @@ namespace :timetables do
           :topic_number => topic_title_meta["Topic Number"],
           :year => meta["Year"],
           :semester => meta["Sem"],
-          #:location => meta["Location"]
+          :institution => Institution.flinders
         ).first_or_initialize
 
         topic.name = meta["Name"]
@@ -159,7 +159,6 @@ namespace :timetables do
         topic.class_contact = meta["Class Contact"]    
         topic.enrolment_opens = meta["First day to enrol"]
         topic.enrolment_closes = meta["Last day to enrol"]
-        topic.institution = Institution.flinders
 
         # Wrap up our changes to the topic here
         topic.save
