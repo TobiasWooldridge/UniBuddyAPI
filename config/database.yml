@@ -5,6 +5,7 @@ production:
   pool: 5
   username: unibuddyapi
   password: password
+  host: localhost
 
 development:
   adapter: postgresql
@@ -13,11 +14,13 @@ development:
   pool: 2
   username: unibuddyapi
   password: password
+  host: localhost
 
 test:
   adapter: postgresql
   encoding: unicode
   database: unibuddyapi_test
-  pool: 5
+  pool: 2
   username: unibuddyapi
   password: password
+  host: localhost
