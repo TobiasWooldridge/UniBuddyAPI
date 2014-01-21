@@ -6,7 +6,7 @@
 
       year = Date.today.strftime("%Y")
       logfile = File.open("log/AdelaideScraper.log","a")
-      logger = Logger.new(logfile)
+      logger = Logger.new MultiIO.new(STDOUT, logfile)
 
       logger.info "Scraping timetables for %s" % year
       @agent = Mechanize.new
@@ -385,3 +385,17 @@ def process_timetable timetable, topic
             end
           end
         end
+
+class MultiIO
+  def initialize(*targets)
+     @targets = targets
+  end
+
+  def write(*args)
+    @targets.each {|t| t.write(*args)}
+  end
+
+  def close
+    @targets.each(&:close)
+  end
+end
