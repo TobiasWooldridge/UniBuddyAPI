@@ -6,9 +6,9 @@
 
       year = Date.today.strftime("%Y")
       logfile = File.open("log/AdelaideScraper.log","a")
-      logger = Logger.new MultiIO.new(STDOUT, logfile)
+      @logger = Logger.new MultiIO.new(STDOUT, logfile)
 
-      logger.info "Scraping timetables for %s" % year
+      @logger.info "Scraping timetables for %s" % year
       @agent = Mechanize.new
 
       #scrape_timetables_from_url "https://cp.adelaide.edu.au/courses/search.asp"
@@ -41,8 +41,8 @@
             page = form.submit
             scrape_topics_on_page page
           rescue => error_two
-            logger.error "Error #{$!} while importing %s" % name
-            logger.error error.backtrace
+            @logger.error "Error #{$!} while importing %s" % name
+            @logger.error error.backtrace
           end
         end
       end
@@ -60,8 +60,8 @@
           url = topic_link['href'].to_s
           scrape_topic_page_from_url url
         rescue => error
-          logger.error "Error #{$!} while importing %s" % topic_link['href']
-          logger.error error.backtrace
+          @logger.error "Error #{$!} while importing %s" % topic_link['href']
+          @logger.error error.backtrace
         end
       end
     end
@@ -71,7 +71,7 @@
       topic_full_name_raw = (page/"div[class=\"content\"] h1:first").text.split(/ - /)
       topic_full_name = topic_full_name_raw.second.squish
 
-      logger.info "Scraping topic %s" % topic_full_name
+      @logger.info "Scraping topic %s" % topic_full_name
 
       topic_title_meta_raw = topic_full_name_raw.first
       topic_title_meta = /^(?<Subject Area>[a-z& ]+)(?<Topic Number>[0-9]+[a-z]*)$/i.match topic_title_meta_raw
@@ -84,8 +84,8 @@
       topic_meta["Topic Number"] = topic_title_meta["Topic Number"]
       topic_meta["Name"] = topic_full_name
 
-      logger.debug "Subject Area is %s" % topic_meta["Subject Area"]
-      logger.debug "Topic Number is %s" % topic_meta["Topic Number"]
+      @logger.debug "Subject Area is %s" % topic_meta["Subject Area"]
+      @logger.debug "Topic Number is %s" % topic_meta["Topic Number"]
 
   	  #Topic coordinators on a seperate page http://www.adelaide.edu.au/course-outlines/013637/1/sem-1/
   	  #The number can be found in the timetable request link
@@ -101,7 +101,7 @@
           value = (table_row/"td:first").text.squish
 
           topic_meta[label] = value
-          logger.debug "Course info table heading %s has value %s" % [label, meta[label]]
+          @logger.debug "Course info table heading %s has value %s" % [label, meta[label]]
         end
 
         meta = topic_meta.deep_dup
@@ -124,7 +124,7 @@
               value = meta_table_values[x].text.squish
             end
             meta[heading] = value
-            logger.debug "Course fees table heading %s has value %s" % [heading, meta[heading]]
+            @logger.debug "Course fees table heading %s has value %s" % [heading, meta[heading]]
           end
   		#GET THIRD TABLE
   		meta_table_dates = (page/"div[class=\"content\"] table:nth-of-type(4)")
@@ -140,12 +140,12 @@
         value = meta_table_dates_values[x].text.squish
 
         meta[heading] = value
-        logger.debug "Critical dates table heading %s has value %s" % [heading, meta[heading]]
+        @logger.debug "Critical dates table heading %s has value %s" % [heading, meta[heading]]
       end
 
       semesterTranslation = {"Term 1"=>"Term1", "Term 2"=>"Term2", "Term 3"=>"Term3", 
         "Term 4"=>"Term4","Trimester 1"=>"Tri1", "Trimester 2"=>"Tri2", "Trimester3"=> "Tri3", "Summer School"=>"NS1", "Winter School"=>"NS2", "Semester 1"=>"S1", "Semester 2"=>"S2"}
-        logger.debug "Translated semester is %s" % semesterTranslation[meta["Term"]]
+        @logger.debug "Translated semester is %s" % semesterTranslation[meta["Term"]]
         topic = Topic.where(
           :subject_area => topic_title_meta["Subject Area"].squish,
           :topic_number => topic_title_meta["Topic Number"],
@@ -193,16 +193,16 @@ def process_timetable timetable, topic
   class_group = nil
   class_type = nil
   rows.length.times do |i|
-    logger.info "Current row number being processed is: %i" % i
+    @logger.info "Current row number being processed is: %i" % i
     rowTh = (rows[i]/"th")
     rowThSplit = rowTh.text.split(": ")
             if rowTh.length == 1  #Having colspan 8 means its a new class type!
               if rowThSplit.length != 2 #If we have a heading but no actual class type skip
                 next
               end
-              logger.info "Found new class type"
+              @logger.info "Found new class type"
               classTypeName = rowThSplit[1].squish
-              logger.debug "Class type name is %s" % classTypeName
+              @logger.debug "Class type name is %s" % classTypeName
               class_type = ClassType.where(
                :topic_id => topic,
                :name => classTypeName
@@ -210,26 +210,26 @@ def process_timetable timetable, topic
 
               class_type.save
             elsif rows[i]["class"] == "trgroup"
-              logger.info "Found one of those grouping topics. Skipping..."
+              @logger.info "Found one of those grouping topics. Skipping..."
               return 
               
             elsif rows[i]["class"] == "trheader" #It's the funny header thing
                 #Maybe save names and put stuff to table with names?
-                logger.info "Found column names. Skipping..."
+                @logger.info "Found column names. Skipping..."
                 next
               elsif rows[i]["class"] =="data" and (rows[i]/"td").length == 8 #It's actual class stuff, for the first time
-                logger.info "First instance of new class data row"
+                @logger.info "First instance of new class data row"
                 cells = rows[i]/"td"
                 groupNumber = (cells[1].text.squish.match "[0-9]+")[0].to_i.to_s #to_i removes leading 0
                 classNumber = cells[0].text.squish
                 totalPlacesAvailable = cells[2].text.squish
                 placesLeft = cells[3].text.squish
                 full = (placesLeft.include?("FULL"))
-                logger.debug "Group number is: %s" % groupNumber
-                logger.debug "Class number is: %s" % classNumber
-                logger.debug "Total places available is: %s" % totalPlacesAvailable
-                logger.debug "Places left in class: %s" % placesLeft
-                logger.debug "Is this class full? %s" % full
+                @logger.debug "Group number is: %s" % groupNumber
+                @logger.debug "Class number is: %s" % classNumber
+                @logger.debug "Total places available is: %s" % totalPlacesAvailable
+                @logger.debug "Places left in class: %s" % placesLeft
+                @logger.debug "Is this class full? %s" % full
 
                 class_group = ClassGroup.where(
                   :class_type => class_type,
@@ -249,9 +249,9 @@ def process_timetable timetable, topic
                   room_name = room_details[2]
                   room_id = room_details[1]
                   room_general_location = room_details[0]
-                  logger.debug "Room name is: %s" % room_name
-                  logger.debug room_id "Room id is: %s" % room_id
-                  logger.debug "Room general location is: %s" % room_general_location
+                  @logger.debug "Room name is: %s" % room_name
+                  @logger.debug room_id "Room id is: %s" % room_id
+                  @logger.debug "Room general location is: %s" % room_general_location
 
                   #Normally join room at Flinders, but not needed here
                   #Maybe make a new room?
@@ -262,16 +262,16 @@ def process_timetable timetable, topic
                   time_starts_at = Time.parse(time_range[0].strip) - Time.now.at_beginning_of_day
                   time_ends_at = Time.parse(time_range[1].strip) - Time.now.at_beginning_of_day
 
-                  logger.debug "Class session starts at: %s" % time_starts_at
-                  logger.debug "Class session ends at: %s" %  time_ends_at
+                  @logger.debug "Class session starts at: %s" % time_starts_at
+                  @logger.debug "Class session ends at: %s" %  time_ends_at
 
                   firstDay = Date.parse(date_range[0].strip)
                   lastDay =  Date.parse(date_range[1].strip)
                   dayOfWeek = Date.parse(cells[5].text.strip).strftime('%u')
 
-                  logger.debug "First day of class session: %s" % firstDay
-                  logger.debug "Last day of class session: %s" % lastDay
-                  logger.debug "Weekday of class session: %s" % dayOfWeek
+                  @logger.debug "First day of class session: %s" % firstDay
+                  @logger.debug "Last day of class session: %s" % lastDay
+                  @logger.debug "Weekday of class session: %s" % dayOfWeek
 
                   class_session = Activity.new(
                     :class_group => class_group,
@@ -282,14 +282,14 @@ def process_timetable timetable, topic
                     :room_id => room.nil? ? nil : room.id
                     )            
                   if !class_session.new_record?
-                    logger.debug "Joining adjacent class sessions for %s %s" % [topic.name, class_type.name]
+                    @logger.debug "Joining adjacent class sessions for %s %s" % [topic.name, class_type.name]
                   end
                   class_session.time_ends_at = time_ends_at
 
                   class_session.save
               elsif (rows[i]/"td").length == 4 # The non data one but still containing values
                 cells = rows[i]/"td"
-                logger.info "Another class data row"
+                @logger.info "Another class data row"
                 date_range = cells[0].text.split(" - ")
                 time_range = cells[2].text.split("-")
 
@@ -298,9 +298,9 @@ def process_timetable timetable, topic
                 room_id = room_details[1]
                 room_general_location = room_details[0]
 
-                logger.debug "Room name is: %s" % room_name
-                logger.debug room_id "Room id is: %s" % room_id
-                logger.debug "Room general location is: %s" % room_general_location
+                @logger.debug "Room name is: %s" % room_name
+                @logger.debug room_id "Room id is: %s" % room_id
+                @logger.debug "Room general location is: %s" % room_general_location
                 #Normally join room at Flinders, but not needed here
                 #Maybe make a new room?
 
@@ -311,16 +311,16 @@ def process_timetable timetable, topic
                 time_starts_at = Time.parse(time_range[0].strip) - Time.now.at_beginning_of_day
                 time_ends_at = Time.parse(time_range[1].strip) - Time.now.at_beginning_of_day
 
-                logger.debug "Class session starts at: %s" % time_starts_at
-                logger.debug "Class session ends at: %s" %  time_ends_at
+                @logger.debug "Class session starts at: %s" % time_starts_at
+                @logger.debug "Class session ends at: %s" %  time_ends_at
 
                 firstDay = Date.parse(date_range[0].strip)
                 lastDay = Date.parse(date_range[1].strip)
                 dayOfWeek = Date.parse(cells[1].text.strip).strftime('%u')
 
-                logger.debug "First day of class session: %s" % firstDay
-                logger.debug "Last day of class session: %s" % lastDay
-                logger.debug "Weekday of class session: %s" % dayOfWeek
+                @logger.debug "First day of class session: %s" % firstDay
+                @logger.debug "Last day of class session: %s" % lastDay
+                @logger.debug "Weekday of class session: %s" % dayOfWeek
 
                 #Gets old class time to see if starts at is ends at
                 class_session = Activity.where(
@@ -343,7 +343,7 @@ def process_timetable timetable, topic
                 #What if sessions are not new but not adjacent?
                 #E.g. https://cp.adelaide.edu.au/courses/details.asp?year=2014&course=104229+1+3410+1
                 if !class_session.new_record?
-                  logger.debug "Joining adjacent class sessions for %s %s" % [topic.name, class_type.name]
+                  @logger.debug "Joining adjacent class sessions for %s %s" % [topic.name, class_type.name]
                 end
                 class_session.time_ends_at = time_ends_at
 
@@ -353,18 +353,18 @@ def process_timetable timetable, topic
               #And access from there
 
             elsif (rows[i]/"td").length == 5
-              logger.info "Found a class with no details available"
+              @logger.info "Found a class with no details available"
               cells = rows[i]/"td"
               groupNumber = (cells[1].text.squish.match "[0-9]+")[0].to_i.to_s #to_i removes leading 0
               classNumber = cells[0].text.squish
               totalPlacesAvailable = cells[2].text.squish
               placesLeft = cells[3].text.squish
               full = (placesLeft.include?("FULL"))
-              logger.debug "Group number is: %s" % groupNumber
-              logger.debug "Class number is: %s" % classNumber
-              logger.debug "Total places available is: %s" % totalPlacesAvailable
-              logger.debug "Places left in class: %s" % placesLeft
-              logger.debug "Is this class full? %s" % full
+              @logger.debug "Group number is: %s" % groupNumber
+              @logger.debug "Class number is: %s" % classNumber
+              @logger.debug "Total places available is: %s" % totalPlacesAvailable
+              @logger.debug "Places left in class: %s" % placesLeft
+              @logger.debug "Is this class full? %s" % full
               class_group = ClassGroup.where(
                 :class_type => class_type,
                   :group_number => groupNumber #Of the form LE01, TU01 etc... bad? originally a number
@@ -375,12 +375,12 @@ def process_timetable timetable, topic
                   class_group.full = full
 
                 elsif (rows[i]/"td").length == 1
-                  logger.info "Found a notes section"
+                  @logger.info "Found a notes section"
                   class_type.note = cells[0].text  
                   class_type.save
                 else
-                  logger.warn "Found an unknown type of row"
-                  logger.warn row[i]
+                  @logger.warn "Found an unknown type of row"
+                  @logger.warn row[i]
               end
             end
           end
