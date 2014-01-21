@@ -220,7 +220,7 @@ def process_timetable timetable, topic
               elsif rows[i]["class"] =="data" and (rows[i]/"td").length == 8 #It's actual class stuff, for the first time
                 logger.info "First instance of new class data row"
                 cells = rows[i]/"td"
-                groupNumber = cells[1].text.squish
+                groupNumber = (cells[1].text.squish.match "[0-9]+")[0].to_i.to_s #to_i removes leading 0
                 classNumber = cells[0].text.squish
                 totalPlacesAvailable = cells[2].text.squish
                 placesLeft = cells[3].text.squish
@@ -355,7 +355,7 @@ def process_timetable timetable, topic
             elsif (rows[i]/"td").length == 5
               logger.info "Found a class with no details available"
               cells = rows[i]/"td"
-              groupNumber = cells[1].text.squish
+              groupNumber = (cells[1].text.squish.match "[0-9]+")[0].to_i.to_s #to_i removes leading 0
               classNumber = cells[0].text.squish
               totalPlacesAvailable = cells[2].text.squish
               placesLeft = cells[3].text.squish
