@@ -250,7 +250,7 @@ def process_timetable timetable, topic
                   room_id = room_details[1]
                   room_general_location = room_details[0]
                   @logger.debug "Room name is: %s" % room_name
-                  @logger.debug room_id "Room id is: %s" % room_id
+                  @logger.debug "Room id is: %s" % room_id
                   @logger.debug "Room general location is: %s" % room_general_location
 
                   #Normally join room at Flinders, but not needed here
@@ -299,7 +299,7 @@ def process_timetable timetable, topic
                 room_general_location = room_details[0]
 
                 @logger.debug "Room name is: %s" % room_name
-                @logger.debug room_id "Room id is: %s" % room_id
+                @logger.debug "Room id is: %s" % room_id
                 @logger.debug "Room general location is: %s" % room_general_location
                 #Normally join room at Flinders, but not needed here
                 #Maybe make a new room?
