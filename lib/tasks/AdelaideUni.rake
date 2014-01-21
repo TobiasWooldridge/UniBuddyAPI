@@ -11,10 +11,11 @@
       @logger.info "Scraping timetables for %s" % year
       @agent = Mechanize.new
 
-      #scrape_timetables_from_url "https://cp.adelaide.edu.au/courses/search.asp"
-      page = @agent.get("https://access.adelaide.edu.au/courses/details.asp?year=2014&course=107281+1+3410+1")
-      
-      process_timetable page/"div[id=\"hidedata04_1\"] >table:first", "faketopic"
+      scrape_timetables_from_url "https://cp.adelaide.edu.au/courses/search.asp"
+      #Fix this topics locations from being blank (by getting room from note below it)
+      #For some reason nogokiri does not grab the note tr...
+      #page = @agent.get("https://access.adelaide.edu.au/courses/details.asp?year=2014&course=107281+1+3410+1")
+      #process_timetable page/"div[id=\"hidedata04_1\"] >table:first", "faketopic"
     end
 
     private
@@ -101,7 +102,7 @@
           value = (table_row/"td:first").text.squish
 
           topic_meta[label] = value
-          @logger.debug "Course info table heading %s has value %s" % [label, meta[label]]
+          @logger.debug "Course info table heading %s has value %s" % [label, topic_meta[label]]
         end
 
         meta = topic_meta.deep_dup
