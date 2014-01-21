@@ -1,6 +1,9 @@
 FlindersAPI2::Application.routes.draw do
   namespace :api do
     namespace :v2 do
+      get "/uni" => "institutions#index"
+      get "/uni/:inst_code" => "institutions#show"
+
       get "/uni/:inst_code/subjects" => "topics#subject_areas"
       get "/uni/:inst_code/topics" => "topics#index"
       get "/uni/:inst_code/topics/:topic_id" => "topics#show"
