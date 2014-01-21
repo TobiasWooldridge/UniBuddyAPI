@@ -221,7 +221,14 @@ def process_timetable timetable, topic
               elsif rows[i]["class"] =="data" and (rows[i]/"td").length == 8 #It's actual class stuff, for the first time
                 @logger.info "First instance of new class data row"
                 cells = rows[i]/"td"
-                groupNumber = (cells[1].text.squish.match "[0-9]+")[0].to_i.to_s #to_i removes leading 0
+                groupNumber = nil
+                groupNumber_raw = (cells[1].text.squish.match "[0-9]+")
+                if !(groupNumber_raw == nil)
+                  groupNumber = groupNumber_raw[0].to_i.to_s
+                else
+                  groupNumber = cells[1].text.squish.slice(2..cells[1].text.length).hash
+                  @logger.debug "No number in groupNumber... Hash of %s used instead #YOLO" % groupNumber
+                end
                 classNumber = cells[0].text.squish
                 totalPlacesAvailable = cells[2].text.squish
                 placesLeft = cells[3].text.squish
@@ -356,7 +363,15 @@ def process_timetable timetable, topic
             elsif (rows[i]/"td").length == 5
               @logger.info "Found a class with no details available"
               cells = rows[i]/"td"
-              groupNumber = (cells[1].text.squish.match "[0-9]+")[0].to_i.to_s #to_i removes leading 0
+              groupNumber = nil
+              groupNumber_raw = (cells[1].text.squish.match "[0-9]+")
+              if !(groupNumber_raw == nil)
+                groupNumber = groupNumber_raw[0].to_i.to_s
+              else
+                groupNumber = cells[1].text.squish.slice(2..cells[1].text.length).hash
+                @logger.debug "No number in groupNumber... Hash of %s used instead #YOLO" % groupNumber
+              end
+               #to_i removes leading 0
               classNumber = cells[0].text.squish
               totalPlacesAvailable = cells[2].text.squish
               placesLeft = cells[3].text.squish
