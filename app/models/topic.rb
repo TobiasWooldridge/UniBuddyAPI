@@ -1,10 +1,12 @@
 class Topic < BaseModel
   has_many :class_types, :dependent => :destroy
+  has_many :synced_selections, :dependent => :destroy
 
   belongs_to :institution
 
   before_create :update_topic_codes
   before_save :update_topic_codes
+
 
   def as_json(options = {})
 		{
@@ -29,7 +31,8 @@ class Topic < BaseModel
 			updated_at: updated_at,
 			enrolment_closes: enrolment_closes,
 			code: code,
-			classes: class_types
+			classes: class_types,
+      institution: institution.to_h_light
 		}
   end
 

@@ -23,6 +23,11 @@ class BaseModel < ActiveRecord::Base
   end
 
   def self.for_institution(inst_code)
+    # Do nothing if inst_code is empty
+    if inst_code.nil?
+      return self
+    end
+
     institution = Institution.select(:id).where(:code => inst_code).first
 
     # Make sure the institution exists
