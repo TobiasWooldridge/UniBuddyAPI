@@ -129,7 +129,7 @@ module Scraper
       topic = Topic.where(
           :subject_area => topic_title_meta["Subject Area"].squish,
           :topic_number => topic_title_meta["Topic Number"],
-          :year => meta["Year"],
+          :year => meta["Year"].strip.to_i,
           :semester => semesterTranslation[meta["Term"]],
       # :location => meta["Campus"]
       ).first_or_initialize
