@@ -1,6 +1,8 @@
 class Institution < BaseModel
   has_many :buildings, :dependent => :destroy
 
+  has_many :institution_semesters, :dependent => :destroy
+
   def as_json(options = {})
     to_h
   end
@@ -14,7 +16,7 @@ class Institution < BaseModel
       state: state,
       features: {
           timetables: {
-              semesters: semesters_with_timetables.pluck_h(:year, :semester)
+              semesters: institution_semesters.pluck_h(:year, :code, :name)
           }
       }
     }
@@ -30,10 +32,28 @@ class Institution < BaseModel
   end
 
   def semesters_with_timetables()
-    Topic.select("topic_year, topic_semester")
+    Topic.select(:year, :semester)
          .where(:institution_id => id)
          .group(:year, :semester)
          .order("year DESC, semester ASC")
+  end
+
+
+  def populate_semesters()
+    semesters = Topic.select(:year, :semester)
+        .where(:institution_id => id)
+        .group(:year, :semester)
+        .order("year DESC, semester ASC")
+
+    semesters.each do |semester|
+      is = InstitutionSemester.where(:institution_id => id, :year => semester.year, :code => semester.semester).first_or_create
+
+      if (is.name.nil?)
+        is.attempt_to_populate_name
+      end
+
+      is.save
+    end
   end
 
   class << self
