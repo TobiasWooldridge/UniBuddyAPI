@@ -160,7 +160,7 @@ module Scraper
 
       #        verb = topic.new_record? ? "Saving" : "Updating"
       #        puts "%s topic %s (%s %s) (%s)" % [verb, topic.code, topic.year, topic.semester, topic.name]
-
+    end
 
       def process_timetable timetable, topic
         rows = timetable/"tr"
@@ -400,4 +400,3 @@ module Scraper
     end
 
   end
-end
