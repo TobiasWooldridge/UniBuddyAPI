@@ -4,7 +4,7 @@ namespace :institution do
   end
 
 
-  task :populate_semesters, [:code] => :environment do |t, args|
+  task :populate_semesters, [:code, :headless] => :environment do |t, args|
     populated_institution_semesters = []
 
     if (args[:code].nil?)
@@ -22,13 +22,16 @@ namespace :institution do
     end
 
 
-    populated_institution_semesters.each do |semester|
-      print "%s\t%s\t%s\t%s\n" % [semester.institution.code, semester.year, semester.code, semester.name || "Unknown semester name"]
 
-      if (semester.name.nil?)
-        print "What do you want to call this semester? "
-        semester.name = $stdin.gets.strip
-        semester.save
+    if args[:headless].nil?
+      populated_institution_semesters.each do |semester|
+        print "%s\t%s\t%s\t%s\n" % [semester.institution.code, semester.year, semester.code, semester.name || "Unknown semester name"]
+
+        if (semester.name.nil?)
+          print "What do you want to call this semester? "
+          semester.name = $stdin.gets.strip
+          semester.save
+        end
       end
     end
   end
