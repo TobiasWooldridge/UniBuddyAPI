@@ -12,12 +12,10 @@
       @agent = Mechanize.new
 
       scrape_timetables_from_url "https://cp.adelaide.edu.au/courses/search.asp"
-      #Fix this topics locations from being blank (by getting room from note below it)
+      #Fix topics locations from being blank (by getting room from note below it)
       #For some reason nogokiri does not grab the note tr...
-      #page = @agent.get("https://access.adelaide.edu.au/courses/details.asp?year=2014&course=107281+1+3410+1")
+      #page = @agent.get("https://access.adelaide.edu.au/courses/details.asp?year=2014&course=105439+1+3410+1")
       #process_timetable page/"div[id=\"hidedata04_1\"] >table:first", "faketopic"
-
-      #Expand max topic number length from 8 to say 15, to cope with topics like 10000BUSNA
     end
 
     private
@@ -253,7 +251,7 @@ def process_timetable timetable, topic
 
                   # Create new Activity
                   date_range = cells[4].text.split(" - ")
-                  time_range = cells[6].text.split("-")
+                  time_range = cells[6].text.split(" - ")
 
                   room_details = cells[7].text.squish.split(', ')
                   room_name = room_details[2]
@@ -403,6 +401,10 @@ def process_timetable timetable, topic
                   class_group.full = full
 
                 elsif (rows[i]/"td").length == 1
+                  if i == 0
+                    @logger.warn "Conflicting auto enrollment sections found..."
+                    next
+                  end
                   @logger.info "Found a notes section"
                   class_type.note = cells[0].text  
                   class_type.save
