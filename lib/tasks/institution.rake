@@ -28,7 +28,7 @@ namespace :institution do
 
       if (semester.name.nil?)
         print "What do you want to call this semester? "
-        semester.name = $stdin.gets
+        semester.name = $stdin.gets.strip
         semester.save
       end
     end
