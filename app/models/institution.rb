@@ -55,6 +55,10 @@ class Institution < BaseModel
         .order("year DESC, semester ASC")
 
     semesters.each do |semester|
+      if semester.year.nil? or semester.semester.nil?
+        next
+      end
+
       is = InstitutionSemester.where(:institution_id => id, :year => semester.year, :code => semester.semester).first_or_create
 
       if (is.name.nil?)
