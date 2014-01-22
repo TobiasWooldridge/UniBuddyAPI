@@ -25,6 +25,9 @@ namespace :institution do
 
     if args[:headless].nil?
       populated_institution_semesters.each do |semester|
+        semester.attempt_to_populate_name
+        semester.reload
+
         print "%s\t%s\t%s\t%s\n" % [semester.institution.code, semester.year, semester.code, semester.name || "Unknown semester name"]
 
         if (semester.name.nil?)

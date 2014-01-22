@@ -324,7 +324,7 @@ module Scraper
               :time_ends_at => time_starts_at,
               :room_id => room.nil? ? nil : room.id
           ).first
-          
+
           # Otherwise not adjacent and no joining
           class_session = class_session || Activity.new(
               :class_group => class_group,
