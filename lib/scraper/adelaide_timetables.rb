@@ -1,6 +1,7 @@
 module Scraper
   module AdelaideTimetables
     def get_timetable_form page
+      @year = (page/'li[id="current"] a').text.match('[0-9]+')[0].to_i
       page.form_with(:action => /search\.asp/)
     end
 
@@ -129,7 +130,7 @@ module Scraper
       topic = Topic.where(
           :subject_area => topic_title_meta["Subject Area"].squish,
           :topic_number => topic_title_meta["Topic Number"],
-          :year => meta["Year"].strip.to_i,
+          :year => @year,
           :semester => semesterTranslation[meta["Term"]],
       # :location => meta["Campus"]
       ).first_or_initialize
