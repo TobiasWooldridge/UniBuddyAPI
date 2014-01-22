@@ -1,21 +1,5 @@
-namespace :timetables do
-  desc "Update class timetables from the Flinders website"
-
-  task :update, [:year, :subject_area]  => :environment do |t, args|
-    desc "Update"
-
-    args.with_defaults(:year => Date.today.strftime("%Y"), :subject_area => nil)
-
-    puts "Scraping timetables for %s (subject area: %s)" % [args.year, args.subject_area || "all subject areas"]
-
-    @agent = Mechanize.new
-
-    scrape_timetables_from_url "http://stusyswww.flinders.edu.au/timetable.taf", args.year, args.subject_area
-  end
-
-  private
-    agent = nil
-
+module Scraper
+  module FlindersTimetables
 
     def get_timetable_form page
       page.form_with(:action => /timetable\.taf/)
@@ -59,12 +43,12 @@ namespace :timetables do
             page = pagination_form.submit
             scrape_topics_on_page page
           rescue => error
-              begin
-                page = pagination_form.submit
-                scrape_topics_on_page page
-              rescue => error_two
-                puts "Failed to scrape %s" % name
-              end
+            begin
+              page = pagination_form.submit
+              scrape_topics_on_page page
+            rescue => error_two
+              puts "Failed to scrape %s" % name
+            end
           end
 
 
@@ -142,11 +126,11 @@ namespace :timetables do
         end
 
         topic = Topic.where(
-          :subject_area => topic_title_meta["Subject Area"],
-          :topic_number => topic_title_meta["Topic Number"],
-          :year => meta["Year"],
-          :semester => meta["Sem"],
-          :institution => Institution.flinders
+            :subject_area => topic_title_meta["Subject Area"],
+            :topic_number => topic_title_meta["Topic Number"],
+            :year => meta["Year"],
+            :semester => meta["Sem"],
+            :institution => Institution.flinders
         ).first_or_initialize
 
         topic.name = meta["Name"]
@@ -155,8 +139,8 @@ namespace :timetables do
         topic.description = meta["Topic Description"]
         topic.learning_outcomes = meta["Expected Learning Outcomes"]
         topic.assumed_knowledge = meta["Assumed Knowledge"]
-        topic.assessment = meta["Assessment"]      
-        topic.class_contact = meta["Class Contact"]    
+        topic.assessment = meta["Assessment"]
+        topic.class_contact = meta["Class Contact"]
         topic.enrolment_opens = meta["First day to enrol"]
         topic.enrolment_closes = meta["Last day to enrol"]
 
@@ -183,8 +167,8 @@ namespace :timetables do
         # Create new ClassType
         if cells.length == 2
           class_type = ClassType.where(
-            :topic => topic,
-            :name => cells[0].text.squish
+              :topic => topic,
+              :name => cells[0].text.squish
           ).first_or_initialize
 
           class_type.note = cells[1].text.squish
@@ -193,8 +177,8 @@ namespace :timetables do
           # Create new ClassGroup
           if cells.length == 6
             class_group = ClassGroup.where(
-              :class_type => class_type,
-              :group_number => (cells[0].text.scan /\(([0-9]+)\)/)[0][0]
+                :class_type => class_type,
+                :group_number => (cells[0].text.scan /\(([0-9]+)\)/)[0][0]
             ).first_or_initialize
             Activity.where(:class_group => class_group).delete_all
 
@@ -221,22 +205,22 @@ namespace :timetables do
 
           # Get the immediate previous activity for this topic if it exists so we can just join them
           class_session = Activity.where(
-            :class_group => class_group,
-            :first_day => Date.parse(date_range[0].strip),
-            :last_day => Date.parse(date_range[1].strip),
-            :day_of_week => Date.parse(cells[1].text.strip).strftime('%u'),
-            :time_ends_at => [time_starts_at, time_starts_at - 10.minutes],
-            :room_id => room.nil? ? nil : room.id
+              :class_group => class_group,
+              :first_day => Date.parse(date_range[0].strip),
+              :last_day => Date.parse(date_range[1].strip),
+              :day_of_week => Date.parse(cells[1].text.strip).strftime('%u'),
+              :time_ends_at => [time_starts_at, time_starts_at - 10.minutes],
+              :room_id => room.nil? ? nil : room.id
           ).first
 
           # Otherwise create a new one
           class_session = class_session || Activity.new(
-            :class_group => class_group,
-            :first_day => Date.parse(date_range[0].strip),
-            :last_day => Date.parse(date_range[1].strip),
-            :day_of_week => Date.parse(cells[1].text.strip).strftime('%u'),
-            :time_starts_at => time_starts_at,
-            :room_id => room.nil? ? nil : room.id
+              :class_group => class_group,
+              :first_day => Date.parse(date_range[0].strip),
+              :last_day => Date.parse(date_range[1].strip),
+              :day_of_week => Date.parse(cells[1].text.strip).strftime('%u'),
+              :time_starts_at => time_starts_at,
+              :room_id => room.nil? ? nil : room.id
           )
 
           if !class_session.new_record?
@@ -250,4 +234,5 @@ namespace :timetables do
       end
     end
 
+  end
 end

@@ -32,7 +32,6 @@ namespace :dates do
         end
 
 
-
         contentBoxes.each_with_index do |c, index|
           contentText = c.text.gsub(/[[:space:]]/, ' ').strip
 
@@ -61,5 +60,5 @@ namespace :dates do
 
   end
   private
-    agent = nil
+  agent = nil
 end

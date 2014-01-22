@@ -21,9 +21,9 @@ namespace :rss do
       doc.css("abbr.unapi-id").remove
 
       doc.css('p').find_all.each do |p|
-          if p.content.blank?
-            p.remove 
-          end
+        if p.content.blank?
+          p.remove
+        end
       end
 
 

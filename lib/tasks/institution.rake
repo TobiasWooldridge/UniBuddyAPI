@@ -1,5 +1,5 @@
 namespace :institution do
-  task :create, [:name, :nickname, :country, :state, :code]  => :environment do |t, args|
+  task :create, [:name, :nickname, :country, :state, :code] => :environment do |t, args|
     Institution.create(:name => args[:name], :nickname => args[:nickname], :country => args[:country], :state => args[:state], :code => args[:code])
   end
 
@@ -20,7 +20,6 @@ namespace :institution do
 
       populated_institution_semesters.concat(institution.institution_semesters)
     end
-
 
 
     populated_institution_semesters.each do |semester|
