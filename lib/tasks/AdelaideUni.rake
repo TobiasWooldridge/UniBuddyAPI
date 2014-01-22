@@ -16,6 +16,8 @@
       #For some reason nogokiri does not grab the note tr...
       #page = @agent.get("https://access.adelaide.edu.au/courses/details.asp?year=2014&course=107281+1+3410+1")
       #process_timetable page/"div[id=\"hidedata04_1\"] >table:first", "faketopic"
+
+      #Expand max topic number length from 8 to say 15, to cope with topics like 10000BUSNA
     end
 
     private
@@ -69,13 +71,13 @@
 
     def scrape_topic_page_from_url url
       page = @agent.get(url)
-      topic_full_name_raw = (page/"div[class=\"content\"] h1:first").text.split(/ - /)
+      topic_full_name_raw = (page/"div[class=\"content\"] h1:first").text.split(/ - /, 2)
       topic_full_name = topic_full_name_raw.second.squish
 
       @logger.info "Scraping topic %s" % topic_full_name
 
       topic_title_meta_raw = topic_full_name_raw.first
-      topic_title_meta = /^(?<Subject Area>[a-z& ]+)(?<Topic Number>[0-9]+[a-z]*)$/i.match topic_title_meta_raw
+      topic_title_meta = /^(?<Subject Area>[a-z& ]+)(?<Topic Number>[0-9]+[a-z&]*)$/i.match topic_title_meta_raw
 
       topic_meta_table_rows = page/"div[id=\"hidedata01_1\"] > table > tr"
 
@@ -267,8 +269,13 @@ def process_timetable timetable, topic
                     room = Room.joins(:building).where("buildings.name = ? AND rooms.code = ?", room_general_location, room_id).first_or_initialize
                   end
 
-                  time_starts_at = Time.parse(time_range[0].strip) - Time.now.at_beginning_of_day
-                  time_ends_at = Time.parse(time_range[1].strip) - Time.now.at_beginning_of_day
+                  if (time_range.length == 2)
+                    time_starts_at = Time.parse(time_range[0].strip) - Time.now.at_beginning_of_day
+                    time_ends_at = Time.parse(time_range[1].strip) - Time.now.at_beginning_of_day
+                  else
+                    time_starts_at = nil
+                    time_ends_at = nil
+                  end
 
                   @logger.debug "Class session starts at: %s" % time_starts_at
                   @logger.debug "Class session ends at: %s" %  time_ends_at
@@ -316,8 +323,13 @@ def process_timetable timetable, topic
                   room = Room.joins(:building).where("buildings.name = ? AND rooms.code = ?", room_general_location, room_id).first_or_initialize
                 end
 
-                time_starts_at = Time.parse(time_range[0].strip) - Time.now.at_beginning_of_day
-                time_ends_at = Time.parse(time_range[1].strip) - Time.now.at_beginning_of_day
+                if (time_range.length == 2)
+                  time_starts_at = Time.parse(time_range[0].strip) - Time.now.at_beginning_of_day
+                  time_ends_at = Time.parse(time_range[1].strip) - Time.now.at_beginning_of_day
+                else
+                  time_starts_at = nil
+                  time_ends_at = nil
+                end
 
                 @logger.debug "Class session starts at: %s" % time_starts_at
                 @logger.debug "Class session ends at: %s" %  time_ends_at
