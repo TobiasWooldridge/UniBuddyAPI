@@ -14,10 +14,8 @@ class Institution < BaseModel
       nickname: nickname,
       country: country,
       state: state,
-      features: {
-          timetables: {
-              semesters: institution_semesters.pluck_h(:year, :code, :name)
-          }
+      resources: {
+        timetable_semesters: semesters_by_year
       }
     }
   end
@@ -31,11 +29,22 @@ class Institution < BaseModel
     }
   end
 
-  def semesters_with_timetables()
-    Topic.select(:year, :semester)
-         .where(:institution_id => id)
-         .group(:year, :semester)
-         .order("year DESC, semester ASC")
+  def semesters_by_year()
+    years_h = {}
+
+    institution_semesters.each do |is|
+      year = years_h[is.year]
+
+      if (year.nil?)
+        year = []
+
+        years_h[is.year] = year
+      end
+
+      year.push({ :code => is.code, :name => is.name })
+    end
+
+    return years_h
   end
 
 

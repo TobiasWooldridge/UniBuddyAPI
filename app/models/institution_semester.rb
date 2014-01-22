@@ -6,6 +6,7 @@ class InstitutionSemester < BaseModel
     similar_semester = InstitutionSemester.where(:code => code).where("institution_semesters.name IS NOT NULL").first
 
     if (!similar_semester.nil?)
+      p "Found similar semester for code %s" % code
       name = similar_semester.name
     end
   end
