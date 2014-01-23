@@ -5,36 +5,24 @@ namespace :institution do
 
 
   task :populate_semesters, [:code, :headless] => :environment do |t, args|
-    populated_institution_semesters = []
-
-    if (args[:code].nil?)
-      Institution.all.each do |institution|
-        institution.populate_semesters
-
-        populated_institution_semesters.concat(institution.institution_semesters)
-      end
-    else
-      institution = Institution.where(:code => args[:code]).first
-
-      institution.populate_semesters
-
-      populated_institution_semesters.concat(institution.institution_semesters)
-    end
-
-
+    semesters = InstitutionSemester.where("name IS NULL")
 
     if args[:headless].nil?
-      populated_institution_semesters.each do |semester|
-        semester.attempt_to_populate_name
-        semester.reload
+      semesters.each do |semester|
+        print "%s\t%s\t%s\n" % [semester.institution.code, semester.year, semester.code]
 
-        print "%s\t%s\t%s\t%s\n" % [semester.institution.code, semester.year, semester.code, semester.name || "Unknown semester name"]
+        semester.name = InstitutionSemester.code_to_name(semester.code)
 
         if (semester.name.nil?)
-          print "What do you want to call this semester? "
+          p InstitutionSemester.code_to_name(semester.code)
+          print "\tWhat do you want to call this semester? "
           semester.name = $stdin.gets.strip.titlecase
-          semester.save
+        else
+          print "\tRecycled name %s\n" % semester.name
+
         end
+
+        semester.save
       end
     end
   end

@@ -1,13 +1,11 @@
 class InstitutionSemester < BaseModel
   belongs_to :institution
 
-  def attempt_to_populate_name()
-    # look for an institution_semester with a similar semester code e.g. 'S1'
-    similar_semester = InstitutionSemester.where(:code => code).where("institution_semesters.name IS NOT NULL").first
+  # This could probably be reimplemented with a more normalised database design, but I don't know how I feel about that
+  # complexity for a table with like 12 records
+  def self.code_to_name(code)
+    is = InstitutionSemester.where(:code => code).where("institution_semesters.name IS NOT NULL").first
 
-    if (!similar_semester.nil?)
-      p "Found similar semester for code %s" % code
-      name = similar_semester.name
-    end
+    is.name || nil
   end
 end
