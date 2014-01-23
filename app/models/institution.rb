@@ -32,7 +32,7 @@ class Institution < BaseModel
   def semesters_by_year()
     years_h = {}
 
-    institution_semesters.each do |is|
+    InstitutionSemester.where(:institution_id => id).order("sort_order ASC, name ASC").each do |is|
       year = years_h[is.year]
 
       if (year.nil?)
