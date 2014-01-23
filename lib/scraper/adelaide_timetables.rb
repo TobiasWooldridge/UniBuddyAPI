@@ -135,6 +135,8 @@ module Scraper
       # :location => meta["Campus"]
       ).first_or_initialize
 
+      @logger.debug "Is this a new record? %s" % topic.new_record?
+
       topic.name = meta["Name"]
       topic.units = meta["Units"]
       # Have to code seperate method to get
