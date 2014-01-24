@@ -209,8 +209,10 @@ module Scraper
         # Topic requiring sync_selections_id to be non-nil as if you pick
         # Lecture 01, you get Tute01 and Prac01 as well
         elsif rows[i]["class"] == "trgroup"
-          @logger.info "Found one of those grouping topics. Assuming all should be grouped by class number..."
-          sync_selection = SelectionSync.new
+          if sync_selection == nil
+            @logger.info "Found one of those grouping topics. Assuming all classes should be grouped by class number..."
+            sync_selection = SelectionSync.new
+          end
 
         # It's the colum descriptions, and we can skip them
         elsif rows[i]["class"] == "trheader" 
