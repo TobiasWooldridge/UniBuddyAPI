@@ -136,26 +136,19 @@ module Scraper
       #Translate from Adelaide Uni Semester to semesters as in DB
       semesterTranslation = {"Term 1" => "Term1", "Term 2" => "Term2", "Term 3" => "Term3",
        "Term 4" => "Term4", "Trimester 1" => "Tri1", "Trimester 2" => "Tri2", "Trimester3" => "Tri3", "Summer School" => "NS1", "Winter School" => "NS2", "Semester 1" => "S1", "Semester 2" => "S2"}
-       @logger.debug "Translated semester is %s" % semesterTranslation[meta["Term"]]
-       topic = Topic.where(
-        :subject_area => meta["Subject Area"].squish,
-        :topic_number => meta["Topic Number"],
-        :year => @year,
-        :semester => semesterTranslation[meta["Term"]],
+      @logger.debug "Translated semester is %s" % semesterTranslation[meta["Term"]]
+      topic = Topic.where(
+       :subject_area => meta["Subject Area"].squish,
+       :topic_number => meta["Topic Number"],
+       :year => @year,
+       :semester => semesterTranslation[meta["Term"]],
       # :location => meta["Campus"]
       ).first_or_initialize
 
-       @logger.debug "Is this a new record? %s" % topic.new_record?
+      @logger.debug "Is this a new record? %s" % topic.new_record?
 
-       topic.name = meta["Name"]
-       topic.units = meta["Units"]
-
-      # Not implemented yet, and currently unused
-      # topic.coordinator = meta["Coordinator"]
-
-      # Not available for Adelaide topics
-      # topic.enrolment_opens = meta["First day to enrol"]
-
+      topic.name = meta["Name"]
+      topic.units = meta["Units"]
       topic.description = meta["Syllabus"]
       topic.assumed_knowledge = meta["Assumed Knowledge"]
       topic.assessment = meta["Assessment"]
@@ -247,7 +240,7 @@ module Scraper
 
           class_group = ClassGroup.where(
             :class_type => class_type,
-              :group_number => groupNumber # Of the form LE01, TU01 etc... bad? originally a number
+              :group_number => groupNumber
               ).first_or_initialize
           Activity.where(:class_group => class_group).delete_all
           class_group.note = placesLeft
@@ -255,7 +248,6 @@ module Scraper
          
           # Enrolment opening info not available from Adelaide, so we will just settle
           # for if the class is full or not
-          # class_group.full = full && Time.now > topic.enrolment_opens
           class_group.full = full
 
           date_range = cells[4].text.split(" - ")
@@ -289,7 +281,7 @@ module Scraper
           firstDay = Date.parse(date_range[0].strip)
           lastDay = Date.parse(date_range[1].strip)
 
-          #If we have a valid day in the day cell of the table
+          # If we have a valid day in the day cell of the table
           if !(cells[5].text == "")
             dayOfWeek = Date.parse(cells[5].text.strip).strftime('%u')
           else
@@ -315,7 +307,8 @@ module Scraper
           class_session.time_ends_at = time_ends_at
 
           class_session.save
-        elsif (rows[i]/"td").length == 4 # The non data one but still containing values
+          # Another class row, that is not the first one
+        elsif (rows[i]/"td").length == 4 
           cells = rows[i]/"td"
           @logger.info "Another class data row"
           date_range = cells[0].text.split(" - ")
@@ -417,13 +410,12 @@ module Scraper
 
           class_group = ClassGroup.where(
             :class_type => class_type,
-              :group_number => groupNumber # Of the form LE01, TU01 etc... bad? originally a number
+              :group_number => groupNumber
               ).first_or_initialize
           Activity.where(:class_group => class_group).delete_all
           class_group.synced_selections_id = sync_selection
 
           # Not available from Adelaide data. Just going with full
-          # class_group.full = full && Time.now > topic.enrolment_opens
           class_group.full = full
 
         # Adelaide Uni problem with Autoenrolment
