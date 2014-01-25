@@ -1,8 +1,6 @@
 class ClassGroup < ActiveRecord::Base
   belongs_to :class_type
 
-  belongs_to :synced_selection
-
   has_many :activities, :dependent => :destroy
 
   def as_json(options = {})
