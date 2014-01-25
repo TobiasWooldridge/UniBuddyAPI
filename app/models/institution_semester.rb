@@ -6,7 +6,7 @@ class InstitutionSemester < BaseModel
   def self.code_to_name(code)
     is = InstitutionSemester.where(:code => code).where("institution_semesters.name IS NOT NULL").first
 
-    if is.nil? || is.name.nil?
+    if is.nil?
       return nil
     else
       return is.name

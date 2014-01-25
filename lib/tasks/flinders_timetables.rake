@@ -20,7 +20,4 @@ namespace :flinders_timetables do
 
   private
   agent = nil
-
-
-
 end
