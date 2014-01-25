@@ -204,7 +204,9 @@ module Scraper
         elsif rows[i]["class"] == "trgroup"
           if sync_selection == nil
             @logger.info "Found one of those grouping topics. Assuming all classes should be grouped by class number..."
-            sync_selection = SelectionSync.new
+            sync_selection = SelectionSync.new(
+              :topic => topic)
+            sync_selection.save
           end
 
         # It's the colum descriptions, and we can skip them
@@ -236,7 +238,7 @@ module Scraper
           @logger.debug "Total places available is: %s" % totalPlacesAvailable
           @logger.debug "Places left in class: %s" % placesLeft
           @logger.debug "Is this class full? %s" % full
-          @logger.debug "Should sync? %s" % sync_selection
+          @logger.debug "Selection sync object: %s" % sync_selection
 
           class_group = ClassGroup.where(
             :class_type => class_type,
@@ -406,7 +408,7 @@ module Scraper
           @logger.debug "Total places available is: %s" % totalPlacesAvailable
           @logger.debug "Places left in class: %s" % placesLeft
           @logger.debug "Is this class full? %s" % full
-          @logger.debug "Should sync? %s" % sync_selection
+          @logger.debug "Selection sync object: %s" % sync_selection
 
           class_group = ClassGroup.where(
             :class_type => class_type,
