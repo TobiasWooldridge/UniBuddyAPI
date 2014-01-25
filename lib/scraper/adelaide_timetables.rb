@@ -1,16 +1,19 @@
 module Scraper
   module AdelaideTimetables
     def get_timetable_form page
+      # Getting the year from the table heading
       @year = (page/'li[id="current"] a').text.match('[0-9]+')[0].to_i
+
       page.form_with(:action => /search\.asp/)
     end
 
     def scrape_timetables_from_url url
       page = @agent.get url
       form = get_timetable_form page
+      
       subject_area_widget = form.field_with(:name => 'subject')
       subject_area_widget.options.from(1).each do |entry|
-        subject_code = entry.value
+
         name = entry.text.split(/- /).second
 
         subject_area_widget.value = entry
@@ -39,6 +42,7 @@ module Scraper
 
         begin
           url = topic_link['href'].to_s
+
           scrape_topic_page_from_url url
         rescue => error
           @logger.error "Error # {$!} while importing %s" % topic_link['href']
@@ -59,34 +63,36 @@ module Scraper
 
       topic_meta_table_rows = page/"div[id=\"hidedata01_1\"] > table > tr"
 
-      topic_meta = Hash.new
+      meta = Hash.new
 
-      topic_meta["Subject Area"] = topic_title_meta["Subject Area"].strip
-      topic_meta["Topic Number"] = topic_title_meta["Topic Number"]
-      topic_meta["Name"] = topic_full_name
+      meta["Subject Area"] = topic_title_meta["Subject Area"].strip
+      meta["Topic Number"] = topic_title_meta["Topic Number"]
+      meta["Name"] = topic_full_name
 
-      @logger.debug "Subject Area is %s" % topic_meta["Subject Area"]
-      @logger.debug "Topic Number is %s" % topic_meta["Topic Number"]
+      @logger.debug "Subject Area is %s" % meta["Subject Area"]
+      @logger.debug "Topic Number is %s" % meta["Topic Number"]
 
       # Topic coordinators on a seperate page http://www.adelaide.edu.au/course-outlines/013637/1/sem-1/
       # The number can be found in the timetable request link
       # sem-2 for semester 2 etc
-      # topic_meta["Coordinator"] = (page/"div.container h2:first").first.next_sibling.next_sibling.text.strip
+      # meta["Coordinator"] = (page/"div.container h2:first").first.next_sibling.next_sibling.text.strip
 
       topic_meta_table_rows.each do |table_row|
+
+        # First we grab the course metadata
         if !(table_row/"th:first").children.empty?
+          # Handle the case when the row identifier is a link (as it has a child <a> element with the actual text)
           label = (table_row/"th:first").children.first.text.tr(":", "").squish
         else
           label = (table_row/"th:first").text.tr(":", "").squish
         end
         value = (table_row/"td:first").text.squish
 
-        topic_meta[label] = value
-        @logger.debug "Course info table heading %s has value %s" % [label, topic_meta[label]]
+        meta[label] = value
+        @logger.debug "Course info table heading %s has value %s" % [label, meta[label]]
       end
 
-      meta = topic_meta.deep_dup
-
+      # Grab the course fee stuff
       meta_table = (page/"div[class=\"content\"] > table:first")
       meta_table_headings = meta_table/"tr:nth-of-type(2) th"
       meta_table_values = meta_table/"tr:nth-of-type(3) td"
@@ -97,8 +103,10 @@ module Scraper
         else
           heading = meta_table_headings[x].text.squish
         end
+
+        # Since money and band are split here, but not in the Flinders scraper
+        # we join them together, and then remove the monetary value
         if x == 2 or x == 3
-          # Money then band
           value = meta_table_values[x+1].text.squish + " " + meta_table_values[x].text.squish
           meta_table_values.delete(meta_table_values[x+1])
         else
@@ -107,7 +115,8 @@ module Scraper
         meta[heading] = value
         @logger.debug "Course fees table heading %s has value %s" % [heading, meta[heading]]
       end
-      # GET THIRD TABLE
+
+      # Grab critical dates
       meta_table_dates = (page/"div[class=\"content\"] table:nth-of-type(4)")
       meta_table_dates_headings = meta_table_dates/"tr:first th"
       meta_table_dates_values = meta_table_dates/"tr:last td"
@@ -124,14 +133,15 @@ module Scraper
         @logger.debug "Critical dates table heading %s has value %s" % [heading, meta[heading]]
       end
 
+      #Translate from Adelaide Uni Semester to semesters as in DB
       semesterTranslation = {"Term 1" => "Term1", "Term 2" => "Term2", "Term 3" => "Term3",
-                             "Term 4" => "Term4", "Trimester 1" => "Tri1", "Trimester 2" => "Tri2", "Trimester3" => "Tri3", "Summer School" => "NS1", "Winter School" => "NS2", "Semester 1" => "S1", "Semester 2" => "S2"}
+       "Term 4" => "Term4", "Trimester 1" => "Tri1", "Trimester 2" => "Tri2", "Trimester3" => "Tri3", "Summer School" => "NS1", "Winter School" => "NS2", "Semester 1" => "S1", "Semester 2" => "S2"}
       @logger.debug "Translated semester is %s" % semesterTranslation[meta["Term"]]
       topic = Topic.where(
-          :subject_area => topic_title_meta["Subject Area"].squish,
-          :topic_number => topic_title_meta["Topic Number"],
-          :year => @year,
-          :semester => semesterTranslation[meta["Term"]],
+       :subject_area => meta["Subject Area"].squish,
+       :topic_number => meta["Topic Number"],
+       :year => @year,
+       :semester => semesterTranslation[meta["Term"]],
       # :location => meta["Campus"]
       ).first_or_initialize
 
@@ -139,8 +149,6 @@ module Scraper
 
       topic.name = meta["Name"]
       topic.units = meta["Units"]
-      # Have to code seperate method to get
-      # topic.coordinator = meta["Coordinator"]
       topic.description = meta["Syllabus"]
       topic.assumed_knowledge = meta["Assumed Knowledge"]
       topic.assessment = meta["Assessment"]
@@ -152,7 +160,7 @@ module Scraper
       # Wrap up our changes to the topic here
       topic.save
 
-      # Now create/update all child objects
+      # Now create/update all timetable data
       process_timetable page/"div[id=\"hidedata04_1\"] >table:first", topic
     end
 
@@ -164,6 +172,7 @@ module Scraper
       classNumber = ""
       class_session = nil
       full = false
+      sync_selection = nil
       class_group = nil
       class_type = nil
 
@@ -171,59 +180,76 @@ module Scraper
         @logger.info "Current row number being processed is: %i" % i
         rowTh = (rows[i]/"th")
         rowThSplit = rowTh.text.split(": ")
-        if rowTh.length == 1 # Having colspan 8 means its a new class type!
-          if rowThSplit.length != 2 # If we have a heading but no actual class type skip
+
+        # If it's just one header, it's new class type
+        if rowTh.length == 1 
+
+          # If we have a heading but no actual class type skip
+          if rowThSplit.length != 2 
             next
           end
+
           @logger.info "Found new class type"
           classTypeName = rowThSplit[1].squish
           @logger.debug "Class type name is %s" % classTypeName
           class_type = ClassType.where(
-              :topic_id => topic,
-              :name => classTypeName
-          ).first_or_initialize
+            :topic_id => topic,
+            :name => classTypeName
+            ).first_or_initialize
 
           class_type.save
-        elsif rows[i]["class"] == "trgroup"
-          @logger.info "Found one of those grouping topics. Skipping..."
-          return
 
-        elsif rows[i]["class"] == "trheader" # It's the funny header thing
-          # Maybe save names and put stuff to table with names?
+        # Topic requiring sync_selections_id to be non-nil as if you pick
+        # Lecture 01, you get Tute01 and Prac01 as well
+        elsif rows[i]["class"] == "trgroup"
+          if sync_selection == nil
+            @logger.info "Found one of those grouping topics. Assuming all classes should be grouped by class number..."
+            sync_selection = SelectionSync.new
+          end
+
+        # It's the colum descriptions, and we can skip them
+        elsif rows[i]["class"] == "trheader" 
           @logger.info "Found column names. Skipping..."
           next
-        elsif rows[i]["class"] =="data" and (rows[i]/"td").length == 8 # It's actual class stuff, for the first time
+
+        # It's the first row of actual class data
+        elsif rows[i]["class"] =="data" and (rows[i]/"td").length == 8 
           @logger.info "First instance of new class data row"
           cells = rows[i]/"td"
           groupNumber = nil
           groupNumber_raw = (cells[1].text.squish.match "[0-9]+")
+
           if !(groupNumber_raw == nil)
             groupNumber = groupNumber_raw[0].to_i.to_s
           else
             groupNumber = cells[1].text.squish.slice(2..cells[1].text.length).hash
             @logger.debug "No number in groupNumber... Hash of %s used instead # YOLO" % groupNumber
           end
+
           classNumber = cells[0].text.squish
           totalPlacesAvailable = cells[2].text.squish
           placesLeft = cells[3].text.squish
           full = (placesLeft.include?("FULL"))
+
           @logger.debug "Group number is: %s" % groupNumber
           @logger.debug "Class number is: %s" % classNumber
           @logger.debug "Total places available is: %s" % totalPlacesAvailable
           @logger.debug "Places left in class: %s" % placesLeft
           @logger.debug "Is this class full? %s" % full
+          @logger.debug "Should sync? %s" % sync_selection
 
           class_group = ClassGroup.where(
-              :class_type => class_type,
-              :group_number => groupNumber # Of the form LE01, TU01 etc... bad? originally a number
-          ).first_or_initialize
+            :class_type => class_type,
+              :group_number => groupNumber
+              ).first_or_initialize
           Activity.where(:class_group => class_group).delete_all
           class_group.note = placesLeft
-          # CANNOT REPLICATE
-          # class_group.full = full && Time.now > topic.enrolment_opens
+          class_group.synced_selections_id = sync_selection
+         
+          # Enrolment opening info not available from Adelaide, so we will just settle
+          # for if the class is full or not
           class_group.full = full
 
-          # Create new Activity
           date_range = cells[4].text.split(" - ")
           time_range = cells[6].text.split(" - ")
 
@@ -235,12 +261,12 @@ module Scraper
           @logger.debug "Room id is: %s" % room_id
           @logger.debug "Room general location is: %s" % room_general_location
 
-          # Normally join room at Flinders, but not needed here
-          # Maybe make a new room?
+          # TODO: Make new room if room does not exist
           if room_details.length == 3
             room = Room.joins(:building).where("buildings.name = ? AND rooms.code = ?", room_general_location, room_id).first_or_initialize
           end
 
+          # If we have a valid time in the time cell of the table
           if (time_range.length == 2)
             time_starts_at = Time.parse(time_range[0].strip) - Time.now.at_beginning_of_day
             time_ends_at = Time.parse(time_range[1].strip) - Time.now.at_beginning_of_day
@@ -254,6 +280,8 @@ module Scraper
 
           firstDay = Date.parse(date_range[0].strip)
           lastDay = Date.parse(date_range[1].strip)
+
+          # If we have a valid day in the day cell of the table
           if !(cells[5].text == "")
             dayOfWeek = Date.parse(cells[5].text.strip).strftime('%u')
           else
@@ -264,21 +292,23 @@ module Scraper
           @logger.debug "Last day of class session: %s" % lastDay
           @logger.debug "Weekday of class session: %s" % dayOfWeek
 
+          # Create a new activity to hold the class
           class_session = Activity.new(
-              :class_group => class_group,
-              :first_day => firstDay,
-              :last_day => lastDay,
-              :day_of_week => dayOfWeek,
-              :time_starts_at => time_starts_at,
-              :room_id => room.nil? ? nil : room.id
-          )
+            :class_group => class_group,
+            :first_day => firstDay,
+            :last_day => lastDay,
+            :day_of_week => dayOfWeek,
+            :time_starts_at => time_starts_at,
+            :room_id => room.nil? ? nil : room.id
+            )
           if !class_session.new_record?
             @logger.debug "Joining adjacent class sessions for %s %s" % [topic.name, class_type.name]
           end
           class_session.time_ends_at = time_ends_at
 
           class_session.save
-        elsif (rows[i]/"td").length == 4 # The non data one but still containing values
+          # Another class row, that is not the first one
+        elsif (rows[i]/"td").length == 4 
           cells = rows[i]/"td"
           @logger.info "Another class data row"
           date_range = cells[0].text.split(" - ")
@@ -292,13 +322,13 @@ module Scraper
           @logger.debug "Room name is: %s" % room_name
           @logger.debug "Room id is: %s" % room_id
           @logger.debug "Room general location is: %s" % room_general_location
-          # Normally join room at Flinders, but not needed here
-          # Maybe make a new room?
 
+          # TODO: Make new room if room does not exist
           if room_details.length == 3
             room = Room.joins(:building).where("buildings.name = ? AND rooms.code = ?", room_general_location, room_id).first_or_initialize
           end
 
+          # If we have a valid time in the time cell of the table
           if (time_range.length == 2)
             time_starts_at = Time.parse(time_range[0].strip) - Time.now.at_beginning_of_day
             time_ends_at = Time.parse(time_range[1].strip) - Time.now.at_beginning_of_day
@@ -312,7 +342,13 @@ module Scraper
 
           firstDay = Date.parse(date_range[0].strip)
           lastDay = Date.parse(date_range[1].strip)
-          dayOfWeek = Date.parse(cells[1].text.strip).strftime('%u')
+
+          #If we have a valid day in the day cell of the table
+          if !(cells[1].text == "")
+            dayOfWeek = Date.parse(cells[1].text.strip).strftime('%u')
+          else
+            dayOfWeek = nil
+          end
 
           @logger.debug "First day of class session: %s" % firstDay
           @logger.debug "Last day of class session: %s" % lastDay
@@ -320,73 +356,82 @@ module Scraper
 
           # Gets old class time to see if starts at is ends at
           class_session = Activity.where(
-              :class_group => class_group,
-              :first_day => firstDay,
-              :last_day => lastDay,
-              :day_of_week => dayOfWeek,
-              :time_ends_at => time_starts_at,
-              :room_id => room.nil? ? nil : room.id
-          ).first
+            :class_group => class_group,
+            :first_day => firstDay,
+            :last_day => lastDay,
+            :day_of_week => dayOfWeek,
+            :time_ends_at => time_starts_at,
+            :room_id => room.nil? ? nil : room.id
+            ).first
 
           # Otherwise not adjacent and no joining
           class_session = class_session || Activity.new(
-              :class_group => class_group,
-              :first_day => firstDay,
-              :last_day => lastDay,
-              :day_of_week => dayOfWeek,
-              :time_starts_at => time_starts_at,
-              :room_id => room.nil? ? nil : room.id
-          )
-          # What if sessions are not new but not adjacent?
-          # E.g. https://cp.adelaide.edu.au/courses/details.asp?year=2014&course=104229+1+3410+1
+            :class_group => class_group,
+            :first_day => firstDay,
+            :last_day => lastDay,
+            :day_of_week => dayOfWeek,
+            :time_starts_at => time_starts_at,
+            :room_id => room.nil? ? nil : room.id
+            )
+
+          #If start times of class is same as end time of old one
           if !class_session.new_record?
             @logger.debug "Joining adjacent class sessions for %s %s" % [topic.name, class_type.name]
           end
           class_session.time_ends_at = time_ends_at
 
           class_session.save
-          # Grab only dates, days, time, location here
-          # Store section, total size, classnumber and available in variables one level up
-          # And access from there
 
+        # Class that has no details available
         elsif (rows[i]/"td").length == 5
           @logger.info "Found a class with no details available"
           cells = rows[i]/"td"
           groupNumber = nil
           groupNumber_raw = (cells[1].text.squish.match "[0-9]+")
           if !(groupNumber_raw == nil)
+            # to_i removes leading 0
             groupNumber = groupNumber_raw[0].to_i.to_s
           else
             groupNumber = cells[1].text.squish.slice(2..cells[1].text.length).hash
             @logger.debug "No number in groupNumber... Hash of %s used instead # YOLO" % groupNumber
           end
-          # to_i removes leading 0
+
           classNumber = cells[0].text.squish
           totalPlacesAvailable = cells[2].text.squish
           placesLeft = cells[3].text.squish
           full = (placesLeft.include?("FULL"))
+
           @logger.debug "Group number is: %s" % groupNumber
           @logger.debug "Class number is: %s" % classNumber
           @logger.debug "Total places available is: %s" % totalPlacesAvailable
           @logger.debug "Places left in class: %s" % placesLeft
           @logger.debug "Is this class full? %s" % full
+          @logger.debug "Should sync? %s" % sync_selection
+
           class_group = ClassGroup.where(
-              :class_type => class_type,
-              :group_number => groupNumber # Of the form LE01, TU01 etc... bad? originally a number
-          ).first_or_initialize
+            :class_type => class_type,
+              :group_number => groupNumber
+              ).first_or_initialize
           Activity.where(:class_group => class_group).delete_all
-          # CANNOT REPLICATE
-          # class_group.full = full && Time.now > topic.enrolment_opens
+          class_group.synced_selections_id = sync_selection
+
+          # Not available from Adelaide data. Just going with full
           class_group.full = full
 
+        # Adelaide Uni problem with Autoenrolment
+        # We can just ignore it
         elsif (rows[i]/"td").length == 1
           if i == 0
-            @logger.warn "Conflicting auto enrollment sections found..."
+            @logger.warn "Conflicting auto enrolment sections found..."
             next
           end
+
+          # If i is not 0 we have found a notes section
           @logger.info "Found a notes section"
           class_type.note = cells[0].text
           class_type.save
+
+        # Unknown row type
         else
           @logger.warn "Found an unknown type of row"
           @logger.warn row[i]

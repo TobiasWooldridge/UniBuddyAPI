@@ -1,4 +1,4 @@
-class SyncedSelection < ActiveRecord::Base
+class SelectionSync < ActiveRecord::Base
   belongs_to :topic
 
   def to_json(options = {})

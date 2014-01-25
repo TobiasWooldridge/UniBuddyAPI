@@ -17,10 +17,11 @@ namespace :adelaide_timetables do
     @agent = Mechanize.new
 
     scrape_timetables_from_url "https://cp.adelaide.edu.au/courses/search.asp"
+
     # Fix topics locations from being blank (by getting room from note below it)
     # For some reason nogokiri does not grab the note tr...
-    # page = @agent.get("https://access.adelaide.edu.au/courses/details.asp?year=2014&course=107194+1+3410+1")
-    # process_timetable page/"div[id=\"hidedata04_1\"] >table:first", "faketopic"
+    #page = @agent.get("https://cp.adelaide.edu.au/courses/details.asp?year=2014&course=001809+1+3410+1")
+    #process_timetable page/"div[id=\"hidedata04_1\"] >table:first", "faketopic"
   end
 
   private
