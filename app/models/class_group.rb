@@ -1,5 +1,6 @@
 class ClassGroup < ActiveRecord::Base
   belongs_to :class_type
+  belongs_to :selection_sync
 
   has_many :activities, :dependent => :destroy
 
@@ -10,7 +11,7 @@ class ClassGroup < ActiveRecord::Base
       note: note,
       full: full,
       activities: activities,
-      synced_selection: synced_selection
+      selection_sync: selection_sync
     }
   end
 end
