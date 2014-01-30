@@ -197,7 +197,7 @@ module Scraper
           room_details = cells[3].text.squish.split(': ')
 
           if room_details.length == 2
-            room = Room.joins(:building).where("buildings.name = ? AND rooms.code = ?", room_details[0].to_s, room_details[1].to_s).first
+            room = Room.joins(:building).where("(buildings.name = ? OR buildings.code = ?) AND rooms.code = ?", room_details[0].to_s, room_details[0].to_s, room_details[1].to_s).first
           end
 
           time_starts_at = Time.parse(time_range[0].strip) - Time.now.at_beginning_of_day
