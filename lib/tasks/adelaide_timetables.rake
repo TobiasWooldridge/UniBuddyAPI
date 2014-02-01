@@ -12,6 +12,7 @@ namespace :adelaide_timetables do
     year = Date.today.strftime("%Y")
     logfile = File.open("log/AdelaideScraper.log", "a")
     @logger = Logger.new MultiIO.new(STDOUT, logfile)
+    @logger.level = 1
 
     @logger.info "Scraping timetables for %s" % year
     @agent = Mechanize.new

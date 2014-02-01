@@ -69,8 +69,10 @@ module Scraper
       meta["Topic Number"] = topic_title_meta["Topic Number"]
       meta["Name"] = topic_full_name
 
-      @logger.debug "Subject Area is %s" % meta["Subject Area"]
-      @logger.debug "Topic Number is %s" % meta["Topic Number"]
+      @logger.debug ({
+        'Subject Area' => meta["Subject Area"],
+        'Topic Number' => meta["Topic Number"]
+      })
 
       # Topic coordinators on a seperate page http://www.adelaide.edu.au/course-outlines/013637/1/sem-1/
       # The number can be found in the timetable request link
@@ -135,7 +137,8 @@ module Scraper
 
       #Translate from Adelaide Uni Semester to semesters as in DB
       semesterTranslation = {"Term 1" => "Term1", "Term 2" => "Term2", "Term 3" => "Term3",
-       "Term 4" => "Term4", "Trimester 1" => "Tri1", "Trimester 2" => "Tri2", "Trimester3" => "Tri3", "Summer School" => "NS1", "Winter School" => "NS2", "Semester 1" => "S1", "Semester 2" => "S2"}
+       "Term 4" => "Term4", "Trimester 1" => "Tri1", "Trimester 2" => "Tri2", "Trimester 3" => "Tri3", "Summer School" => "Su", "Winter School" => "Wi", "Semester 1" => "S1", "Semester 2" => "S2"}
+
       @logger.debug "Translated semester is %s" % semesterTranslation[meta["Term"]]
       topic = Topic.where(
        :subject_area => meta["Subject Area"].squish,
@@ -177,7 +180,7 @@ module Scraper
       class_type = nil
 
       rows.length.times do |i|
-        @logger.info "Current row number being processed is: %i" % i
+        @logger.debug "Current row number being processed is: %i" % i
         rowTh = (rows[i]/"th")
         rowThSplit = rowTh.text.split(": ")
 
@@ -189,7 +192,7 @@ module Scraper
             next
           end
 
-          @logger.info "Found new class type"
+          @logger.debug "Found new class type"
           classTypeName = rowThSplit[1].squish
           @logger.debug "Class type name is %s" % classTypeName
           class_type = ClassType.where(
@@ -203,7 +206,7 @@ module Scraper
         # Lecture 01, you get Tute01 and Prac01 as well
         elsif rows[i]["class"] == "trgroup"
           if sync_selection == nil
-            @logger.info "Found one of those grouping topics. Assuming all classes should be grouped by class number..."
+            @logger.debug "Found one of those grouping topics. Assuming all classes should be grouped by class number..."
             sync_selection = SelectionSync.new(
               :topic => topic)
             sync_selection.save
@@ -211,12 +214,12 @@ module Scraper
 
         # It's the colum descriptions, and we can skip them
         elsif rows[i]["class"] == "trheader" 
-          @logger.info "Found column names. Skipping..."
+          @logger.debug "Found column names. Skipping..."
           next
 
         # It's the first row of actual class data
         elsif rows[i]["class"] =="data" and (rows[i]/"td").length == 8 
-          @logger.info "First instance of new class data row"
+          @logger.debug "First instance of new class data row"
           cells = rows[i]/"td"
           groupNumber = nil
           groupNumber_raw = (cells[1].text.squish.match "[0-9]+")
@@ -233,12 +236,14 @@ module Scraper
           placesLeft = cells[3].text.squish
           full = (placesLeft.include?("FULL"))
 
-          @logger.debug "Group number is: %s" % groupNumber
-          @logger.debug "Class number is: %s" % classNumber
-          @logger.debug "Total places available is: %s" % totalPlacesAvailable
-          @logger.debug "Places left in class: %s" % placesLeft
-          @logger.debug "Is this class full? %s" % full
-          @logger.debug "Selection sync object: %s" % sync_selection
+          @logger.debug ({
+              "Group Number" => groupNumber,
+              "Class Number" => classNumber,
+              "Total Places Available" => totalPlacesAvailable,
+              "Places Left" => placesLeft,
+              "Full" => full,
+              "Sync selection" => sync_selection
+          })
 
           class_group = ClassGroup.where(
             :class_type => class_type,
@@ -312,7 +317,7 @@ module Scraper
           # Another class row, that is not the first one
         elsif (rows[i]/"td").length == 4 
           cells = rows[i]/"td"
-          @logger.info "Another class data row"
+          @logger.debug "Another class data row"
           date_range = cells[0].text.split(" - ")
           time_range = cells[2].text.split("-")
 
@@ -386,7 +391,7 @@ module Scraper
 
         # Class that has no details available
         elsif (rows[i]/"td").length == 5
-          @logger.info "Found a class with no details available"
+          @logger.debug "Found a class with no details available"
           cells = rows[i]/"td"
           groupNumber = nil
           groupNumber_raw = (cells[1].text.squish.match "[0-9]+")
@@ -410,6 +415,16 @@ module Scraper
           @logger.debug "Is this class full? %s" % full
           @logger.debug "Selection sync object: %s" % sync_selection
 
+
+          @logger.debug ({
+            "Group Number" => groupNumber,
+            "Class Number" => classNumber,
+            "Total Places Available" => totalPlacesAvailable,
+            "Places Left" => placesLeft,
+            "Full" => full,
+            "Sync selection" => sync_selection
+          })
+
           class_group = ClassGroup.where(
             :class_type => class_type,
               :group_number => groupNumber
@@ -429,7 +444,7 @@ module Scraper
           end
 
           # If i is not 0 we have found a notes section
-          @logger.info "Found a notes section"
+          @logger.debug "Found a notes section"
           class_type.note = cells[0].text
           class_type.save
 
