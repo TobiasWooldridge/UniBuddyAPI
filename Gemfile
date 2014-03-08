@@ -7,7 +7,7 @@ gem 'bootstrap-sass', '2.3'
 
 gem 'pg'
 
-gem 'sass-rails',   '~> 4.0.0'
+gem 'sass-rails', '~> 4.0.0'
 
 gem 'uglifier', '>= 1.3.0'
 
@@ -24,10 +24,6 @@ gem 'rack-cors', :require => 'rack/cors'
 gem 'sanitize'
 
 #gem "ots", "~> 0.5.4"
-
-# Used for rendering markdown-based documentation on home page
-gem 'github-markup'
-gem 'redcarpet'
 
 group :development, :test do
   gem 'rspec-rails'

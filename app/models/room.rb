@@ -2,6 +2,7 @@ class Room < ActiveRecord::Base
   belongs_to :building
   has_many :room_bookings, :dependent => :destroy
   has_many :activities
+  has_many :room_details_suggestions
 
   def bookings
     room_bookings
@@ -63,6 +64,8 @@ class Room < ActiveRecord::Base
       full_code: full_code,
       full_name: full_name,
       capacity: capacity,
+      latitude: latitude,
+      longitude: longitude
     }
   end
 

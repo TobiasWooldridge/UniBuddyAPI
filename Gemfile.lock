@@ -55,7 +55,6 @@ GEM
       loofah (>= 0.3.1)
       nokogiri (> 0.0.0)
       sax-machine (>= 0.0.12)
-    github-markup (0.7.5)
     highline (1.6.19)
     hike (1.2.3)
     http-cookie (1.0.1)
@@ -125,7 +124,6 @@ GEM
       rake (>= 0.8.7)
       thor (>= 0.18.1, < 2.0)
     rake (10.1.0)
-    redcarpet (3.0.0)
     rest-client (1.6.7)
       mime-types (>= 1.16)
     rspec (2.11.0)
@@ -191,7 +189,6 @@ DEPENDENCIES
   factory_girl
   factory_girl_rails (~> 4.0)
   feedzirra
-  github-markup
   jquery-rails
   mechanize
   pg
@@ -199,7 +196,6 @@ DEPENDENCIES
   rack-cors
   rails (= 4.0.0)
   rails_12factor
-  redcarpet
   rspec-rails
   rspec_api_test
   sanitize
