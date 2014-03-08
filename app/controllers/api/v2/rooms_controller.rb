@@ -22,9 +22,12 @@ class Api::V2::RoomsController < Api::V2::BaseController
          latitude: params[:latitude],
      })
 
-    if params[:longitude] == nil or params[:longitude] == nil
+    # Crummy validation. TODO(TobiasWooldridge): Fix this.
+    if not Float(params[:longitude]) or not Float(params[:longitude])
       raise "Invalid longitude/latitude"
     end
+
+    suggestion.save
 
     respond_with padded_response suggestion
   end
