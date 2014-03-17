@@ -13,6 +13,7 @@ FlindersAPI2::Application.routes.draw do
       get "/uni/:inst_code/buildings/:building_code/rooms" => "rooms#index"
       get "/uni/:inst_code/buildings/:building_code/rooms/:room_code" => "rooms#show"
       get "/uni/:inst_code/buildings/:building_code/rooms/:room_code/suggest" => "rooms#suggest_details"
+      post "/uni/:inst_code/buildings/:building_code/rooms/:room_code/suggest" => "rooms#suggest_details"
       get "/uni/:inst_code/buildings/:building_code/rooms/:room_code/bookings" => "room_bookings#index"
 
       get "/uni/:inst_code/dates" => "dates#index"
