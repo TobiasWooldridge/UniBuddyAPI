@@ -23,12 +23,12 @@ class Api::V2::RoomsController < Api::V2::BaseController
      })
 
     # Crummy validation. TODO(TobiasWooldridge): Fix this.
-    if not Float(params[:longitude]) or not Float(params[:longitude])
+    if not Float(params[:longitude]) or not Float(params[:latitude])
       raise "Invalid longitude/latitude"
     end
 
     suggestion.save
 
-    respond_with padded_response suggestion
+    render json: (padded_response suggestion)
   end
 end
