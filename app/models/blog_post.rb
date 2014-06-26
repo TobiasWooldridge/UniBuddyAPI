@@ -1,3 +1,3 @@
-class BlogPost < ActiveRecord::Base
+class BlogPost < BaseModel
   belongs_to :institution
 end
