@@ -17,8 +17,16 @@ FlindersAPI2::Application.routes.draw do
       get "/uni/:inst_code/buildings/:building_code/rooms/:room_code/bookings" => "room_bookings#index"
 
       get "/uni/:inst_code/dates" => "dates#index"
+      get "/uni/:inst_code/dates/current" => "dates#current"
+
+      get "/uni/:inst_code/weeks" => "dates#index"
+      get "/uni/:inst_code/weeks/current" => "dates#current"
 
       get "/uni/:inst_code/news" => "news#index"
+
+      namespace :geo do
+        get "/rooms" => "rooms#index"
+      end
     end
   end
 
