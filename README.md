@@ -13,34 +13,28 @@ The API is designed to be RESTful, and enables simple access to the data scraped
 The supported formats of the API include JSON and JSONP (using ?callback=foo query parameter)
 
 
-Currently, the requests are supported by the API aree
+Currently, the requests are supported by the API are
 
-    GET "/api/v1/buildings.json"
+*   GET "/api/v2/uni/:uni_name/buildings.json"
+    GET "[/api/v2/uni/flinders/buildings.json](http://api.unibuddy.com.au/api/v2/uni/flinders/buildings.json)
 
-    GET "/api/v1/buildings/:building_id.json"
-    GET "/api/v1/buildings/ENGR.json"
-    
-    GET "/api/v1/buildings/:building_id/rooms.json"
-    GET "/api/v1/buildings/ENGR/rooms.json"
-    
-    GET "/api/v1/buildings/:building_id/rooms/:room_id.json"
-    GET "/api/v1/buildings/ENGR/rooms/209.json"
-    
-    GET "/api/v1/buildings/:building_id/rooms/:room_id/bookings.json"
-    GET "/api/v1/buildings/ENGR/rooms/209/bookings.json"
+*   GET "/api/v2/uni/:uni_name/buildings/:building_code.json"
+    GET "[/api/v2/uni/flinders/buildings/ENGR.json](http://api.unibuddy.com.au/api/v2/uni/flinders/buildings/ENGR.json)
 
-You must append json or jsonp to the URL to request that type of response. If using jsonp, a callback must be specified, e.g. the function Library.beAwesome will be passed the JSON from the following response
+*   GET "/api/v2/uni/:uni_name/buildings/:building_id/rooms.json"
+    GET "[/api/v2/uni/flinders/buildings/ENGR/rooms.json](http://api.unibuddy.com.au/api/v2/uni/flinders/buildings/ENGR/rooms.json)
 
-    GET "/api/v1/bookings.jsonp?callback=Library.beAwesome"
+*   GET "/api/v2/uni/:uni_name/buildings/:building_id/rooms/:room_id.json"
+    GET "[/api/v2/uni/flinders/buildings/ENGR/rooms/209.json](http://api.unibuddy.com.au/api/v2/uni/flinders/buildings/ENGR/rooms/209.json)
 
-## Signage
+*   GET "/api/v2/uni/:uni_name/buildings/:building_id/rooms/:room_id/bookings.json"
+    GET "[/api/v2/uni/flinders/buildings/ENGR/rooms/209/bookings.json](http://api.unibuddy.com.au/api/v2/uni/flinders/buildings/ENGR/rooms/209/bookings.json)
 
-The signage for the project is designed for usage on non-interactive internet-enabled screens, similar to the digital signs seen around Flinders University.
+*   GET "/api/v2/uni/:uni_name/dates.json"
+    GET "[/api/v2/uni/flinders/dates.json](http://api.unibuddy.com.au/api/v2/uni/flinders/dates.json)
 
-The signage is designed to be accessed via a web browser, and is tested in modern versions of Chrome and Firefox.
-
-The signage's data is dynamically pulled from Flinders university's public website
-
+*   GET "/api/v2/uni/:uni_name/news.json"
+    GET "[/api/v2/uni/flinders/news.json](http://api.unibuddy.com.au/api/v2/uni/flinders/news.json)
 
 ## Data
 
@@ -57,23 +51,14 @@ The scraped content includes
 * Room bookings
 * Term dates
 * Blog content
-* Topics and classes (TODO)
-
-* Number of computer terminals in use in a room (TODO, not scraped from web)
+* Topics and classes
 
 ### Crowdsourcing
 
-A benefit of using the API system as a structured data repository is that data could be crowdsourced. For example, the latitude, longitude and altitude of rooms in Flinders university. This could be used to create, say, signage which shows not just rooms in the same building but rooms within the general vicinity.
-
-## Testing
-
-Unit tests are used to ensure integrity in the project's functionality (TODO)
-
-
-## Other
+A benefit of using the API system as a structured data repository is that data could be crowdsourced. For example, the latitude, longitude and altitude of rooms in Flinders university.
 
 ### Legal
 
-All code by myself in this repository licensed under the AGPL license unless otherwise specified. You can pretty much do whatever you want with it. But I would love if you contributed back to the project if it's useful to you :)
+All code committed to this this repository licensed under the AGPL license unless otherwise specified. But I would love if you contributed back to the project if it's useful to you :)
 
-Note that some dependencies may not be as leniently licensed.
+Note that some dependencies may be differently licensed.
