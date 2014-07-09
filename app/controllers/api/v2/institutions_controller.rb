@@ -1,6 +1,6 @@
 class Api::V2::InstitutionsController < Api::V2::BaseController
   def index
-    @institutions = Institution.order("name DESC").all
+    @institutions = Institution.order('id ASC').all
 
     respond_with padded_response @institutions
   end
