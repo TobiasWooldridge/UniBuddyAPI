@@ -86,47 +86,57 @@ module Scraper
       end
     end
 
-    def scrape_topic_page study_period, topic_page
-      optionNames = (topic_page/".OptionNote").map { |x| x.text }
-
+    def scrape_topic_page(study_period, topic_page)
       form = topic_page.forms.first
-      options = form.buttons_with(:value => /Option [0-9]+/)
-      options.each_with_index do |option, index|
-        campus = optionNames[index]
-        if campus == 'External'
-          @logger.info 'Skipping External campus'
-          next
+      option_buttons = form.buttons_with(:value => /Option [0-9]+/)
+      option_names = (topic_page/'.OptionNote').map { |x| x.text }
+
+      if option_buttons.length == 1
+        # If there's only one option, don't click any buttons to show options (as we'll actually toggle and hide it)
+        scrape_topic_page_option topic_page, study_period, '', option_names.first
+
+      else
+        # Otherwise, iterate over every option and click its 'show' button and scrape it
+        option_buttons.each_with_index do |option_button, index|
+          campus = option_names[index]
+          option_page = clean_asp form.click_button(option_button)
+
+          # Add the option number and campus
+          name_suffix = ' (%s - %s)' % [option_button.value, campus]
+
+          scrape_topic_page_option option_page, study_period, name_suffix, campus
         end
-
-        # We have a Topic object for each option (e.g. "Digital Electronics (City West)")
-        topic_heading = topic_page.search('#pnlCourseHeaderArea h3').text.squish
-        name, subject_area, cat_num, graduate_level = topic_heading.scan(/(.*) - ([A-Z]*) ([0-9]+) - (.*)/)[0]
-
-        # Add the option number and campus
-        if optionNames.length > 1
-          name = "%s (%s - %s)" % [name, option.value, campus]
-        end
-
-        topic = Topic.where(
-            :name => name,
-            :subject_area => subject_area,
-            :topic_number => cat_num,
-            :year => study_period.year,
-            :semester => 'SP%d' % study_period.period,
-            :institution => Institution.uni_sa
-        ).first_or_initialize
-
-        topic.save
-        verb = topic.new_record? ? 'Saved' : 'Updated'
-        @logger.debug '%s topic %s (%s %s) (%s)' % [verb, topic.code, topic.year, topic.semester, topic.name]
-
-
-        page_with_timetable = clean_asp form.click_button(option)
-        scrape_topic_timetable_page topic, page_with_timetable
       end
     end
 
-    def scrape_topic_timetable_page topic, option_page
+    def scrape_topic_page_option(option_page, study_period, name_suffix, campus)
+      if campus == 'External'
+        @logger.info 'Skipping External campus'
+        return
+      end
+
+      # We have a Topic object for each option (e.g. "Digital Electronics (City West)")
+      topic_heading = option_page.search('#pnlCourseHeaderArea h3').text.squish
+      name, subject_area, cat_num, graduate_level = topic_heading.scan(/(.*) - ([A-Z]*) ([0-9]+) - (.*)/)[0]
+
+      topic = Topic.where(
+          :name => name + name_suffix,
+          :subject_area => subject_area,
+          :topic_number => cat_num,
+          :year => study_period.year,
+          :semester => 'SP%d' % study_period.period,
+          :institution => Institution.uni_sa
+      ).first_or_initialize
+
+      topic.save
+      verb = topic.new_record? ? 'Saved' : 'Updated'
+      @logger.debug '%s topic %s (%s %s) (%s)' % [verb, topic.code, topic.year, topic.semester, topic.name]
+
+      # Scrape timetables for option
+      scrape_topic_page_timetable topic, option_page
+    end
+
+    def scrape_topic_page_timetable(topic, option_page)
       @logger.info 'Scraping timetable for %s' % topic.name
       class_timetables = option_page/'#pnlOptionData > div:nth-child(even) > table'
 
