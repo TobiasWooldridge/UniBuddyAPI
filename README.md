@@ -36,6 +36,9 @@ Currently, the requests are supported by the API are
 *   GET "/api/v2/uni/:uni_name/news.json"
     GET "[/api/v2/uni/flinders/news.json](http://api.unibuddy.com.au/api/v2/uni/flinders/news.json)
 
+
+Supported uni_names include 'flinders', 'adelaide' and 'uni_sa'
+
 ## Data
 
 The scraping of the Flinders website is a treacherous undertaking, because the website's HTML is inconsistent and not standards compliant. This project provides an API to save other developers from having to bother scraping the Flinders public website themselves, and hopefully enable other developers to make apps which use the data easily.
