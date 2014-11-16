@@ -2,7 +2,7 @@ module Scraper
   module FlindersTimetables
 
     def get_timetable_form page
-      page.form_with(:action => /timetable\.taf/)
+      page.form_with(:action => /timetable(_.+)?\.taf(\?.*)/)
     end
 
     def get_next_page_form page

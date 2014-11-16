@@ -4,7 +4,7 @@ namespace :institution do
   end
 
 
-  task :populate_semesters, [:code, :headless] => :environment do |t, args|
+  task :label_semesters, [:code, :headless] => :environment do |t, args|
     semesters = InstitutionSemester.where("name IS NULL")
 
     if args[:headless].nil?
@@ -19,11 +19,26 @@ namespace :institution do
           semester.name = $stdin.gets.strip.titlecase
         else
           print "\tRecycled name %s\n" % semester.name
-
         end
 
         semester.save
       end
+    end
+  end
+
+
+  task :add_semesters, [] => :environment do |t, args|
+    semesters = Topic.select('institution_id, year, semester').group('institution_id, year, semester')
+    semesters.each do |semester|
+      instSemester = InstitutionSemester.where(:institution_id => semester.institution_id, :year => semester.year, :code => semester.semester).first_or_initialize
+
+      if not instSemester.new_record?
+        next
+      end
+
+      instSemester.name = InstitutionSemester.code_to_name(instSemester.code)
+
+      instSemester.save
     end
   end
 end
