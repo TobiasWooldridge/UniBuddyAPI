@@ -98,6 +98,11 @@ module Scraper
 
       topic_meta["Coordinator"] = (page/"div.container h2:first").first.next_sibling.next_sibling.text.strip
 
+      if topic_meta["Coordinator"].length > 200 then
+        topic_meta["Coordinator"] = topic_meta["Coordinator"].first(200)
+      end
+
+
       topic_meta_table_rows.each do |table_row|
         label = (table_row/"td:first").text.squish
         value = (table_row/"td:last").text.squish
