@@ -16,6 +16,7 @@ class Topic < BaseModel
 			topic_number: topic_number,
 			year: year,
 			semester: semester,
+			location: location,
 			units: units,
 			coordinator: coordinator,
 			description: description,
