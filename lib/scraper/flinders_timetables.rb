@@ -172,9 +172,6 @@ module Scraper
         # Wrap up our changes to the topic here
         topic.save
 
-        puts "REMOVEME %s (%s %s %s) (%s)" % [topic.code, topic.year, topic.semester, topic.location, topic.name]
-
-
         # Now create/update all child objects
         process_timetable page/(pick + " > div > table:first"), topic
 
