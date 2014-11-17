@@ -10,7 +10,7 @@ class Topic < BaseModel
 
   def as_json(options = {})
 		{
-      id: id,
+			id: id,
 			name: name,
 			subject_area: subject_area,
 			topic_number: topic_number,
@@ -32,12 +32,12 @@ class Topic < BaseModel
 			enrolment_closes: enrolment_closes,
 			code: code,
 			classes: class_types,
-      institution: institution.to_h_light
+			institution: institution.to_h_light
 		}
   end
 
   private
-    def update_topic_codes
-      write_attribute :code, subject_area + topic_number
-    end
+	def update_topic_codes
+	  write_attribute :code, subject_area + topic_number
+	end
 end

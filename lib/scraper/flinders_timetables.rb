@@ -67,6 +67,9 @@ module Scraper
     def scrape_topics_on_page page
       topic_links = page/'article[role="main"] a'
 
+      # Because topics will be listed with the same URL multiple times for separate locations/semesters, we store the previous URL so we can skip repetitions
+      prevUrl = ""
+
       topic_links.each do |topic_link|
         if topic_link['href'].match(/^topic.taf/).nil?
           next
@@ -74,6 +77,13 @@ module Scraper
 
         begin
           url = topic_link['href'] + "&aims=Y&fees=Y"
+
+          if url == prevUrl then
+            next
+          else
+            prevUrl = url
+          end
+
           scrape_topic_page_from_url url
         rescue => error
           puts "Error #{$!} while importing %s" % topic_link['href']
@@ -117,6 +127,7 @@ module Scraper
       end
 
       picks.each do |pick|
+        # We combine the semester data for 
         meta = topic_meta.deep_dup
 
         meta_table = (page/(pick + " table:first"))
@@ -135,11 +146,20 @@ module Scraper
             :topic_number => topic_title_meta["Topic Number"],
             :year => meta["Year"],
             :semester => meta["Sem"],
-            :institution => Institution.flinders
+            :institution => Institution.flinders,
+            :location => nil
+        ).first || Topic.where(
+            :subject_area => topic_title_meta["Subject Area"],
+            :topic_number => topic_title_meta["Topic Number"],
+            :year => meta["Year"],
+            :semester => meta["Sem"],
+            :institution => Institution.flinders,
+            :location => meta["Location"]
         ).first_or_initialize
 
         topic.name = meta["Name"]
         topic.units = meta["Units"]
+        topic.location = meta["Location"]
         topic.coordinator = meta["Coordinator"]
         topic.description = meta["Topic Description"]
         topic.learning_outcomes = meta["Expected Learning Outcomes"]
@@ -152,11 +172,14 @@ module Scraper
         # Wrap up our changes to the topic here
         topic.save
 
+        puts "REMOVEME %s (%s %s %s) (%s)" % [topic.code, topic.year, topic.semester, topic.location, topic.name]
+
+
         # Now create/update all child objects
         process_timetable page/(pick + " > div > table:first"), topic
 
         verb = topic.new_record? ? "Saving" : "Updating"
-        puts "%s topic %s (%s %s) (%s)" % [verb, topic.code, topic.year, topic.semester, topic.name]
+        puts "%s topic %s (%s %s %s) (%s)" % [verb, topic.code, topic.year, topic.semester, topic.location, topic.name]
       end
     end
 

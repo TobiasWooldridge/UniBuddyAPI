@@ -30,6 +30,10 @@ namespace :institution do
   task :add_semesters, [] => :environment do |t, args|
     semesters = Topic.select('institution_id, year, semester').group('institution_id, year, semester')
     semesters.each do |semester|
+      if semester.year == nil or semester.semester == nil then
+        next
+      end
+
       instSemester = InstitutionSemester.where(:institution_id => semester.institution_id, :year => semester.year, :code => semester.semester).first_or_initialize
 
       if not instSemester.new_record?
@@ -37,6 +41,8 @@ namespace :institution do
       end
 
       instSemester.name = InstitutionSemester.code_to_name(instSemester.code)
+
+      p instSemester
 
       instSemester.save
     end
