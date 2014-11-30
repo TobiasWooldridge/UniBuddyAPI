@@ -10,7 +10,7 @@ class Api::V2::TopicsController < Api::V2::BaseController
       end
     end
 
-    respond_with padded_response @topics.order("code ASC").pluck_h(:id, :name, :code, :year, :semester, :location)
+    respond_with padded_response @topics.order("code ASC").pluck_h(:id, :name, :code, :year, :semester, :location, :subscript)
   end
 
   def show

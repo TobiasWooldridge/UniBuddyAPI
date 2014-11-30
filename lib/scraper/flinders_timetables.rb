@@ -141,25 +141,36 @@ module Scraper
           meta[heading] = value
         end
 
+
+        subscriptMatch = /(?<subscript>Held .+$)/.match(meta["Title"])
+
+        subscript = nil
+        if subscriptMatch
+          subscript = subscriptMatch[:subscript]
+        end
+
         topic = Topic.where(
             :subject_area => topic_title_meta["Subject Area"],
             :topic_number => topic_title_meta["Topic Number"],
             :year => meta["Year"],
             :semester => meta["Sem"],
             :institution => Institution.flinders,
-            :location => nil
+            :subscript => nil,
+            :location => meta["Location"]
         ).first || Topic.where(
             :subject_area => topic_title_meta["Subject Area"],
             :topic_number => topic_title_meta["Topic Number"],
             :year => meta["Year"],
             :semester => meta["Sem"],
             :institution => Institution.flinders,
+            :subscript => subscript,
             :location => meta["Location"]
         ).first_or_initialize
 
         topic.name = meta["Name"]
         topic.units = meta["Units"]
         topic.location = meta["Location"]
+        topic.subscript = subscript
         topic.coordinator = meta["Coordinator"]
         topic.description = meta["Topic Description"]
         topic.learning_outcomes = meta["Expected Learning Outcomes"]
@@ -222,6 +233,8 @@ module Scraper
               stream.save
 
               class_group.stream = stream
+            else
+              class_group.stream = nil
             end
 
 
