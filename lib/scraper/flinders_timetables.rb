@@ -207,10 +207,29 @@ module Scraper
             ).first_or_initialize
             Activity.where(:class_group => class_group).delete_all
 
-            class_group.note = cells[5].text
+            class_group.note = cells[5].text.squish
 
+            streamMatch = /Stream (?<streamName>[0-9]+)/.match(class_group.note)
+
+            if streamMatch
+              # Create new Stream
+              streamName = streamMatch[:streamName]
+
+              stream = Stream.where(
+                  :topic => topic,
+                  :name => streamName
+              ).first_or_create
+              stream.save
+
+              class_group.stream = stream
+            end
+
+
+            # Note that Flinders reports class groups as full if class registration hasn't opened yet
             full = !(cells[5].text.scan /FULL/).empty?
             class_group.full = full && Time.now > topic.enrolment_opens
+
+            class_group.save
 
             cells.shift
           end

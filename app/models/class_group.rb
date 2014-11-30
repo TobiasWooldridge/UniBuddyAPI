@@ -1,6 +1,6 @@
 class ClassGroup < ActiveRecord::Base
   belongs_to :class_type
-  belongs_to :selection_sync
+  belongs_to :stream
 
   has_many :activities, :dependent => :destroy
 
@@ -11,7 +11,7 @@ class ClassGroup < ActiveRecord::Base
       note: note,
       full: full,
       activities: activities,
-      selection_sync: selection_sync
+      stream: stream
     }
   end
 end

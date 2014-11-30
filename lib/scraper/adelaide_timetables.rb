@@ -175,7 +175,7 @@ module Scraper
       classNumber = ""
       class_session = nil
       full = false
-      sync_selection = nil
+      stream = nil
       class_group = nil
       class_type = nil
 
@@ -202,14 +202,14 @@ module Scraper
 
           class_type.save
 
-        # Topic requiring sync_selections_id to be non-nil as if you pick
+        # Topic requiring streams_id to be non-nil as if you pick
         # Lecture 01, you get Tute01 and Prac01 as well
         elsif rows[i]["class"] == "trgroup"
-          if sync_selection == nil
+          if stream == nil
             @logger.debug "Found one of those grouping topics. Assuming all classes should be grouped by class number..."
-            sync_selection = SelectionSync.new(
+            stream = Stream.new(
               :topic => topic)
-            sync_selection.save
+            stream.save
           end
 
         # It's the colum descriptions, and we can skip them
@@ -242,7 +242,7 @@ module Scraper
               "Total Places Available" => totalPlacesAvailable,
               "Places Left" => placesLeft,
               "Full" => full,
-              "Sync selection" => sync_selection
+              "Stream" => stream
           })
 
           class_group = ClassGroup.where(
@@ -251,7 +251,7 @@ module Scraper
               ).first_or_initialize
           Activity.where(:class_group => class_group).delete_all
           class_group.note = placesLeft
-          class_group.synced_selections_id = sync_selection
+          class_group.stream_id = stream
          
           # Enrolment opening info not available from Adelaide, so we will just settle
           # for if the class is full or not
@@ -413,7 +413,7 @@ module Scraper
           @logger.debug "Total places available is: %s" % totalPlacesAvailable
           @logger.debug "Places left in class: %s" % placesLeft
           @logger.debug "Is this class full? %s" % full
-          @logger.debug "Selection sync object: %s" % sync_selection
+          @logger.debug "Stream object: %s" % stream
 
 
           @logger.debug ({
@@ -422,7 +422,7 @@ module Scraper
             "Total Places Available" => totalPlacesAvailable,
             "Places Left" => placesLeft,
             "Full" => full,
-            "Sync selection" => sync_selection
+            "Stream" => stream
           })
 
           class_group = ClassGroup.where(
@@ -430,7 +430,7 @@ module Scraper
               :group_number => groupNumber
               ).first_or_initialize
           Activity.where(:class_group => class_group).delete_all
-          class_group.synced_selections_id = sync_selection
+          class_group.stream_id = stream
 
           # Not available from Adelaide data. Just going with full
           class_group.full = full
