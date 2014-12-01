@@ -34,6 +34,16 @@ namespace :institution do
         next
       end
 
+      if Time.now.year > semester.year
+        # Ignore old years
+        p "Skipping semester with year %s" % semester.year
+        next
+      elsif /^TH.*$/.match(semester.semester)
+        # Hack to skip thesis topics
+        p "Skipping semester with semester code %s" % semester.semester
+        next
+      end
+
       instSemester = InstitutionSemester.where(:institution_id => semester.institution_id, :year => semester.year, :code => semester.semester).first_or_initialize
 
       if not instSemester.new_record?
