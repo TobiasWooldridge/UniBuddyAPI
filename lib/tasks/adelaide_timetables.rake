@@ -4,20 +4,21 @@ namespace :adelaide_timetables do
 
   desc "Update class timetables from the Adelaide University website"
 
-  task :update => :environment do |t, args|
+  task :update, [:year, :program_area] => :environment do |t, args|
     include Scraper::AdelaideTimetables
     
     desc "Update"
 
-    year = Date.today.strftime("%Y")
+    args.with_defaults(:year => Date.today.strftime("%Y"), :program_area => nil)
+
     logfile = File.open("log/AdelaideScraper.log", "a")
     @logger = Logger.new MultiIO.new(STDOUT, logfile)
-    @logger.level = 1
+    @logger.level = 0
 
-    @logger.info "Scraping timetables for %s" % year
+    @logger.info 'Scraping timetables for %s (program area: %s)' % [args.year, args.program_area || 'all program areas']
     @agent = Mechanize.new
 
-    scrape_timetables_from_url "https://cp.adelaide.edu.au/courses/search.asp"
+    scrape_timetables_from_url "https://cp.adelaide.edu.au/courses/search.asp", args.year, args.program_area
 
     # Fix topics locations from being blank (by getting room from note below it)
     # For some reason nogokiri does not grab the note tr...
