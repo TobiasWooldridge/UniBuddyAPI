@@ -1,18 +1,18 @@
 module Scraper
   module AdelaideTimetables
-    def get_timetable_form page
+    def get_timetable_form page,year
       # Getting the year from the table heading
-      @year = (page/'li[id="current"] a').text.match('[0-9]+')[0].to_i
+      @year = year || (page/'li[id="current"] a').text.match('[0-9]+')[0]
 
       page.form_with(:action => /search\.asp/)
     end
 
     def scrape_timetables_from_url url,year,program_area
       page = @agent.get url
-      form = get_timetable_form page
+      form = get_timetable_form page,year
       
       subject_area_widget = form.field_with(:name => 'subject')
-      form.field_with(:name => 'year').value = year
+      form.field_with(:name => 'year').value = @year
       subject_area_widget.options.from(1).each do |entry|
 
         current_program_area = entry.value
@@ -296,8 +296,8 @@ module Scraper
           @logger.debug "Class session starts at: %s" % time_starts_at
           @logger.debug "Class session ends at: %s" % time_ends_at
 
-          firstDay = Date.parse(date_range[0].strip)
-          lastDay = Date.parse(date_range[1].strip)
+          firstDay = Date.parse(date_range[0].strip + " " + @year)
+          lastDay = Date.parse(date_range[1].strip + " " + @year)
 
           # If we have a valid day in the day cell of the table
           if !(cells[rowOffset+1].text == "")

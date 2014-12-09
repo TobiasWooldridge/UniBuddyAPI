@@ -9,13 +9,13 @@ namespace :adelaide_timetables do
     
     desc "Update"
 
-    args.with_defaults(:year => Date.today.strftime("%Y"), :program_area => nil)
+    args.with_defaults(:year => nil, :program_area => nil)
 
     logfile = File.open("log/AdelaideScraper.log", "a")
     @logger = Logger.new MultiIO.new(STDOUT, logfile)
     @logger.level = 0
 
-    @logger.info 'Scraping timetables for %s (program area: %s)' % [args.year, args.program_area || 'all program areas']
+    @logger.info 'Scraping timetables for %s (program area: %s)' % [args.year || 'latest year', args.program_area || 'all program areas']
     @agent = Mechanize.new
 
     scrape_timetables_from_url "https://cp.adelaide.edu.au/courses/search.asp", args.year, args.program_area
