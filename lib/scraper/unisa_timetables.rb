@@ -174,14 +174,17 @@ module Scraper
             sched_rows.each do |sched_row|
               sched_cells = sched_row.xpath('td')
 
-              time_starts_at = Time.parse(sched_cells[3].text.strip) - Time.now.at_beginning_of_day
-              time_ends_at = Time.parse(sched_cells[4].text.strip) - Time.now.at_beginning_of_day
+              first_day = Date.parse(sched_cells[0].text.strip) rescue nil
+              last_day = Date.parse(sched_cells[1].text.strip) rescue nil
+              day_of_week = Date.parse(sched_cells[2].text.strip).strftime('%u') rescue nil
+              time_starts_at = Time.parse(sched_cells[3].text.strip) - Time.now.at_beginning_of_day rescue nil
+              time_ends_at = Time.parse(sched_cells[4].text.strip) - Time.now.at_beginning_of_day rescue nil
 
               class_session = Activity.where(
                   :class_group => class_group,
-                  :first_day => Date.parse(sched_cells[0].text.strip),
-                  :last_day => Date.parse(sched_cells[1].text.strip),
-                  :day_of_week => Date.parse(sched_cells[2].text.strip).strftime('%u'),
+                  :first_day => first_day,
+                  :last_day => last_day,
+                  :day_of_week => day_of_week,
                   :time_starts_at => time_starts_at,
                   :time_ends_at => time_ends_at
               ).first_or_create
