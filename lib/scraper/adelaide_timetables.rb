@@ -233,7 +233,8 @@ module Scraper
           cells = rows[i]/"td"
           if (rowType == "first")
               groupNumber = nil
-              groupNumber_raw = (cells[1].text.squish.match "[0-9]+")
+              # Set group number to 0 for online lecture (no group should use this + it looks like O for online)
+              groupNumber_raw = (cells[1].text.squish.match "[0-9]+") || (cells[1].text.squish == "LECO" ? "0" : nil)
 
               if !(groupNumber_raw == nil)
                 groupNumber = groupNumber_raw[0].to_i.to_s
