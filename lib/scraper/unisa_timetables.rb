@@ -186,8 +186,9 @@ module Scraper
                   :time_ends_at => time_ends_at
               ).first_or_create
             end
-          rescue
+          rescue =>error
             @logger.error "#{$!} when scraping %s" % topic.code
+            @logger.error error.backtrace
           end
         end
       end
