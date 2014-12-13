@@ -30,7 +30,7 @@ namespace :unisa_timetables do
     study_periods = get_study_periods()
 
     study_periods.each do |sp|
-      if (sp.period != 5)
+      if (sp.year != 2015)
         next
       end
 
