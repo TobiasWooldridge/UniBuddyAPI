@@ -49,7 +49,7 @@ module Scraper
 
     SubjectArea = Struct.new(:code, :name)
 
-    def scrape_study_period study_period
+    def scrape_study_period study_period,subject_area_limit
       courses_page = get_courses_page(study_period)
 
       if (courses_page == nil)
@@ -64,6 +64,10 @@ module Scraper
 
 
       subject_area_field.options.from(1).each do |subject_area|
+        if !subject_area_limit.nil? and subject_area_limit != subject_area.value
+          @logger.info 'Skipping topic area: %s' % subject_area.text
+          next
+        end
         @logger.info 'Scraping topic area: %s' % subject_area.text
         subject_area_field.value = subject_area
         cat_num_field.value = ''
