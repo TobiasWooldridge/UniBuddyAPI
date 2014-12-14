@@ -1,19 +1,24 @@
 module Scraper
   module AdelaideTimetables
-    def get_timetable_form page
+    def get_timetable_form page,year
       # Getting the year from the table heading
-      @year = (page/'li[id="current"] a').text.match('[0-9]+')[0].to_i
+      @year = year || (page/'li[id="current"] a').text.match('[0-9]+')[0]
 
       page.form_with(:action => /search\.asp/)
     end
 
-    def scrape_timetables_from_url url
+    def scrape_timetables_from_url url,year,program_area
       page = @agent.get url
-      form = get_timetable_form page
+      form = get_timetable_form page,year
       
       subject_area_widget = form.field_with(:name => 'subject')
+      form.field_with(:name => 'year').value = @year
       subject_area_widget.options.from(1).each do |entry|
 
+        current_program_area = entry.value
+        if !program_area.nil? and current_program_area != program_area
+          next
+        end
         name = entry.text.split(/- /).second
 
         subject_area_widget.value = entry
@@ -25,7 +30,7 @@ module Scraper
             page = form.submit
             scrape_topics_on_page page
           rescue => error_two
-            @logger.error "Error # {$!} while importing %s" % name
+            @logger.error "Error #{$!} while importing %s" % name
             @logger.error error.backtrace
           end
         end
@@ -45,7 +50,7 @@ module Scraper
 
           scrape_topic_page_from_url url
         rescue => error
-          @logger.error "Error # {$!} while importing %s" % topic_link['href']
+          @logger.error "Error #{$!} while importing %s" % topic_link['href']
           @logger.error error.backtrace
         end
       end
@@ -218,49 +223,56 @@ module Scraper
           next
 
         # It's the first row of actual class data
-        elsif rows[i]["class"] =="data" and (rows[i]/"td").length == 8 
-          @logger.debug "First instance of new class data row"
+        elsif (rows[i]["class"] =="data" and (rows[i]/"td").length == 8) or ((rows[i]/"td").length == 4)    
+      
+          rowType = (rows[i]/"td").length == 4 ? "second":"first"
+      
+          # If we have a first row, the data we are interested in is shifted to the right 4 columns
+          rowOffset = (rowType == "first" ? 4 : 0)
+          @logger.debug "Found a class data row of %s type..." % rowType
           cells = rows[i]/"td"
-          groupNumber = nil
-          groupNumber_raw = (cells[1].text.squish.match "[0-9]+")
+          if (rowType == "first")
+              groupNumber = nil
+              # Set group number to 0 for online lecture (no group should use this + it looks like O for online)
+              groupNumber_raw = (cells[1].text.squish.match "[0-9]+") || (cells[1].text.squish == "LECO" ? "0" : nil)
 
-          if !(groupNumber_raw == nil)
-            groupNumber = groupNumber_raw[0].to_i.to_s
-          else
-            groupNumber = cells[1].text.squish.slice(2..cells[1].text.length).hash
-            @logger.debug "No number in groupNumber... Hash of %s used instead # YOLO" % groupNumber
+              if !(groupNumber_raw == nil)
+                groupNumber = groupNumber_raw[0].to_i.to_s
+              else
+                groupNumber = cells[1].text.squish.slice(2..cells[1].text.length).hash
+                @logger.debug "No number in groupNumber... Hash of %s used instead # YOLO" % groupNumber
+              end
+
+              classNumber = cells[0].text.squish
+              totalPlacesAvailable = cells[2].text.squish
+              placesLeft = cells[3].text.squish
+              full = (placesLeft.include?("FULL"))
+
+              @logger.debug ({
+                  "Group Number" => groupNumber,
+                  "Class Number" => classNumber,
+                  "Total Places Available" => totalPlacesAvailable,
+                  "Places Left" => placesLeft,
+                  "Full" => full,
+                  "Stream" => stream
+              })
+
+              class_group = ClassGroup.where(
+                :class_type => class_type,
+                  :group_number => groupNumber
+                  ).first_or_initialize
+              Activity.where(:class_group => class_group).delete_all
+              class_group.note = placesLeft
+              class_group.stream_id = stream
+             
+              # Enrolment opening info not available from Adelaide, so we will just settle
+              # for if the class is full or not
+              class_group.full = full
           end
+          date_range = cells[rowOffset].text.split(" - ")
+          time_range = cells[rowOffset+2].text.split(" - ")
 
-          classNumber = cells[0].text.squish
-          totalPlacesAvailable = cells[2].text.squish
-          placesLeft = cells[3].text.squish
-          full = (placesLeft.include?("FULL"))
-
-          @logger.debug ({
-              "Group Number" => groupNumber,
-              "Class Number" => classNumber,
-              "Total Places Available" => totalPlacesAvailable,
-              "Places Left" => placesLeft,
-              "Full" => full,
-              "Stream" => stream
-          })
-
-          class_group = ClassGroup.where(
-            :class_type => class_type,
-              :group_number => groupNumber
-              ).first_or_initialize
-          Activity.where(:class_group => class_group).delete_all
-          class_group.note = placesLeft
-          class_group.stream_id = stream
-         
-          # Enrolment opening info not available from Adelaide, so we will just settle
-          # for if the class is full or not
-          class_group.full = full
-
-          date_range = cells[4].text.split(" - ")
-          time_range = cells[6].text.split(" - ")
-
-          room_details = cells[7].text.squish.split(', ')
+          room_details = cells[rowOffset+3].text.squish.split(', ')
           room_name = room_details[2]
           room_id = room_details[1]
           room_general_location = room_details[0]
@@ -285,74 +297,12 @@ module Scraper
           @logger.debug "Class session starts at: %s" % time_starts_at
           @logger.debug "Class session ends at: %s" % time_ends_at
 
-          firstDay = Date.parse(date_range[0].strip)
-          lastDay = Date.parse(date_range[1].strip)
+          firstDay = Date.parse(date_range[0].strip + " " + @year)
+          lastDay = Date.parse(date_range[1].strip + " " + @year)
 
           # If we have a valid day in the day cell of the table
-          if !(cells[5].text == "")
-            dayOfWeek = Date.parse(cells[5].text.strip).strftime('%u')
-          else
-            dayOfWeek = nil
-          end
-
-          @logger.debug "First day of class session: %s" % firstDay
-          @logger.debug "Last day of class session: %s" % lastDay
-          @logger.debug "Weekday of class session: %s" % dayOfWeek
-
-          # Create a new activity to hold the class
-          class_session = Activity.new(
-            :class_group => class_group,
-            :first_day => firstDay,
-            :last_day => lastDay,
-            :day_of_week => dayOfWeek,
-            :time_starts_at => time_starts_at,
-            :room_id => room.nil? ? nil : room.id
-            )
-          if !class_session.new_record?
-            @logger.debug "Joining adjacent class sessions for %s %s" % [topic.name, class_type.name]
-          end
-          class_session.time_ends_at = time_ends_at
-
-          class_session.save
-          # Another class row, that is not the first one
-        elsif (rows[i]/"td").length == 4 
-          cells = rows[i]/"td"
-          @logger.debug "Another class data row"
-          date_range = cells[0].text.split(" - ")
-          time_range = cells[2].text.split("-")
-
-          room_details = cells[3].text.squish.split(', ')
-          room_name = room_details[2]
-          room_id = room_details[1]
-          room_general_location = room_details[0]
-
-          @logger.debug "Room name is: %s" % room_name
-          @logger.debug "Room id is: %s" % room_id
-          @logger.debug "Room general location is: %s" % room_general_location
-
-          # TODO: Make new room if room does not exist
-          if room_details.length == 3
-            room = Room.joins(:building).where("buildings.name = ? AND rooms.code = ?", room_general_location, room_id).first_or_initialize
-          end
-
-          # If we have a valid time in the time cell of the table
-          if (time_range.length == 2)
-            time_starts_at = Time.parse(time_range[0].strip) - Time.now.at_beginning_of_day
-            time_ends_at = Time.parse(time_range[1].strip) - Time.now.at_beginning_of_day
-          else
-            time_starts_at = nil
-            time_ends_at = nil
-          end
-
-          @logger.debug "Class session starts at: %s" % time_starts_at
-          @logger.debug "Class session ends at: %s" % time_ends_at
-
-          firstDay = Date.parse(date_range[0].strip)
-          lastDay = Date.parse(date_range[1].strip)
-
-          #If we have a valid day in the day cell of the table
-          if !(cells[1].text == "")
-            dayOfWeek = Date.parse(cells[1].text.strip).strftime('%u')
+          if !(cells[rowOffset+1].text == "")
+            dayOfWeek = Date.parse(cells[rowOffset+1].text.strip).strftime('%u')
           else
             dayOfWeek = nil
           end
@@ -456,5 +406,4 @@ module Scraper
       end
     end
   end
-
 end
