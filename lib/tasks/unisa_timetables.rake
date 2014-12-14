@@ -3,7 +3,7 @@ require 'scraper/unisa_timetables'
 namespace :unisa_timetables do
   desc 'Update class timetables from the UniSA website'
 
-  task :update, [:username, :password] => :environment do |t, args|
+  task :update, [:username, :password, :subject_area] => :environment do |t, args|
     include Scraper::UnisaTimetables
 
     desc 'Update'
@@ -15,7 +15,7 @@ namespace :unisa_timetables do
     end
 
 
-    args.with_defaults(:username => '', :password => '')
+    args.with_defaults(:username => '', :password => '', :subject_area => nil)
 
     if (args.username == '')
       @logger.error('Username required')
@@ -30,11 +30,11 @@ namespace :unisa_timetables do
     study_periods = get_study_periods()
 
     study_periods.each do |sp|
-      if (sp.period != 5)
+      if (sp.year != 2015)
         next
       end
 
-      scrape_study_period sp
+      scrape_study_period sp, args.subject_area
     end
   end
 
