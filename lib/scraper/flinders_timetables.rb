@@ -280,6 +280,9 @@ module Scraper
               :room_id => room.nil? ? nil : room.id
           )
 
+          class_session.first_day.change(:year => topic.year)
+          class_session.last_day.change(:year => topic.year)
+
           if !class_session.new_record?
             puts "Joining adjacent class activities for %s %s" % [topic.name, class_type.name]
           end
