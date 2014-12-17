@@ -260,11 +260,14 @@ module Scraper
           time_starts_at = Time.parse(time_range[0].strip) - Time.now.at_beginning_of_day
           time_ends_at = Time.parse(time_range[1].strip) - Time.now.at_beginning_of_day
 
+          first_day = Date.parse(date_range[0].strip).change(:year => topic.year)
+          last_day = Date.parse(date_range[1].strip).change(:year => topic.year)
+
           # Get the immediate previous activity for this topic if it exists so we can just join them
           class_session = Activity.where(
               :class_group => class_group,
-              :first_day => Date.parse(date_range[0].strip),
-              :last_day => Date.parse(date_range[1].strip),
+              :first_day => first_day,
+              :last_day => last_day,
               :day_of_week => Date.parse(cells[1].text.strip).strftime('%u'),
               :time_ends_at => [time_starts_at, time_starts_at - 10.minutes],
               :room_id => room.nil? ? nil : room.id
@@ -273,15 +276,12 @@ module Scraper
           # Otherwise create a new one
           class_session = class_session || Activity.new(
               :class_group => class_group,
-              :first_day => Date.parse(date_range[0].strip),
-              :last_day => Date.parse(date_range[1].strip),
+              :first_day => first_day,
+              :last_day => last_day,
               :day_of_week => Date.parse(cells[1].text.strip).strftime('%u'),
               :time_starts_at => time_starts_at,
               :room_id => room.nil? ? nil : room.id
           )
-
-          class_session.first_day.change(:year => topic.year)
-          class_session.last_day.change(:year => topic.year)
 
           if !class_session.new_record?
             puts "Joining adjacent class activities for %s %s" % [topic.name, class_type.name]
