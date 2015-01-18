@@ -15,10 +15,10 @@ namespace :unisa_timetables do
     end
 
 
-    args.with_defaults(:username => '', :password => '', :subject_area => nil)
+    args.with_defaults(:username => '', :password => '', :subject_area => nil, :year => nil)
 
-    if (args.username == '')
-      @logger.error('Username required')
+    if (args.username == '' or args.password == '')
+      @logger.error('Username and password required')
       next
     end
 
@@ -29,18 +29,16 @@ namespace :unisa_timetables do
 
     study_periods = get_study_periods()
 
-    study_periods.each do |sp|
-      if (sp.year != 2015)
+    study_periods.each do |study_period|
+      if ((args.year.nil? and study_period.year < Date.today.year) or (!args.year.nil? and study_period.year != args.year) )
         next
       end
 
-      scrape_study_period sp, args.subject_area
+      scrape_study_period study_period, args.subject_area
     end
   end
 
   private
-  agent = nil
-
   class MultiIO
     def initialize(*targets)
       @targets = targets

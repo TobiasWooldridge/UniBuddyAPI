@@ -49,12 +49,14 @@ module Scraper
 
     SubjectArea = Struct.new(:code, :name)
 
-    def scrape_study_period study_period,subject_area_limit
+    def scrape_study_period study_period, subject_area_limit
       courses_page = get_courses_page(study_period)
 
       if (courses_page == nil)
         @logger.warn 'Could not scrape study period %d. Maybe it\'s passed?' % study_period.period
         return
+      else
+        @logger.info 'Scraping study period %d SP%d' % [study_period.year, study_period.period]
       end
 
       courses_form = courses_page.forms.first
@@ -65,26 +67,29 @@ module Scraper
 
       subject_area_field.options.from(1).each do |subject_area|
         if !subject_area_limit.nil? and subject_area_limit != subject_area.value
-          @logger.info 'Skipping topic area: %s' % subject_area.text
           next
         end
-        @logger.info 'Scraping topic area: %s' % subject_area.text
+        @logger.info 'Scraping topic area: %s %s SP%s' % [subject_area.text, study_period.year, study_period.period]
         subject_area_field.value = subject_area
         cat_num_field.value = ''
         topic_list_page = clean_asp courses_form.click_button(search_button)
 
         topic_list = topic_list_page/'table.ClassTimeTable#grdvwCourse tr:not(:first-child)'
 
-        topic_list.each do |topic|
-          catNumber = topic.css('td')[2].text.to_i
-          cat_num_field.value = catNumber
+        if topic_list.length == 0 and !(topic_list_page/'.OptionNote').nil?
+          scrape_topic_page study_period, topic_list_page
+        else
+          topic_list.each do |topic|
+            catNumber = topic.css('td')[2].text.to_i
+            cat_num_field.value = catNumber
 
-          topic_page = clean_asp courses_form.click_button(search_button)
+            topic_page = clean_asp courses_form.click_button(search_button)
 
-          begin
-            scrape_topic_page study_period, topic_page
-          rescue
-            @logger.error "#{$!} when scraping %s %s" % [subject_area.text, catNumber]
+            begin
+              scrape_topic_page study_period, topic_page
+            rescue
+              @logger.error "#{$!} when scraping %s %s" % [subject_area.text, catNumber]
+            end
           end
         end
       end
