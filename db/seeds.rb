@@ -72,6 +72,9 @@ InstitutionSemester.where(:institution => adelaide, :year => 2014, :code => "Tri
 InstitutionSemester.where(:institution => adelaide, :year => 2014, :code => "Wi", :name => "Winter School").first_or_create
 InstitutionSemester.where(:institution => adelaide, :year => 2014, :code => "Su", :name => "Summer School").first_or_create
 
+InstitutionSemester.where(:institution => uni_sa, :year => 2014, :code => "SP1", :name => "Study Period 1").first_or_create
+InstitutionSemester.where(:institution => uni_sa, :year => 2014, :code => "SP2", :name => "Study Period 2").first_or_create
+InstitutionSemester.where(:institution => uni_sa, :year => 2014, :code => "SP3", :name => "Study Period 3").first_or_create
 InstitutionSemester.where(:institution => uni_sa, :year => 2014, :code => "SP4", :name => "Study Period 4").first_or_create
 InstitutionSemester.where(:institution => uni_sa, :year => 2014, :code => "SP5", :name => "Study Period 5").first_or_create
 InstitutionSemester.where(:institution => uni_sa, :year => 2014, :code => "SP6", :name => "Study Period 6").first_or_create
