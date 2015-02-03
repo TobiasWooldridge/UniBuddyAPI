@@ -210,12 +210,14 @@ module Scraper
         # Topic requiring streams_id to be non-nil as if you pick
         # Lecture 01, you get Tute01 and Prac01 as well
         elsif rows[i]["class"] == "trgroup"
-          if stream == nil
-            @logger.debug "Found one of those grouping topics. Assuming all classes should be grouped by class number..."
+            @logger.debug "Found a new stream"
+            # I can't seem to get just comments on their own without this hack... /"//comment()" returns all the comments for the document.
+            streamMatch = rows[i].children[2].to_str.match /ASSOCIATED_CLASS = '(?<streamName>[0-9]+)'/
+            @logger.debug "Stream number is %d" % streamMatch[:streamName]
             stream = Stream.new(
-              :topic => topic)
+              :topic => topic,
+              :name => streamMatch[:streamName])
             stream.save
-          end
 
         # It's the colum descriptions, and we can skip them
         elsif rows[i]["class"] == "trheader" 
@@ -263,7 +265,7 @@ module Scraper
                   ).first_or_initialize
               Activity.where(:class_group => class_group).delete_all
               class_group.note = placesLeft
-              class_group.stream_id = stream
+              class_group.stream = stream
              
               # Enrolment opening info not available from Adelaide, so we will just settle
               # for if the class is full or not
