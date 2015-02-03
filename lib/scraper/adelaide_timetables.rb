@@ -223,7 +223,7 @@ module Scraper
 
             stream = Stream.where(
               :topic => topic,
-              :name => "Grp %d" % streamNum).first_or_create
+              :name => "G%d" % streamNum).first_or_create
 
         # It's the column descriptions, and we can skip them
         elsif rows[i]["class"] == "trheader" 
