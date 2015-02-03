@@ -28,8 +28,10 @@ group :development, :test do
 end
 
 group :development do
-  gem 'capistrano'
+  gem 'capistrano', '~> 3.1'
   gem 'capistrano-bundler'
+  gem 'capistrano-rvm'
+  gem 'capistrano-passenger'
 end
 
 group :production do
