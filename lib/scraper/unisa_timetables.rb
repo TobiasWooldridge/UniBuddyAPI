@@ -72,7 +72,7 @@ module Scraper
         @logger.info 'Scraping topic area: %s %s SP%s' % [subject_area.text, study_period.year, study_period.period]
         subject_area_field.value = subject_area
         cat_num_field.value = ''
-        topic_list_page = clean_asp courses_form.click_button(search_button)
+        topic_list_page = clean_aspp courses_form.click_button(search_button)
 
         topic_list = topic_list_page/'table.ClassTimeTable#grdvwCourse tr:not(:first-child)'
 

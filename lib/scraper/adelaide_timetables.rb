@@ -219,9 +219,9 @@ module Scraper
               :name => streamMatch[:streamName])
             stream.save
 
-        # It's the colum descriptions, and we can skip them
+        # It's the column descriptions, and we can skip them
         elsif rows[i]["class"] == "trheader" 
-          @logger.debug "Found column names. Skipping..."
+          @logger.debug "Found column names. Skipping row..."
           next
 
         # It's the first row of actual class data
@@ -270,21 +270,35 @@ module Scraper
               # Enrolment opening info not available from Adelaide, so we will just settle
               # for if the class is full or not
               class_group.full = full
+              class_group.save
           end
           date_range = cells[rowOffset].text.split(" - ")
           time_range = cells[rowOffset+2].text.split(" - ")
 
           room_details = cells[rowOffset+3].text.squish.split(', ')
-          room_name = room_details[2]
+
+          building_name = room_details[0]
           room_id = room_details[1]
-          room_general_location = room_details[0]
-          @logger.debug "Room name is: %s" % room_name
-          @logger.debug "Room id is: %s" % room_id
-          @logger.debug "Room general location is: %s" % room_general_location
+          room_name = room_details[2]
+
+          @logger.debug ({
+              "Room name is" => room_name,
+              "Room id" => room_id,
+              "Building Name" => building_name
+          })
 
           # TODO: Make new room if room does not exist
+          room = nil
           if room_details.length == 3
-            room = Room.joins(:building).where("buildings.name = ? AND rooms.code = ?", room_general_location, room_id).first_or_initialize
+            building = Building.where(:institution => Institution.adelaide, :name => building_name).first_or_initialize
+            if building.code.nil? then
+              building.code = building_name # TODO: Get codes for Adelaide buildings
+            end
+            building.save
+
+            room = Room.where(:building => building, :code => room_id).first_or_initialize
+            room.name = room_name
+            room.save
           end
 
           # If we have a valid time in the time cell of the table
@@ -296,11 +310,10 @@ module Scraper
             time_ends_at = nil
           end
 
-          @logger.debug "Class session starts at: %s" % time_starts_at
-          @logger.debug "Class session ends at: %s" % time_ends_at
+          @logger.debug ({"Class session starts" => time_starts_at, "Class session ends at" => time_ends_at})
 
-          firstDay = Date.parse(date_range[0].strip + " " + @year)
-          lastDay = Date.parse(date_range[1].strip + " " + @year)
+          firstDay = Date.parse(date_range[0].strip + ' ' + @year)
+          lastDay = Date.parse(date_range[1].strip + ' ' + @year)
 
           # If we have a valid day in the day cell of the table
           if !(cells[rowOffset+1].text == "")
@@ -309,9 +322,11 @@ module Scraper
             dayOfWeek = nil
           end
 
-          @logger.debug "First day of class session: %s" % firstDay
-          @logger.debug "Last day of class session: %s" % lastDay
-          @logger.debug "Weekday of class session: %s" % dayOfWeek
+          @logger.debug ({
+              "First day of class session" => firstDay,
+              "Last day of class session" => lastDay,
+              "Weekday of class session" => dayOfWeek
+          })
 
           # Gets old class time to see if starts at is ends at
           class_session = Activity.where(
@@ -360,21 +375,13 @@ module Scraper
           placesLeft = cells[3].text.squish
           full = (placesLeft.include?("FULL"))
 
-          @logger.debug "Group number is: %s" % groupNumber
-          @logger.debug "Class number is: %s" % classNumber
-          @logger.debug "Total places available is: %s" % totalPlacesAvailable
-          @logger.debug "Places left in class: %s" % placesLeft
-          @logger.debug "Is this class full? %s" % full
-          @logger.debug "Stream object: %s" % stream
-
-
           @logger.debug ({
-            "Group Number" => groupNumber,
-            "Class Number" => classNumber,
-            "Total Places Available" => totalPlacesAvailable,
-            "Places Left" => placesLeft,
-            "Full" => full,
-            "Stream" => stream
+            "Group number is" => groupNumber,
+            "Class number is" => classNumber,
+            "Total places available is" => totalPlacesAvailable,
+            "Places left in class" => placesLeft,
+            "Class full?" => full,
+            "Stream object" => stream
           })
 
           class_group = ClassGroup.where(
@@ -382,7 +389,7 @@ module Scraper
               :group_number => groupNumber
               ).first_or_initialize
           Activity.where(:class_group => class_group).delete_all
-          class_group.stream_id = stream
+          class_group.stream = stream
 
           # Not available from Adelaide data. Just going with full
           class_group.full = full

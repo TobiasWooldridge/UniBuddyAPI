@@ -13,7 +13,10 @@ namespace :adelaide_timetables do
 
     logfile = File.open("log/AdelaideScraper.log", "a")
     @logger = Logger.new MultiIO.new(STDOUT, logfile)
-    @logger.level = 0
+    @logger.level = 1
+    @logger.formatter = proc do |severity, datetime, progname, msg|
+      "#{severity}: #{msg}\n"
+    end
 
     @logger.info 'Scraping timetables for %s (program area: %s)' % [args.year || 'latest year', args.program_area || 'all program areas']
     @agent = Mechanize.new
