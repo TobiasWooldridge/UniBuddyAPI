@@ -173,6 +173,17 @@ module Scraper
 
       # Now create/update all timetable data
       process_timetable page/"div[id=\"hidedata04_1\"] >table:first", topic
+
+
+      topic.class_types.each do |ct|
+        if ct.class_group.size == 1
+          # Using a loop for an array with a guaranteed size of one? #yolo
+          ct.class_group.each do |cg|
+            cg.stream = nil
+            cg.save
+          end
+        end
+      end
     end
 
     def process_timetable timetable, topic

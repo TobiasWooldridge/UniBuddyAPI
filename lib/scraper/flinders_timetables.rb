@@ -230,7 +230,6 @@ module Scraper
                   :topic => topic,
                   :name => streamName
               ).first_or_create
-              stream.save
 
               class_group.stream = stream
             else
