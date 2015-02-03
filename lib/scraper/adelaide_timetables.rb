@@ -1,3 +1,6 @@
+require 'numbers_in_words'
+require 'numbers_in_words/duck_punch'
+
 module Scraper
   module AdelaideTimetables
     def get_timetable_form page,year
@@ -212,12 +215,15 @@ module Scraper
         elsif rows[i]["class"] == "trgroup"
             @logger.debug "Found a new stream"
             # I can't seem to get just comments on their own without this hack... /"//comment()" returns all the comments for the document.
-            streamMatch = rows[i].children[2].to_str.match /ASSOCIATED_CLASS = '(?<streamName>[0-9]+)'/
-            @logger.debug "Stream number is %d" % streamMatch[:streamName]
-            stream = Stream.new(
+            # @logger.info rows[i].children[2].to_str
+            # streamMatch = rows[i].children[2].to_str.match /ASSOCIATED_CLASS = '1(?<streamName>[0-9]+)'/
+            # @logger.debug "Stream number is %d" % streamMatch[:streamName]
+
+            streamNum = rows[i].to_str.in_numbers
+
+            stream = Stream.where(
               :topic => topic,
-              :name => streamMatch[:streamName])
-            stream.save
+              :name => "Grp %d" % streamNum).first_or_create
 
         # It's the column descriptions, and we can skip them
         elsif rows[i]["class"] == "trheader" 
