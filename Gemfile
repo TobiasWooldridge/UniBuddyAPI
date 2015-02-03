@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 ruby '2.0.0'
 
-gem 'rails', '4.0.0'
+gem 'rails', '4.2.0'
 
 gem 'pg'
 
@@ -9,7 +9,8 @@ gem 'mechanize'
 
 gem 'puma'
 
-gem 'feedzirra'
+gem 'feedjira'
+gem 'responders', '~> 2.0'
 
 gem 'rack-cors', :require => 'rack/cors'
 
@@ -28,6 +29,7 @@ end
 
 group :development do
   gem 'capistrano'
+  gem 'capistrano-bundler'
 end
 
 group :production do
