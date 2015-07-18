@@ -64,8 +64,13 @@ module Scraper
           scrape_topic base_url, topic, year
         end
 
-        if results["TRUNCATED"] == 1
-          @truncated.push(subject_area)
+        if results["TRUNCATED"] == 1 and sub_number > 9
+          @truncated.push({:subj => subject_area, :number => sub_number})
+        elsif results["TRUNCATED"] == 1
+          last_index_top = (topics.last['TDTOPICNUMBER'] / 100).to_i
+          last_index_top.upto(99) do |n|
+            scrape_sub_topic base_url, year, subject_area, n
+          end
         end
 
       end
