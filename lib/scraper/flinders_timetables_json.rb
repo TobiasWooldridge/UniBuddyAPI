@@ -2,6 +2,7 @@ module Scraper
   module FlindersTimetables
 
     def get url
+      #puts url
       #get start time
       t1 = Time.now
 
@@ -115,17 +116,21 @@ module Scraper
 
   			results = get topicAvailablitiesBaseUrl
   			if results['SUCCESS'] == 1
-  				process_availabilities base_url, year, topic_meta, results['AVAILABILITYLIST']['AVAILABILITIES']
-  				@updated_topics += 1
-  			elsif results['SUCCESS'] == 2
-  				puts "Topic not available this year: %s" % topic_meta["Name"]
-  			elsif results['SUCCESS'] == 0
-  				puts results['EXCEPTION']
-  			else
-  				puts "Parse error looking for timetables for %s" % topic_meta["Name"]
-  			end
-  				
-
+          #check publish date
+          publishDate = Date.parse(results['PUBLISHDATE'][0]['PUBLISH_TIMETABLE_DATE'])
+          if publishDate < Date.today
+            process_availabilities base_url, year, topic_meta, results['AVAILABILITYLIST']['AVAILABILITIES']
+            @updated_topics += 1
+          else
+            puts "Timetable not available until %s" % publishDate
+          end
+        elsif results['SUCCESS'] == 2
+        	puts "Topic not available this year: %s" % topic_meta["Name"]
+        elsif results['SUCCESS'] == 0
+        	puts results['EXCEPTION']
+        else
+        	puts "Parse error looking for timetables for %s" % topic_meta["Name"]
+        end
   		elsif results['SUCCESS'] == 2
   			puts "Topic %s not available this year" % topic['TDTOPICCODE']
   		elsif results['SUCCESS'] == 0
@@ -306,7 +311,7 @@ module Scraper
   		elsif classes['SUCCESS'] == 0
   			puts results['EXCEPTION']
   		else
-  			puts "error pasing timetable results for topic %s" % topic.name
+  			puts "error parsing timetable results for topic %s" % topic.name
   		end
 
   	end
