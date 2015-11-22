@@ -4,9 +4,9 @@
 # is considered to be the first unless any hosts have the primary
 # property set.  Don't declare `role :all`, it's a meta role.
 
-role :web, 'wooldridge.id.au'
-role :app, 'wooldridge.id.au'
-role :db,  'wooldridge.id.au'
+role :web, 'blue.unibuddy.com.au'
+role :app, 'blue.unibuddy.com.au'
+role :db,  'blue.unibuddy.com.au'
 
 
 # Extended Server Syntax
@@ -15,7 +15,7 @@ role :db,  'wooldridge.id.au'
 # server list. The second argument is a, or duck-types, Hash and is
 # used to set extended properties on the server.
 
-server 'wooldridge.id.au', user: 'flindersapi', roles: %w{web app db}
+server 'blue.unibuddy.com.au', user: 'unibuddy', roles: %w{web app db}
 
 
 # Custom SSH Options

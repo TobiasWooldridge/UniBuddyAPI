@@ -18,7 +18,9 @@ gem 'numbers_in_words'
 
 gem 'sanitize'
 
-#gem "ots", "~> 0.5.4"
+group :assets do
+    gem 'coffee-rails'
+end
 
 group :development, :test do
   gem 'rspec-rails'
@@ -30,8 +32,9 @@ end
 group :development do
   gem 'capistrano', '~> 3.1'
   gem 'capistrano-bundler'
-  gem 'capistrano-rvm'
   gem 'capistrano-passenger'
+  gem 'capistrano-rails'
+  gem 'capistrano-rvm'
 end
 
 group :production do

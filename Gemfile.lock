@@ -48,6 +48,9 @@ GEM
       sshkit (~> 1.2)
     capistrano-passenger (0.0.1)
       capistrano (~> 3.0)
+    capistrano-rails (1.1.5)
+      capistrano (~> 3.1)
+      capistrano-bundler (~> 1.1)
     capistrano-rvm (0.1.2)
       capistrano (~> 3.0)
       sshkit (~> 1.2)
@@ -218,6 +221,7 @@ DEPENDENCIES
   capistrano (~> 3.1)
   capistrano-bundler
   capistrano-passenger
+  capistrano-rails
   capistrano-rvm
   factory_girl
   factory_girl_rails (~> 4.0)
