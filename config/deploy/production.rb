@@ -17,6 +17,7 @@ role :db,  'blue.unibuddy.com.au'
 
 server 'blue.unibuddy.com.au', user: 'unibuddy', roles: %w{web app db}
 
+set :deploy_to, '/var/www/UniBuddyAPI'
 
 # Custom SSH Options
 # ==================
