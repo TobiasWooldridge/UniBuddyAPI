@@ -4,24 +4,38 @@ module Scraper
     def get url
       #puts url
       #get start time
-      t1 = Time.now
+      results = nil
+      while results == nil
+        # t1 = Time.now
+          
+        page = @agent.get(url)
 
-      results = JSON.parse @agent.get(url).body
+        # t2 = Time.now
 
-      t2 = Time.now
-
-      diff = (t2 - t1) * 1000
-      if diff > 500
-        #sleep for 1 second
-        puts "request took %i, sleeping for 1 second" % diff
-        sleep 1
+        if page.code.to_i < 400
+          results = JSON.parse page.body
+        elsif page.code.to_i < 500
+          #our error terminate here
+          raise "%s resulted in %i" % [url, page.code]
+        elsif page.code.to_i == 503
+          puts "503 received from server, pausing for 1 second"
+          sleep 1
+        else
+          raise "%s resulted in %i" % [url, page.code]
+        end
+        # diff = (t2 - t1) * 1000
+        # if diff > 700
+        #   #sleep for 1 second
+        #   puts "request took %i, sleeping for 1 second" % diff
+        #   sleep 1
+        # end
       end
       return results
     end
 
-  	def scrape_timetables base_url, year, subject_area
+  	def scrape_timetables base_url, year, subject_area, key
 
-  		topiclisturl = "%s/topic/getTopicList?format=json&tdtopicsubject=%s&tdtopicnumber=&tdtopicfulltitlelower=&tdyear=%s" % [base_url, subject_area, year]
+  		topiclisturl = "%s/topic/getTopicList?format=json&tdtopicsubject=%s&tdtopicnumber=&tdtopicfulltitlelower=&tdyear=%s&%s" % [base_url, subject_area, year, key]
 
   		puts "getting topics from %s" % topiclisturl
 
@@ -36,15 +50,6 @@ module Scraper
   			topics.each do |topic|
   				scrape_topic base_url, topic, year
   			end
-
-        if results["TRUNCATED"] == 1
-          #get first int of last topic
-          last_index_top = (topics.last['TDTOPICNUMBER'] / 1000).to_i
-          last_index_top.upto(9) do |n|
-            scrape_sub_topic base_url, year, subject_area, n
-          end
-        end
-
   		end
   	end
 
@@ -309,7 +314,7 @@ module Scraper
   			puts timetableBaseUrl
   			puts "Expected error fetching timetale??? for topic %s" % topic.name
   		elsif classes['SUCCESS'] == 0
-  			puts results['EXCEPTION']
+  			puts classes['EXCEPTION']
   		else
   			puts "error parsing timetable results for topic %s" % topic.name
   		end
