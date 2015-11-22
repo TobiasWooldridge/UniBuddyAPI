@@ -4,28 +4,16 @@
 # http://en.wikipedia.org/wiki/Cron
 
 # Example:
-#
-# set :output, "/path/to/my/cron_log.log"
-#
-# every 2.hours do
-#   command "/usr/bin/some_great_command"
-#   runner "MyModel.some_method"
-#   rake "some:great:rake:task"
-# end
-#
-# every 4.days do
-#   runner "AnotherModel.prune_old_records"
-# end
+set :output, "log/cron.log"
 
-# Learn more: http://github.com/javan/whenever
-
-
-every :day, :at => '4:00am' do
-  rake 'flinders_timetables:update_json'
+every :day, :at => '3:00am' do
+  rake 'flinders_timetables:update_json[2016]' 'institution:update_semesters[true]'
 end
 
+every :day, :at => '3:30am' do
+  rake 'adelaide_timetables:update[2016]' 'institution:update_semesters[true]'
+end
 
-
-every :hour do
-  rake 'institution:update_semesters[true]'
+every :day, :at => '4:00am' do
+  rake 'unisa_timetables:update' 'institution:update_semesters[true]'
 end

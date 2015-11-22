@@ -18,6 +18,7 @@ gem 'numbers_in_words'
 
 gem 'sanitize'
 
+# cron jobs, works out of the box with with Capistrano
 gem 'whenever'
 
 group :assets do
