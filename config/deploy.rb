@@ -39,6 +39,8 @@ set :rvm_ruby_version, '2.0.0'
 
 set :bundle_flags, '--deployment'
 
+set :whenever_identifier, ->{ "#{fetch(:application)}_#{fetch(:stage)}" }
+
 namespace :deploy do
 
   after :restart, :clear_cache do

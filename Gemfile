@@ -18,6 +18,8 @@ gem 'numbers_in_words'
 
 gem 'sanitize'
 
+gem 'whenever'
+
 group :assets do
     gem 'sass'
     gem 'sass-rails'
