@@ -19,6 +19,7 @@ gem 'numbers_in_words'
 gem 'sanitize'
 
 group :assets do
+    gem 'sass'
     gem 'sass-rails'
     gem 'coffee-rails'
 end

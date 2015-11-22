@@ -253,4 +253,5 @@ DEPENDENCIES
   rspec-rails
   rspec_api_test
   sanitize
+  sass
   sass-rails
