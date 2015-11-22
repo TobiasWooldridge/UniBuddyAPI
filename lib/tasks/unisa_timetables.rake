@@ -3,7 +3,7 @@ require 'scraper/unisa_timetables'
 namespace :unisa_timetables do
   desc 'Update class timetables from the UniSA website'
 
-  task :update, [:username, :password, :subject_area] => :environment do |t, args|
+  task :update, [:subject_area] => :environment do |t, args|
     include Scraper::UnisaTimetables
 
     desc 'Update'
@@ -14,18 +14,14 @@ namespace :unisa_timetables do
       "#{msg}\n"
     end
 
+    args.with_defaults(:subject_area => nil, :year => nil)
 
-    args.with_defaults(:username => '', :password => '', :subject_area => nil, :year => nil)
-
-    if (args.username == '' or args.password == '')
-      @logger.error('Username and password required')
-      next
-    end
-
-    @logger.info 'Scraping timetables using username %s' % args.username
+    @logger.info 'Scraping timetables using username %s' % Rails.application.secrets.unisa_username
 
     @agent = Mechanize.new
-    @agent.add_auth('https://my.unisa.edu.au', args.username, args.password)
+    @agent.add_auth('https://my.unisa.edu.au',
+                    Rails.application.secrets.unisa_username,
+                    Rails.application.secrets.password)
 
     study_periods = get_study_periods()
 

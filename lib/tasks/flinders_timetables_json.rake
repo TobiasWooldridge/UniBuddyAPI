@@ -5,13 +5,13 @@ namespace :flinders_timetables do
 
   desc 'Update class timtetables from the Flinders website JSON api'
 
-  task :update_json, [:key, :year, :subject_area] => :environment do |t, args|
+  task :update_json, [:year, :subject_area] => :environment do |t, args|
     include Scraper::FlindersTimetables
     include ActionView::Helpers::DateHelper
 
     desc 'Update from JSON'
 
-    args.with_defaults(:key => nil, :year => Date.today.strftime("%Y"), :subject_area => nil)
+    args.with_defaults(:year => Date.today.strftime("%Y"), :subject_area => nil)
 
     puts 'Scraping timetables from JSON for %s (subject area: %s)' % [args.year, args.subject_area || 'all subject areas']
 
@@ -21,7 +21,7 @@ namespace :flinders_timetables do
 
     t1 = Time.now
 
-    scrape_timetables baseURL, args.year, args.subject_area, args.key
+    scrape_timetables baseURL, args.year, args.subject_area, Rails.application.secrets.flinders_api_secret
 
     t2 = Time.now
 
