@@ -7,13 +7,13 @@
 set :output, "log/cron.log"
 
 every :day, :at => '3:00am' do
-  rake 'flinders_timetables:update_json[2016]' 'institution:update_semesters[true]'
+  rake 'flinders_timetables:update_json[2016] institution:update_semesters[true]'
 end
 
 every :day, :at => '3:30am' do
-  rake 'adelaide_timetables:update[2016]' 'institution:update_semesters[true]'
+  rake 'adelaide_timetables:update[2016] institution:update_semesters[true]'
 end
 
 every :day, :at => '4:00am' do
-  rake 'unisa_timetables:update' 'institution:update_semesters[true]'
+  rake 'unisa_timetables:update institution:update_semesters[true]'
 end
