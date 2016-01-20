@@ -72,7 +72,7 @@ module Scraper
         @logger.info 'Scraping topic area: %s %s SP%s' % [subject_area.text, study_period.year, study_period.period]
         subject_area_field.value = subject_area
         cat_num_field.value = ''
-        topic_list_page = clean_aspp courses_form.click_button(search_button)
+        topic_list_page = clean_asp courses_form.click_button(search_button)
 
         topic_list = topic_list_page/'table.ClassTimeTable#grdvwCourse tr:not(:first-child)'
 
@@ -156,11 +156,14 @@ module Scraper
 
         rows.each_with_index do |row, index|
           cells = row.xpath('td')
-
+          class_enrolled = cells[5].text.squish
+          if "varies".eql? class_enrolled
+            @logger.info 'Skipping component with variable values'
+            next
+          end
           component = cells[2].text.squish
           class_id = index
           class_size = cells[4].text.squish
-          class_enrolled = cells[5].text.squish
           full = class_size == class_enrolled
           notes = cells[6].text.squish
           schedule = cells[7]

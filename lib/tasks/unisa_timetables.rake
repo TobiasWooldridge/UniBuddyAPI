@@ -21,7 +21,7 @@ namespace :unisa_timetables do
     @agent = Mechanize.new
     @agent.add_auth('https://my.unisa.edu.au',
                     Rails.application.secrets.unisa_username,
-                    Rails.application.secrets.password)
+                    Rails.application.secrets.unisa_password)
 
     study_periods = get_study_periods()
 
