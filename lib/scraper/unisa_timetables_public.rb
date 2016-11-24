@@ -90,7 +90,7 @@ module Scraper
       timetable_rows = timetable.children
       timetable_rows.select {|row| !row.text?}.each do |row|
 
-        catch :externalclass do
+        catch :invalidclass do
           row_class = row['class']
           case row_class
           when "OptionRow"
@@ -128,12 +128,16 @@ module Scraper
                 break
               end
             end
+            attendance = timetable_columns[TimetableColumn::ATTENDANCE].text
             class_component = timetable_columns[TimetableColumn::COMPONENT].text
 
             # Skip external components as they usually don't have timetable info?
             if(class_component == "External")
               @logger.debug "Skipping external class"
-              throw :externalclass
+              throw :invalidclass
+            elsif(attendance == "On Line")
+              @logger.debug "Skipping online class"
+              throw :invalidclass
             else
               # Only save options if not external and not saved before
               if(topic == nil)
