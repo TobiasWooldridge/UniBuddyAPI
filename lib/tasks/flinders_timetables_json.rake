@@ -21,7 +21,21 @@ namespace :flinders_timetables do
 
     t1 = Time.now
 
-    scrape_timetables baseURL, args.year, args.subject_area, Rails.application.secrets.flinders_api_secret
+    if args.subject_area.length > 0
+      scrape_timetables baseURL, args.year, args.subject_area, Rails.application.secrets.flinders_api_secret
+    else
+      options = @agent.get('https://www.flinders.edu.au/webapps/stusys/index.cfm/common/getTopicSubjects?format=json&tpyear=%s' % args.year)
+      if options.code.to_i < 400
+        parsedOptions = JSON.parse options.body
+        subjects = parsedOptions['OPTIONSLIST']['OPTIONS']
+        puts "Found %i subjects" % subjects.length
+        subjects.each do |subject|
+          scrape_timetables baseURL, args.year, subject['ID'], Rails.application.secrets.flinders_api_secret
+        end
+      else
+        puts "Failed to get subject list"
+      end
+    end
 
     t2 = Time.now
 
