@@ -44,7 +44,7 @@ namespace :flinders_timetables do
 
     puts "Completed in %s" % distance_of_time_in_words(t1, t2, include_seconds: true)
 
-    if @truncated.length > 0
+    if @truncated != nil && @truncated.length > 0
       puts "The following topics had truncated results"
       puts @truncated
     end
