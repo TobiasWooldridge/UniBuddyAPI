@@ -11,13 +11,20 @@ namespace :flinders_timetables do
 
     desc 'Update from JSON'
 
-    args.with_defaults(:year => Date.today.strftime("%Y"), :subject_area => nil)
-
-    puts 'Scraping timetables from JSON for %s (subject area: %s)' % [args.year, args.subject_area || 'all subject areas']
+    defaultYear = Date.today.strftime("%Y")
 
     @agent = Mechanize.new
     @found_topics, @updated_topics, @saved_class_types, @saved_class_groups, @saved_class_sessions = [0,0,0,0,0]
     baseURL = "https://www.flinders.edu.au/webapps/stusys/index.cfm"
+    defaultYearRequest = @agent.get('https://www.flinders.edu.au/webapps/stusys/index.cfm/timetabletopic/getDefaultYear?format=json')
+    if defaultYearRequest.code.to_i < 400
+      parsedYearRequest = JSON.parse defaultYearRequest.body
+      defaultYear = parsedYearRequest['YEAR'][0]['TTPDYEAR'].to_s
+    end
+
+    args.with_defaults(:year => defaultYear, :subject_area => nil)
+
+    puts 'Scraping timetables from JSON for %s (subject area: %s)' % [args.year, args.subject_area || 'all subject areas']
 
     t1 = Time.now
 
