@@ -23,15 +23,19 @@ namespace :flinders_timetables do
     end
 
     args.with_defaults(:year => defaultYear, :subject_area => nil)
+    year = args[:year]
+    if year == ''
+	year = defaultYear
+    end
 
-    puts 'Scraping timetables from JSON for %s (subject area: %s)' % [args.year, args.subject_area || 'all subject areas']
+    puts 'Scraping timetables from JSON for %s (subject area: %s)' % [year, args.subject_area || 'all subject areas']
 
     t1 = Time.now
 
     if args.subject_area != nil
-      scrape_timetables baseURL, args.year[/\d+/].to_i, args.subject_area, Rails.application.secrets.flinders_api_secret
+      scrape_timetables baseURL, year[/\d+/].to_i, args.subject_area, Rails.application.secrets.flinders_api_secret
     else
-      options = @agent.get('https://www.flinders.edu.au/webapps/stusys/index.cfm/common/getTopicSubjects?format=json&tpyear=%i' % args.year[/\d+/].to_i)
+      options = @agent.get('https://www.flinders.edu.au/webapps/stusys/index.cfm/common/getTopicSubjects?format=json&tpyear=%i' % year[/\d+/].to_i)
       if options.code.to_i < 400
         parsedOptions = JSON.parse options.body
         subjects = parsedOptions['OPTIONLIST']['OPTIONS']
