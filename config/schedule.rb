@@ -30,6 +30,6 @@ every :day, :at => '2:00pm' do
   rake 'unisa_timetables_public:update institution:update_semesters[true]'
 end
 
-every :day, :at -> '10:00pm' do
+every :day, :at => '10:00pm' do
   rake 'institution:update_semesters[true]'
 end
