@@ -7,7 +7,7 @@
 set :output, "log/cron.log"
 
 every :day, :at => '12:00am' do
-	echo $(date)
+	
 end
 
 every :day, :at => '3:00am' do
